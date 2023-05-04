@@ -10,7 +10,6 @@ import {User} from "../../services/apis/types";
 export class HeaderComponent implements OnInit {
 	user: User = {} as User;
 	constructor() {
-		console.log('xxxxx');
 	}
 
 	ngOnInit() {
