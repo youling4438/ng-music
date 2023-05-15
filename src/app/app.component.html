@@ -1,3 +1,17 @@
 <div id="music">
 	<app-header></app-header>
+	<div class="content">
+		<div class="container">
+			<div class="breadcrumb-warp">
+				<app-breadcrumb [separatorTemplate]="mySeparatorTpl">
+					<app-breadcrumb-item>全部</app-breadcrumb-item>
+					<app-breadcrumb-item>一级</app-breadcrumb-item>
+					<app-breadcrumb-item>二级</app-breadcrumb-item>
+				</app-breadcrumb>
+				<ng-template #mySeparatorTpl>
+					<b>&gt;</b>
+				</ng-template>
+			</div>
+		</div>
+	</div>
 </div>

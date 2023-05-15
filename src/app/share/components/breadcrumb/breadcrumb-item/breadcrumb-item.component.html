@@ -1,0 +1,12 @@
+<div class="bread-crumb-item">
+	<div class="content">
+		<ng-content></ng-content>
+	</div>
+	<div class="separator">
+		<ng-container [ngTemplateOutlet]="parent.separatorTemplate || defaultSeparatorTpl"></ng-container>
+		<ng-template #defaultSeparatorTpl>
+			<span>&gt;</span>
+		</ng-template>
+	</div>
+</div>
+
