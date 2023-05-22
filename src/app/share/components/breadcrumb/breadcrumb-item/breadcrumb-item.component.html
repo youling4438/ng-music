@@ -3,7 +3,7 @@
 		<ng-content></ng-content>
 	</div>
 	<div class="separator">
-		<span *appStrTplOutLet="parent.separatorTemplate">{{parent.separatorTemplate}}</span>
+		<span *appStrTplOutLet="parent.separatorTemplate; context: myContext">{{parent.separatorTemplate}}</span>
 	</div>
 </div>
 

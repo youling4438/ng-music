@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Optional } from '@angular/core';
+import {ChangeDetectionStrategy, Component, Optional} from '@angular/core';
 import {BreadcrumbComponent} from "../breadcrumb.component";
 
 @Component({
@@ -8,8 +8,8 @@ import {BreadcrumbComponent} from "../breadcrumb.component";
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbItemComponent {
+	myContext = {$implicit: 'defaultValue', name: 'thomas'};
+
 	constructor(@Optional() readonly parent: BreadcrumbComponent) {
 	}
-
-
 }
