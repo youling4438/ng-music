@@ -2,6 +2,7 @@ import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {BreadcrumbComponent} from './breadcrumb.component';
 import {BreadcrumbItemComponent} from './breadcrumb-item/breadcrumb-item.component';
+import {DirectivesModule} from "../../directives/directives.module";
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import {BreadcrumbItemComponent} from './breadcrumb-item/breadcrumb-item.compone
 		BreadcrumbItemComponent,
 	],
 	imports: [
-		CommonModule
+		CommonModule,
+		DirectivesModule,
 	],
 	exports: [
 		BreadcrumbComponent,

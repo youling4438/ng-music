@@ -3,10 +3,7 @@
 		<ng-content></ng-content>
 	</div>
 	<div class="separator">
-		<ng-container [ngTemplateOutlet]="parent.separatorTemplate || defaultSeparatorTpl"></ng-container>
-		<ng-template #defaultSeparatorTpl>
-			<span>&gt;</span>
-		</ng-template>
+		<span *appStrTplOutLet="parent.separatorTemplate">{{parent.separatorTemplate}}</span>
 	</div>
 </div>
 
