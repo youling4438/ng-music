@@ -8,5 +8,5 @@ import {ChangeDetectionStrategy, Component, Input, TemplateRef, ViewEncapsulatio
 	encapsulation: ViewEncapsulation.None,
 })
 export class BreadcrumbComponent {
-	@Input() separatorTemplate: TemplateRef<any> | string = '&gt;';
+	@Input() separator: TemplateRef<any> | string = '>';
 }

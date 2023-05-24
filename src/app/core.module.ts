@@ -4,6 +4,7 @@ import {AppRoutingModule} from "./app-routing.module";
 import {HeaderComponent} from './layouts/header/header.component';
 import {BreadcrumbModule} from "./share/components/breadcrumb/breadcrumb.module";
 import {ShareModule} from "./share/share.module";
+import {HttpClientModule} from "@angular/common/http";
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import {ShareModule} from "./share/share.module";
 	],
 	imports: [
 		BrowserModule,
+		HttpClientModule,
 		AppRoutingModule,
 		BreadcrumbModule,
 		ShareModule,
@@ -19,6 +21,7 @@ import {ShareModule} from "./share/share.module";
 	exports: [
 		HeaderComponent,
 		BreadcrumbModule,
+		BrowserModule,
 	]
 
 })
