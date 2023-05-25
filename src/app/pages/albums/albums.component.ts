@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumArgs, AlbumService, CategoryInfo} from "../../services/apis/album.service";
+import {SubCategory} from "../../services/apis/types";
 
 @Component({
 	selector: 'app-albums',
@@ -28,11 +29,17 @@ export class AlbumsComponent implements OnInit {
 		this.updatePageData();
 	}
 
+	public changeSubCategory(subCategory: SubCategory) : void {
+		if(this.searchParams.subcategory !== subCategory.code){
+			this.searchParams.subcategory = subCategory.code;
+			this.updatePageData();
+		}
+	}
+
 	private updatePageData(): void {
 		this.albumServe.detailCategoryPageInfo(this.searchParams).subscribe(categoryInfo => {
 			this.categoryInfo = categoryInfo;
 			this.cdr.markForCheck();
 		})
-
 	}
 }
