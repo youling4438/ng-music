@@ -1,17 +1,19 @@
 <div class="main-content">
 	<div class="categories">
 		<ul>
-			<li>全部</li>
-			<li *ngFor="let item of categoryInfo?.subcategories"
+			<li (click)="changeSubCategory()">全部</li>
+			<li *ngFor="let item of categoryInfo?.subcategories; trackBy: trackBySubCategory"
 				(click)="changeSubCategory(item)"
-				>{{item.displayValue}}</li>
+				[class.checked]="item.code === searchParams.subcategory"
+			>{{item.displayValue}}</li>
 		</ul>
 	</div>
 	<div class="conditions">
 		<div class="row" *ngFor="let row of categoryInfo?.metadata">
 			<b class="title">{{row.displayName}}</b>
 			<ul class="tabs">
-				<li class="tag" *ngFor="let item of row.metaValues">{{item.displayName}}</li>
+				<li class="tag"
+					*ngFor="let item of row.metaValues; trackBy: trackByMetaValues">{{item.displayName}}</li>
 			</ul>
 		</div>
 	</div>

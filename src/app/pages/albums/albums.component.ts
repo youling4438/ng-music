@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumArgs, AlbumService, CategoryInfo} from "../../services/apis/album.service";
-import {SubCategory} from "../../services/apis/types";
+import {MetaValue, SubCategory} from "../../services/apis/types";
 
 @Component({
 	selector: 'app-albums',
@@ -29,9 +29,9 @@ export class AlbumsComponent implements OnInit {
 		this.updatePageData();
 	}
 
-	public changeSubCategory(subCategory: SubCategory) : void {
-		if(this.searchParams.subcategory !== subCategory.code){
-			this.searchParams.subcategory = subCategory.code;
+	public changeSubCategory(subCategory?: SubCategory): void {
+		if (this.searchParams.subcategory !== subCategory?.code) {
+			this.searchParams.subcategory = subCategory?.code || '';
 			this.updatePageData();
 		}
 	}
@@ -42,4 +42,8 @@ export class AlbumsComponent implements OnInit {
 			this.cdr.markForCheck();
 		})
 	}
+
+	public trackBySubCategory(index, subCategory: SubCategory): string { return subCategory.code; }
+	public trackByMetaValues(index, metaValue: MetaValue): number { return metaValue.id; }
+
 }
