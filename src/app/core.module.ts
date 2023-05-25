@@ -5,6 +5,7 @@ import {HeaderComponent} from './layouts/header/header.component';
 import {BreadcrumbModule} from "./share/components/breadcrumb/breadcrumb.module";
 import {ShareModule} from "./share/share.module";
 import {HttpClientModule} from "@angular/common/http";
+import {PagesModule} from "./pages/pages.module";
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import {HttpClientModule} from "@angular/common/http";
 	imports: [
 		BrowserModule,
 		HttpClientModule,
+		PagesModule,
 		AppRoutingModule,
 		BreadcrumbModule,
 		ShareModule,
@@ -22,8 +24,8 @@ import {HttpClientModule} from "@angular/common/http";
 		HeaderComponent,
 		BreadcrumbModule,
 		BrowserModule,
+		AppRoutingModule,
 	]
-
 })
 export class CoreModule {
 	constructor(@SkipSelf() @Optional() parentModule: CoreModule) {
