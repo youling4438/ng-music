@@ -1,6 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumArgs, AlbumService, CategoryInfo} from "../../services/apis/album.service";
 import {MetaValue, SubCategory} from "../../services/apis/types";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
 	selector: 'app-albums',
@@ -10,7 +11,7 @@ import {MetaValue, SubCategory} from "../../services/apis/types";
 })
 export class AlbumsComponent implements OnInit {
 	searchParams: AlbumArgs = {
-		category: 'youshengshu',
+		category: '',
 		subcategory: '',
 		meta: '',
 		sort: 0,
@@ -22,11 +23,15 @@ export class AlbumsComponent implements OnInit {
 	constructor(
 		private albumServe: AlbumService,
 		private cdr: ChangeDetectorRef,
+		private route: ActivatedRoute,
 	) {
 	}
 
 	ngOnInit() {
-		this.updatePageData();
+		this.route.paramMap.subscribe(paramsMap => {
+			this.searchParams.category = paramsMap.get('pinyin');
+			this.updatePageData();
+		})
 	}
 
 	public changeSubCategory(subCategory?: SubCategory): void {
