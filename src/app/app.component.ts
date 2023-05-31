@@ -3,6 +3,7 @@ import {AlbumService} from "./services/apis/album.service";
 import {Category} from "./services/apis/types";
 import {CategoryService} from "./services/business/category.service";
 import {Router} from "@angular/router";
+import {combineLatest} from "rxjs";
 
 @Component({
 	selector: 'app-root',
@@ -13,9 +14,9 @@ import {Router} from "@angular/router";
 export class AppComponent implements OnInit {
 	title = 'ng-music';
 	currentCategory: Category;
-	categories: Category[];
+	categories: Category[] = [];
 	categoryPinyin: string = '';
-	subcategory: string[];
+	subcategory: string[] = [];
 
 	constructor(
 		private albumServe: AlbumService,
@@ -30,24 +31,28 @@ export class AppComponent implements OnInit {
 	}
 
 	private init(): void {
-		this.categoryServe.getCategory().subscribe(category => {
-			console.log("category : ", category);
+		combineLatest([this.categoryServe.getCategory(), this.categoryServe.getSubCategory()])
+		.subscribe(([category, subcategory]) => {
 			if (category !== this.categoryPinyin) {
 				this.categoryPinyin = category;
 				this.categoryServe.setCategory(category);
-				if (this.categories) {
-					console.log('categories data already loaded!');
-				} else {
-					this.getCategories();
-				}
 			}
+			if (this.categories.length) {
+				this.setCurrentCategory();
+			}
+			this.subcategory = subcategory;
 		});
+		this.getCategories();
+	}
+
+	private setCurrentCategory(): void {
+		this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);
 	}
 
 	private getCategories(): void {
 		this.albumServe.categories().subscribe(categories => {
 			this.categories = categories;
-			this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);
+			this.setCurrentCategory();
 			this.cdr.markForCheck();
 		});
 	}

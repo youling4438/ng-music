@@ -1,7 +1,7 @@
 <div class="main-content">
 	<div class="categories">
 		<ul>
-			<li (click)="changeSubCategory()">全部</li>
+			<li (click)="changeSubCategory()" [class.checked]="!searchParams.subcategory" >全部</li>
 			<li *ngFor="let item of categoryInfo?.subcategories; trackBy: trackBySubCategory"
 				(click)="changeSubCategory(item)"
 				[class.checked]="item.code === searchParams.subcategory"
