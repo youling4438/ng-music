@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {map} from "rxjs/operators";
-import {stringify} from "qs";
 import {environment} from "../../../environments/environment";
 import {Album, AlbumInfo, Anchor, Base, Category, MetaData, SubCategory, TracksInfo} from "./types";
 
@@ -65,9 +64,8 @@ export class AlbumService {
 
 	// 二三级分类列表
 	detailCategoryPageInfo(args: Pick<AlbumArgs, 'category' | 'subcategory'>): Observable<CategoryInfo> {
-		const params = new HttpParams({fromString: stringify(args)});
 		return this.http
-			.get(`${environment.baseUrl}${this.prefix}categories`, {params})
+			.get(`${environment.baseUrl}${this.prefix}categories`, {params: args})
 			.pipe(map((res: Base<CategoryInfo>) => res.data));
 	}
 }
