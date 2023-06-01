@@ -10,7 +10,7 @@
 	</div>
 	<div class="conditions">
 		<div class="row" *ngFor="let row of categoryInfo?.metadata">
-			<b class="title">{{row.displayName}}</b>
+			<b class="title">{{row.name}}</b>
 			<ul class="tabs">
 				<li class="tag"
 					*ngFor="let item of row.metaValues; trackBy: trackByMetaValues">{{item.displayName}}</li>
