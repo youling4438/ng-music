@@ -69,21 +69,35 @@ export class AlbumsComponent implements OnInit {
 			metaRowId: metaData.id,
 			metaRowName: metaData.name,
 		});
+		this.searchParams.meta = this.getMetaParam();
+	}
+
+	private getMetaParam(): string {
+		let paramsMeta = '';
+		if (this.checkedMetas.length) {
+			this.checkedMetas.forEach(meta => {
+				paramsMeta += `${meta.metaRowId}_${meta.metaId}-`;
+			});
+		}
+		console.log("paramsMeta.slice(0, -1) : ", paramsMeta.slice(0, -1));
+		return paramsMeta.slice(0, -1);
 	}
 
 	unCheckMeta(meta: CheckedMeta | 'clear'): void {
 		if (meta === 'clear') {
 			this.checkedMetas = [];
+			this.searchParams.meta = '';
 		} else {
 			const targetIndex: number = this.checkedMetas.findIndex(item => meta.metaId === item.metaId && meta.metaRowId === item.metaRowId);
-			if(targetIndex > -1) {
+			if (targetIndex > -1) {
 				this.checkedMetas.splice(targetIndex, 1);
 			}
+			this.searchParams.meta = this.getMetaParam();
 		}
 	}
 
-	showMetaRow(rowName: string): boolean{
-		if(this.checkedMetas.length){
+	showMetaRow(rowName: string): boolean {
+		if (this.checkedMetas.length) {
 			return this.checkedMetas.findIndex(meta => meta.metaRowName === rowName) === -1;
 		}
 		return true;
