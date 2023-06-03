@@ -1,7 +1,7 @@
 <div class="main-content">
 	<div class="categories">
 		<ul>
-			<li (click)="changeSubCategory()" [class.checked]="!searchParams.subcategory" >全部</li>
+			<li (click)="changeSubCategory()" [class.checked]="!searchParams.subcategory">全部</li>
 			<li *ngFor="let item of categoryInfo?.subcategories; trackBy: trackBySubCategory"
 				(click)="changeSubCategory(item)"
 				[class.checked]="item.code === searchParams.subcategory"
@@ -9,14 +9,27 @@
 		</ul>
 	</div>
 	<div class="conditions">
-		<div class="row" *ngFor="let row of categoryInfo?.metadata">
-			<b class="title">{{row.name}}</b>
+		<ng-container *ngFor="let row of categoryInfo?.metadata">
+			<div class="row" *ngIf="showMetaRow(row.name)">
+				<b class="title">{{row.name}}</b>
+				<ul class="tabs">
+					<li class="tag" (click)="changeMeta(row, item)"
+						*ngFor="let item of row.metaValues; trackBy: trackByMetaValues">{{item.displayName}}</li>
+				</ul>
+			</div>
+		</ng-container>
+		<div class="row checked-conditions" *ngIf="checkedMetas.length">
+			<b class="title">已筛选</b>
 			<ul class="tabs">
-				<li class="tag"
-					*ngFor="let item of row.metaValues; trackBy: trackByMetaValues">{{item.displayName}}</li>
+				<li class="tag" (click)="unCheckMeta(item)" *ngFor="let item of checkedMetas">
+					<span class="label-title">{{item.metaRowName}}</span> |
+					<span>{{item.metaName}}</span>
+				</li>
 			</ul>
+			<a class="clear" (click)="unCheckMeta('clear')">清除全部</a>
 		</div>
 	</div>
+
 	<div class="albums">
 		albums
 	</div>
