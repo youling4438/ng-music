@@ -3,8 +3,9 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {AlbumArgs, AlbumService, AlbumsInfo, CategoryInfo} from "../../services/apis/album.service";
 import {MetaData, MetaValue, SubCategory} from "../../services/apis/types";
 import {CategoryService} from "../../services/business/category.service";
-import {forkJoin} from "rxjs";
 import {withLatestFrom} from "rxjs/operators";
+import {WindowService} from "../../services/tools/window.service";
+import {storageKeys} from "../../share/config";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -39,6 +40,7 @@ export class AlbumsComponent implements OnInit {
 		private route: ActivatedRoute,
 		private router: Router,
 		private categoryServe: CategoryService,
+		private winServe: WindowService,
 	) {
 	}
 
@@ -51,25 +53,35 @@ export class AlbumsComponent implements OnInit {
 					}
 					this.searchParams.category = pinyin;
 					this.searchParams.subcategory = '';
-					this.checkedMetas = [];
-					this.searchParams.meta = this.getMetaParam();
+					this.winServe.removeStorage(storageKeys.subcategoryCode);
 					this.categoryServe.setSubCategory([]);
 					this.updatePageData();
+					this.clearMetas();
 					this.updateAlbums();
 				}
 			)
 	}
 
 	public changeSubCategory(subCategory?: SubCategory): void {
-		if (this.searchParams.subcategory !== subCategory?.code) {
-			this.searchParams.subcategory = subCategory?.code || '';
-			this.categoryServe.setSubCategory([subCategory?.displayValue]);
+		console.log('subCategory :', subCategory);
+		if(subCategory){
+			if (this.searchParams.subcategory !== subCategory.code) {
+				this.searchParams.subcategory = subCategory.code || '';
+				this.categoryServe.setSubCategory([subCategory.displayValue]);
+				this.winServe.setStorage(storageKeys.subcategoryCode, this.searchParams.subcategory);
+				this.updatePageData();
+				this.clearMetas();
+				this.searchParams.sort = 0;
+				this.updateAlbums();
+			}
+		} else {
+			this.searchParams.subcategory = '';
+			this.winServe.removeStorage(storageKeys.subcategoryCode);
 			this.updatePageData();
-			this.checkedMetas = [];
-			this.searchParams.meta = this.getMetaParam();
-			this.searchParams.sort = 0;
+			this.clearMetas();
 			this.updateAlbums();
 		}
+
 	}
 
 	changeMeta(metaData: MetaData, metaValue: MetaValue): void {
@@ -80,6 +92,7 @@ export class AlbumsComponent implements OnInit {
 			metaRowName: metaData.name,
 		});
 		this.searchParams.meta = this.getMetaParam();
+		this.winServe.setStorage(storageKeys.metas, this.searchParams.meta);
 		this.searchParams.sort = 0;
 		this.updateAlbums();
 	}
@@ -96,14 +109,14 @@ export class AlbumsComponent implements OnInit {
 
 	unCheckMeta(meta: CheckedMeta | 'clear'): void {
 		if (meta === 'clear') {
-			this.checkedMetas = [];
-			this.searchParams.meta = '';
+			this.clearMetas();
 		} else {
 			const targetIndex: number = this.checkedMetas.findIndex(item => meta.metaId === item.metaId && meta.metaRowId === item.metaRowId);
 			if (targetIndex > -1) {
 				this.checkedMetas.splice(targetIndex, 1);
 			}
 			this.searchParams.meta = this.getMetaParam();
+			this.winServe.setStorage(storageKeys.metas, this.searchParams.meta);
 		}
 		this.searchParams.sort = 0;
 		this.updateAlbums();
@@ -136,6 +149,12 @@ export class AlbumsComponent implements OnInit {
 			this.albumsInfo = albumsInfo;
 			this.cdr.markForCheck();
 		})
+	}
+
+	private clearMetas() :void {
+		this.checkedMetas = [];
+		this.winServe.removeStorage(storageKeys.metas);
+		this.searchParams.meta = this.getMetaParam();
 	}
 
 	public trackBySubCategory(index, subCategory: SubCategory): string {

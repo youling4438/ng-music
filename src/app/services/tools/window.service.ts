@@ -18,6 +18,8 @@ export class WindowService {
 	getStorage(key: string): string | null {
 		if (this.isBrowser) {
 			return localStorage.getItem(key);
+		} else {
+			return null;
 		}
 	}
 
