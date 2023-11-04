@@ -14,13 +14,16 @@ export class IconDirective implements OnChanges {
 	constructor(
 		private el: ElementRef,
 		private rd2: Renderer2,
-	) {}
+	) {
+	}
 
 	ngOnChanges(changes: SimpleChanges) {
-		const { type } = changes;
-		if (type.previousValue) {
-			this.rd2.removeClass(this.el.nativeElement, `icon-${type.previousValue}`);
+		const {type} = changes;
+		if (type) {
+			if (type.previousValue) {
+				this.rd2.removeClass(this.el.nativeElement, `icon-${type.previousValue}`);
+			}
+			this.rd2.addClass(this.el.nativeElement, `icon-${type.currentValue}`);
 		}
-		this.rd2.addClass(this.el.nativeElement, `icon-${type.currentValue}`);
 	}
 }
