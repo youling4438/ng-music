@@ -7,6 +7,7 @@ import {withLatestFrom} from "rxjs/operators";
 import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
 import {forkJoin} from "rxjs";
+import {IconType} from "../../share/directives/icon/types";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -34,6 +35,7 @@ export class AlbumsComponent implements OnInit {
 	checkedMetas: CheckedMeta[] = [];
 	albumsInfo: AlbumsInfo;
 	sorts = ['综合排序', '最近更新', '播放最多'];
+	currentIcon: IconType = 'headset';
 
 	constructor(
 		private albumServe: AlbumService,
@@ -122,6 +124,7 @@ export class AlbumsComponent implements OnInit {
 			}
 		}
 		this.searchParams.sort = 0;
+		this.updatePageData();
 	}
 
 	changeSort(sortIndex: number): void {
