@@ -52,7 +52,7 @@
 					<p class="listen-count">
 						<i class="icon" [appIcon]="currentIcon"></i>
 						<!--<i class="icon iconfont icon-headset"></i>-->
-						<span>{{ album.playCount }}万</span>
+						<span>{{ album.playCount | numberFormat }}万</span>
 					</p>
 				</div>
 				<div class="abstract">
