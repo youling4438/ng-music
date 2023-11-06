@@ -21,9 +21,11 @@
 		<div class="row checked-conditions" *ngIf="checkedMetas.length">
 			<b class="title">已筛选</b>
 			<ul class="tabs">
-				<li class="tag" (click)="unCheckMeta(item)" *ngFor="let item of checkedMetas">
-					<span class="label-title">{{item.metaRowName}}</span> |
-					<span>{{item.metaName}}</span>
+				<li class="tag checked" *ngFor="let item of checkedMetas">
+					<span class="label-title">{{item.metaRowName}}</span>
+					<app-tag [tagCloseAble]="true" (closed)="unCheckMeta(item)">
+						{{item.metaName}}
+					</app-tag>
 				</li>
 			</ul>
 			<a class="clear" (click)="unCheckMeta('clear')">清除全部</a>
@@ -57,7 +59,9 @@
 				</div>
 				<div class="abstract">
 					<p class="txt title ellipsis">
-						<span *ngIf="album.isFinished === 2" class="tag">完本</span>
+						<app-tag *ngIf="album.isFinished === 2" class="tag" tagColor="green">
+							完本
+						</app-tag>
 						<span>{{ album.title }}</span>
 					</p>
 					<p class="txt author"><span>{{ album.anchorName }}</span></p>

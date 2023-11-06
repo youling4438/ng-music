@@ -4,6 +4,7 @@ import {AlbumsComponent} from './albums.component';
 import {CommonModule} from "@angular/common";
 import {DirectivesModule} from "../../share/directives/directives.module";
 import {PipesModule} from "../../share/pipes/pipes.module";
+import {TagModule} from "../../share/components/tag/tag.module";
 
 @NgModule({
 	declarations: [
@@ -14,6 +15,7 @@ import {PipesModule} from "../../share/pipes/pipes.module";
 		DirectivesModule,
 		AlbumsRoutingModule,
 		PipesModule,
+		TagModule,
 	]
 })
 
