@@ -5,7 +5,6 @@ type PageItemType = 'page' | 'prev' | 'next' | 'prev5' | 'next5';
 interface PageItem {
 	type: PageItemType;
 	disabled?: boolean;
-	checked?: boolean;
 	num?: number;
 }
 
@@ -31,20 +30,19 @@ export class PaginationComponent implements OnInit {
 		console.log('this.listOfPageItem', this.listOfPageItem);
 	}
 
-	private generatorPageItem(pageNum: number, lastNum: number): PageItem[] {
+	private generatorPageItem(start: number, end: number): PageItem[] {
 		const list: PageItem[] = [];
-		for (let i = 1; i <= lastNum; i++) {
+		for (let i = start; i <= end; i++) {
 			list.push({
 				num: i,
 				type: 'page',
-				checked: i === pageNum,
 			});
 		}
 		return list;
 	}
 
 	private getListOfPageItem(pageNum: number, lastNum: number): PageItem[] {
-		const list = this.generatorPageItem(pageNum, lastNum);
+		const list = this.generatorPageItem(1, lastNum);
 		return this.concatPrevNextBtn(list, pageNum, lastNum);
 	}
 
