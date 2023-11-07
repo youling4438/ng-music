@@ -56,7 +56,8 @@
 						],
 						"scripts": [],
 						"allowedCommonJsDependencies": [
-							"qs"
+							"qs",
+							"lodash"
 						]
 					},
 					"configurations": {

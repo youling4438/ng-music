@@ -5,6 +5,7 @@ import {CommonModule} from "@angular/common";
 import {DirectivesModule} from "../../share/directives/directives.module";
 import {PipesModule} from "../../share/pipes/pipes.module";
 import {TagModule} from "../../share/components/tag/tag.module";
+import {PaginationModule} from "../../share/components/pagination/pagination.module";
 
 @NgModule({
 	declarations: [
@@ -16,6 +17,7 @@ import {TagModule} from "../../share/components/tag/tag.module";
 		AlbumsRoutingModule,
 		PipesModule,
 		TagModule,
+		PaginationModule,
 	]
 })
 
