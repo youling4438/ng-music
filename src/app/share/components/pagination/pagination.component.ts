@@ -31,7 +31,7 @@ export class PaginationComponent implements OnInit {
 		console.log('this.listOfPageItem', this.listOfPageItem);
 	}
 
-	private getListOfPageItem(pageNum: number, lastNum: number): PageItem[] {
+	private generatorPageItem(pageNum: number, lastNum: number): PageItem[] {
 		const list: PageItem[] = [];
 		for (let i = 1; i <= lastNum; i++) {
 			list.push({
@@ -40,6 +40,11 @@ export class PaginationComponent implements OnInit {
 				checked: i === pageNum,
 			});
 		}
+		return list;
+	}
+
+	private getListOfPageItem(pageNum: number, lastNum: number): PageItem[] {
+		const list = this.generatorPageItem(pageNum, lastNum);
 		return this.concatPrevNextBtn(list, pageNum, lastNum);
 	}
 
