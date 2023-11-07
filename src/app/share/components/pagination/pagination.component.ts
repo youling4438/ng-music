@@ -15,8 +15,8 @@ interface PageItem {
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaginationComponent implements OnInit {
-	@Input() total: number = 85;
-	@Input() pageNum: number = 1;
+	@Input() total: number = 500;
+	@Input() pageNum: number = 5;
 	@Input() pageSize: number = 10;
 	private lastNum = 0;
 	listOfPageItem: PageItem[] = [];
@@ -42,8 +42,39 @@ export class PaginationComponent implements OnInit {
 	}
 
 	private getListOfPageItem(pageNum: number, lastNum: number): PageItem[] {
-		const list = this.generatorPageItem(1, lastNum);
-		return this.concatPrevNextBtn(list, pageNum, lastNum);
+		if (lastNum <= 9) {
+			const list = this.generatorPageItem(1, lastNum);
+			return this.concatPrevNextBtn(list, pageNum, lastNum);
+		} else {
+			const firstPageItem: PageItem[] = this.generatorPageItem(1, 1);
+			const lastPageItem: PageItem[] = this.generatorPageItem(lastNum, lastNum);
+			const prev5PageItem: PageItem = {type: 'prev5',};
+			const next5PageItem: PageItem = {type: 'next5',};
+			let midPageItem: PageItem[] = [];
+			if (pageNum <= 4) {
+				midPageItem = [
+					...this.generatorPageItem(2, 5),
+					next5PageItem,
+				];
+			} else if (pageNum > lastNum - 4) {
+				midPageItem = [
+					prev5PageItem,
+					...this.generatorPageItem(lastNum - 4, lastNum - 1),
+				];
+			} else {
+				midPageItem = [
+					prev5PageItem,
+					...this.generatorPageItem(pageNum - 2, pageNum + 2),
+					next5PageItem,
+				];
+			}
+			const list: PageItem[] = [
+				...firstPageItem,
+				...midPageItem,
+				...lastPageItem,
+			];
+			return this.concatPrevNextBtn(list, pageNum, lastNum);
+		}
 	}
 
 	private concatPrevNextBtn(list: PageItem[], pageNum: number, lastNum: number): PageItem[] {
@@ -52,13 +83,7 @@ export class PaginationComponent implements OnInit {
 				type: 'prev',
 				disabled: pageNum === 1,
 			},
-			{
-				type: 'prev5',
-			},
 			...list,
-			{
-				type: 'next5',
-			},
 			{
 				type: 'next',
 				disabled: pageNum === lastNum,
