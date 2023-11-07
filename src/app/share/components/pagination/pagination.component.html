@@ -1,37 +1,21 @@
 <div class="app-page-wrap">
 	<ul class="app-pages">
-		<li class="app-page disabled">
-			<i appIcon="previewleft" class="icon"></i>
-		</li>
-		<li class="app-page checked">
-			<a>1</a>
-		</li>
-		<li class="app-page">
-			<i appIcon="more" class="icon"></i>
-		</li>
-		<li class="app-page">
-			<a>4</a>
-		</li>
-		<li class="app-page">
-			<a>5</a>
-		</li>
-		<li class="app-page">
-			<a>6</a>
-		</li>
-		<li class="app-page">
-			<a>7</a>
-		</li>
-		<li class="app-page">
-			<a>8</a>
-		</li>
-		<li class="app-page">
-			<i appIcon="more" class="icon"></i>
-		</li>
-		<li class="app-page">
-			<a>100</a>
-		</li>
-		<li class="app-page">
-			<i appIcon="previewright" class="icon"></i>
+		<li
+			class="app-page"
+			*ngFor="let item of listOfPageItem"
+			[class.checked]="pageNum === item.num"
+			[class.disabled]="item.disabled"
+		>
+			<ng-container [ngSwitch]="item.type">
+				<a *ngSwitchCase="'page'">{{item.num}}</a>
+				<ng-container *ngSwitchDefault>
+					<ng-container [ngSwitch]="item.type">
+						<i *ngSwitchCase="'prev'" appIcon="previewleft"></i>
+						<i *ngSwitchCase="'next'" appIcon="previewright"></i>
+						<i *ngSwitchDefault appIcon="more"></i>
+					</ng-container>
+				</ng-container>
+			</ng-container>
 		</li>
 	</ul>
 	<div class="app-page-navigate">
