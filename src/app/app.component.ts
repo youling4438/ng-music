@@ -32,16 +32,16 @@ export class AppComponent implements OnInit {
 
 	private init(): void {
 		combineLatest([this.categoryServe.getCategory(), this.categoryServe.getSubCategory()])
-		.subscribe(([category, subcategory]) => {
-			if (category !== this.categoryPinyin) {
-				this.categoryPinyin = category;
-				this.categoryServe.setCategory(category);
-			}
-			if (this.categories.length) {
-				this.setCurrentCategory();
-			}
-			this.subcategory = subcategory;
-		});
+			.subscribe(([category, subcategory]) => {
+				if (category !== this.categoryPinyin) {
+					this.categoryPinyin = category;
+					this.categoryServe.setCategory(category);
+				}
+				if (this.categories.length) {
+					this.setCurrentCategory();
+				}
+				this.subcategory = subcategory;
+			});
 		this.getCategories();
 	}
 
@@ -58,8 +58,6 @@ export class AppComponent implements OnInit {
 	}
 
 	changeCategory(category: Category): void {
-		if (this.currentCategory.id !== category.id) {
-			this.router.navigateByUrl('/albums/' + category.pinyin);
-		}
+		this.router.navigateByUrl('/albums/' + category.pinyin);
 	}
 }
