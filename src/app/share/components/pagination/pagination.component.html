@@ -22,7 +22,7 @@
 	<div class="app-page-navigate">
 		<input type="number" class="app-input"
 			   (keyup.enter)="changePage(+pageInput.value)"
-			   [min]="1" [max]="lastNum" #pageInput />
-		<button (click)="changePage(+pageInput.value)">跳转</button>
+			   [min]="1" [max]="lastNum" #pageInput/>
+		<button appBtn (click)="changePage(+pageInput.value)">跳转</button>
 	</div>
 </div>
