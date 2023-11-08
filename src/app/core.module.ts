@@ -6,6 +6,7 @@ import {BreadcrumbModule} from "./share/components/breadcrumb/breadcrumb.module"
 import {ShareModule} from "./share/share.module";
 import {HttpClientModule} from "@angular/common/http";
 import {PagesModule} from "./pages/pages.module";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import {PagesModule} from "./pages/pages.module";
 		AppRoutingModule,
 		BreadcrumbModule,
 		ShareModule,
+		BrowserAnimationsModule,
 	],
 	exports: [
 		HeaderComponent,
