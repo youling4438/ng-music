@@ -1,4 +1,11 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	Input,
+	OnChanges,
+	Output,
+} from '@angular/core';
 
 type PageItemType = 'page' | 'prev' | 'next' | 'prev5' | 'next5';
 
@@ -14,20 +21,17 @@ interface PageItem {
 	styleUrls: ['./pagination.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PaginationComponent implements OnInit {
+export class PaginationComponent implements OnChanges {
 	@Input() total: number = 500;
 	@Input() pageNum: number = 5;
 	@Input() pageSize: number = 10;
-	private lastNum = 0;
+	@Output() pageChanged = new EventEmitter<number>();
+	lastNum = 0;
 	listOfPageItem: PageItem[] = [];
 
-	constructor() {
-	}
-
-	ngOnInit(): void {
+	ngOnChanges(): void {
 		this.lastNum = Math.ceil(this.total / this.pageSize);
 		this.listOfPageItem = this.getListOfPageItem(this.pageNum, this.lastNum);
-		console.log('this.listOfPageItem', this.listOfPageItem);
 	}
 
 	private generatorPageItem(start: number, end: number): PageItem[] {
@@ -89,5 +93,33 @@ export class PaginationComponent implements OnInit {
 				disabled: pageNum === lastNum,
 			},
 		]
+	}
+
+	pageClick({disabled, type, num,}: PageItem): void {
+		if (!disabled) {
+			let newPageNum: number = this.pageNum;
+			if (type === 'page') {
+				newPageNum = num;
+			} else {
+				const diff = {
+					next: 1,
+					next5: 5,
+					prev: -1,
+					prev5: -5,
+				};
+				newPageNum += diff[type];
+			}
+			newPageNum = Math.min(this.lastNum, Math.max(1, newPageNum));
+			this.pageChanged.emit(newPageNum);
+		}
+	}
+
+	changePage(value: number): void {
+		if (value > 0) {
+			this.pageClick({
+				type: 'page',
+				num: value,
+			});
+		}
 	}
 }

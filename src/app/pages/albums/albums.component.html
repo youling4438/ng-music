@@ -70,6 +70,12 @@
 		</div>
 	</div>
 	<div class="page-wrap">
-		<app-pagination class="page"></app-pagination>
+		<app-pagination
+			class="page"
+			[total]="total"
+			[pageNum]="searchParams.page"
+			[pageSize]="searchParams.perPage"
+			(pageChanged)="pageChanged($event)"
+		></app-pagination>
 	</div>
 </div>

@@ -1,5 +1,4 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from "@angular/router";
 import {AlbumArgs, AlbumService, AlbumsInfo, CategoryInfo} from "../../services/apis/album.service";
 import {Album, MetaData, MetaValue, SubCategory} from "../../services/apis/types";
 import {CategoryService} from "../../services/business/category.service";
@@ -8,6 +7,7 @@ import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
 import {forkJoin} from "rxjs";
 import {IconType} from "../../share/directives/icon/types";
+import {ActivatedRoute} from "@angular/router";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -31,6 +31,7 @@ export class AlbumsComponent implements OnInit {
 		page: 1,
 		perPage: 30,
 	};
+	total: number = 0;
 	categoryInfo: CategoryInfo;
 	checkedMetas: CheckedMeta[] = [];
 	albumsInfo: AlbumsInfo;
@@ -41,7 +42,6 @@ export class AlbumsComponent implements OnInit {
 		private albumServe: AlbumService,
 		private cdr: ChangeDetectorRef,
 		private route: ActivatedRoute,
-		private router: Router,
 		private categoryServe: CategoryService,
 		private winServe: WindowService,
 	) {
@@ -127,6 +127,19 @@ export class AlbumsComponent implements OnInit {
 		this.updatePageData();
 	}
 
+	pageChanged(newPageNum: number): void {
+		this.searchParams.page = newPageNum;
+		this.updateAlbums();
+	}
+
+	private updateAlbums():void {
+		this.albumServe.albums(this.searchParams).subscribe((albumsInfo: AlbumsInfo) =>{
+			this.albumsInfo = albumsInfo;
+			this.total = albumsInfo.total;
+			this.cdr.markForCheck();
+		});
+	}
+
 	changeSort(sortIndex: number): void {
 		if (sortIndex !== this.searchParams.sort) {
 			this.searchParams.sort = sortIndex;
@@ -141,11 +154,13 @@ export class AlbumsComponent implements OnInit {
 	}
 
 	private updatePageData(needSetStatus: boolean = false): void {
+		this.searchParams.page = 1;
 		forkJoin([
 			this.albumServe.albums(this.searchParams),
 			this.albumServe.detailCategoryPageInfo(this.searchParams),
 		]).subscribe(([albumsInfo, categoryInfo]) => {
 			this.albumsInfo = albumsInfo;
+			this.total = albumsInfo.total;
 			this.categoryInfo = categoryInfo;
 			if (needSetStatus) {
 				this.setStatus(categoryInfo);
@@ -162,13 +177,10 @@ export class AlbumsComponent implements OnInit {
 		}
 		if(this.searchParams.meta) {
 			const metaMaps = this.searchParams.meta.split('-').map(_item => _item.split('_'));
-			console.log('metaMaps', metaMaps);
 			metaMaps.forEach(meta => {
 				const targetRow = metadata.find(row => row.id === Number(meta[0]));
-				console.log('targetRow', targetRow);
 				const { id: metaRowId, name, metaValues } = targetRow || metadata[0];
 				const targetMeta = metaValues.find(metaItem => metaItem.id === Number(meta[1]));
-				console.log('targetMeta', targetMeta);
 				const { id, displayName } = targetMeta || metaValues[0];
 				this.checkedMetas.push({
 					metaRowId: metaRowId,
