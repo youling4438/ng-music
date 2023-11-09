@@ -3,6 +3,8 @@ import {AlbumRoutingModule} from './album-routing.module';
 import {AlbumComponent} from './album.component';
 import {DirectivesModule} from "../../share/directives/directives.module";
 import {TagModule} from "../../share/components/tag/tag.module";
+import {NgForOf, NgIf} from "@angular/common";
+import {PipesModule} from "../../share/pipes/pipes.module";
 
 
 @NgModule({
@@ -13,6 +15,9 @@ import {TagModule} from "../../share/components/tag/tag.module";
 		AlbumRoutingModule,
 		TagModule,
 		DirectivesModule,
+		NgIf,
+		PipesModule,
+		NgForOf,
 	]
 })
 export class AlbumModule {
