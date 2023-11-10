@@ -62,6 +62,8 @@ export class AlbumsComponent implements OnInit {
 						if (cacheCode) {
 							needSetStatus = true;
 							this.searchParams.subcategory = cacheCode;
+						} else {
+							this.clearSubcategory();
 						}
 						const cacheMetas = this.winServe.getStorage(storageKeys.metas);
 						if (cacheMetas) {
