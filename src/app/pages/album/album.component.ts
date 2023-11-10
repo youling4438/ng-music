@@ -4,7 +4,11 @@ import {forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
-
+interface MoreStatus {
+	full: boolean;
+	label: '显示全部' | '收起';
+	icon: 'arrow-down-line' | 'arrow-up-line';
+}
 @Component({
 	selector: 'app-album',
 	templateUrl: './album.component.html',
@@ -24,13 +28,23 @@ export class AlbumComponent implements OnInit, AfterViewInit {
 		pageNum: 1,
 		pageSize: 30
 	};
-
+	moreStatus: MoreStatus = {
+		full: false,
+		label: '显示全部',
+		icon: 'arrow-down-line',
+	};
 	constructor(
 		private albumServe: AlbumService,
 		private route: ActivatedRoute,
 		private cdr: ChangeDetectorRef,
 		private categoryServe: CategoryService,
 	) {
+	}
+
+	toggleMoreStatus() : void {
+		this.moreStatus.full = !this.moreStatus.full;
+		this.moreStatus.label = this.moreStatus.full ? '收起' :  '显示全部';
+		this.moreStatus.icon = this.moreStatus.full ? 'arrow-up-line' :  'arrow-down-line';
 	}
 
 	ngOnInit(): void {
