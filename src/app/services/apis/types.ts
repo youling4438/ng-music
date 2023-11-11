@@ -70,12 +70,12 @@ export interface AlbumInfo {
 	rate: number;
 	playCount: number;
 	crumbs: {
-		// categoryId: 5
+		categoryId: number;
 		categoryPinyin: string;
-		// categoryTitle: "外语"
-		// subcategoryCode: "yingyu"
+		categoryTitle: string;
+		subcategoryCode: string;
 		subcategoryDisplayName: string;
-		// subcategoryId: number;
+		subcategoryId: number;
 	};
 	metas: AlbumInfoMeta[];
 }

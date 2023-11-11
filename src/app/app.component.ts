@@ -35,10 +35,9 @@ export class AppComponent implements OnInit {
 			.subscribe(([category, subcategory]) => {
 				if (category !== this.categoryPinyin) {
 					this.categoryPinyin = category;
-					this.categoryServe.setCategory(category);
-				}
-				if (this.categories.length) {
-					this.setCurrentCategory();
+					if (this.categories.length) {
+						this.setCurrentCategory();
+					}
 				}
 				this.subcategory = subcategory;
 			});

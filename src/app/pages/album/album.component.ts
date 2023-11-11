@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {forkJoin} from "rxjs";
+import {first, forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
@@ -66,7 +66,7 @@ export class AlbumComponent implements OnInit {
 			this.albumServe.albumScore(this.trackParams.albumId),
 			this.albumServe.album(this.trackParams.albumId),
 			this.albumServe.relateAlbums(this.trackParams.albumId),
-		]).subscribe(([score, albumInfo, relateAlbums]) => {
+		]).pipe(first()).subscribe(([score, albumInfo, relateAlbums]) => {
 			this.score = score;
 			this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId,};
 			this.anchor = albumInfo.anchorInfo;
