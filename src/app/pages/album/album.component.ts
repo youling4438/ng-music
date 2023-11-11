@@ -1,21 +1,23 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
+
 interface MoreStatus {
 	full: boolean;
 	label: '显示全部' | '收起';
 	icon: 'arrow-down-line' | 'arrow-up-line';
 }
+
 @Component({
 	selector: 'app-album',
 	templateUrl: './album.component.html',
 	styleUrls: ['./album.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AlbumComponent implements OnInit, AfterViewInit {
+export class AlbumComponent implements OnInit {
 	albumInfo: AlbumInfo;
 	score: number;
 	anchor: Anchor;
@@ -33,6 +35,8 @@ export class AlbumComponent implements OnInit, AfterViewInit {
 		label: '显示全部',
 		icon: 'arrow-down-line',
 	};
+	articleHeight: number;
+
 	constructor(
 		private albumServe: AlbumService,
 		private route: ActivatedRoute,
@@ -41,17 +45,23 @@ export class AlbumComponent implements OnInit, AfterViewInit {
 	) {
 	}
 
-	toggleMoreStatus() : void {
+	toggleMoreStatus(): void {
 		this.moreStatus.full = !this.moreStatus.full;
-		this.moreStatus.label = this.moreStatus.full ? '收起' :  '显示全部';
-		this.moreStatus.icon = this.moreStatus.full ? 'arrow-up-line' :  'arrow-down-line';
+		this.moreStatus.label = this.moreStatus.full ? '收起' : '显示全部';
+		this.moreStatus.icon = this.moreStatus.full ? 'arrow-up-line' : 'arrow-down-line';
 	}
 
 	ngOnInit(): void {
-		this.trackParams.albumId = this.route.snapshot.paramMap.get('albumId');
+		this.route.paramMap.subscribe(paramMap => {
+			this.trackParams.albumId = paramMap.get('albumId');
+			if (this.moreStatus.full) {
+				this.toggleMoreStatus();
+			}
+			this.initAlbum();
+		});
 	}
 
-	ngAfterViewInit(): void {
+	initAlbum(): void {
 		forkJoin([
 			this.albumServe.albumScore(this.trackParams.albumId),
 			this.albumServe.album(this.trackParams.albumId),

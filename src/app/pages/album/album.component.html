@@ -34,8 +34,14 @@
 			</div>
 		</div>
 		<div class="intro">
-			<article [innerHTML]="albumInfo.detailRichIntro | safeContent "></article>
-			<div class="more-arrow" (click)="toggleMoreStatus()">
+			<article
+				[appToggleMore]="360"
+				[isFull]="moreStatus.full"
+				[content]="albumInfo.detailRichIntro | safeContent"
+				(domInitHeight)="articleHeight = $event"
+				[innerHTML]="albumInfo.detailRichIntro | safeContent"
+			></article>
+			<div class="more-arrow" *ngIf="articleHeight > 360" (click)="toggleMoreStatus()">
 				<div class="blur" [hidden]="moreStatus.full"></div>
 				<span>{{moreStatus.label}}</span>
 				<i [appIcon]="moreStatus.icon" class="icon"></i>
@@ -74,8 +80,7 @@
 				</div>
 				<div class="card-body">
 					<div class="albums">
-						<div class="album-item" *ngFor="let item of anchor.anchorAlbumList"
-							 [routerLink]="'/album/' + item.albumId">
+						<div class="album-item" [routerLink]="'../' + item.albumId" *ngFor="let item of anchor.anchorAlbumList">
 							<div class="thumbnail">
 								<img [src]="item.cover" [alt]="item.albumTitle">
 							</div>
@@ -97,7 +102,7 @@
 			</div>
 			<div class="card-body">
 				<div class="albums">
-					<div class="album-item" *ngFor="let item of relateAlbums" [routerLink]="'/album/' + item.id">
+					<div class="album-item" [routerLink]="'../' + item.id" *ngFor="let item of relateAlbums">
 						<div class="thumbnail">
 							<img [src]="'//imagev2.xmcdn.com/' + item.coverPath" [alt]="item.title">
 						</div>
