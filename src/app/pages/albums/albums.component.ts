@@ -86,7 +86,6 @@ export class AlbumsComponent implements OnInit {
 		}
 		this.unCheckMeta('clear');
 		this.updatePageData();
-
 	}
 
 	changeMeta(metaData: MetaData, metaValue: MetaValue): void {

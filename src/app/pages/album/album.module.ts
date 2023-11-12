@@ -6,6 +6,7 @@ import {TagModule} from "../../share/components/tag/tag.module";
 import {NgForOf, NgIf} from "@angular/common";
 import {PipesModule} from "../../share/pipes/pipes.module";
 import {SizeComponent} from './size/size.component';
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -20,6 +21,8 @@ import {SizeComponent} from './size/size.component';
 		NgIf,
 		PipesModule,
 		NgForOf,
+		ReactiveFormsModule,
+		FormsModule,
 	]
 })
 export class AlbumModule {

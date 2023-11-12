@@ -1,6 +1,17 @@
 <div class="album-info">
-	font-size: {{fontSize}}
-	<app-size [(size)]="fontSize"></app-size>
+<!--	<app-size [ngModel]="size" (ngModelChange)="sizeChange($event)"></app-size>-->
+	<form [formGroup]="form" (ngSubmit)="onSubmit()">
+		<label for="type">
+			type:
+			<input id='type' type="text" formControlName="type">
+		</label>
+		<label for="size">
+			size:
+<!--			<input id='size' type="number" formControlName="size">-->
+			<app-size id='size' formControlName="size"></app-size>
+		</label>
+		<button appBtn type="submit">提交</button>
+	</form>
 	<div class="main" *ngIf="albumInfo">
 		<div class="info">
 			<div class="thumbnail">
