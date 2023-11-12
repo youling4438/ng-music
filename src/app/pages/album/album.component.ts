@@ -36,6 +36,7 @@ export class AlbumComponent implements OnInit {
 		icon: 'arrow-down-line',
 	};
 	articleHeight: number;
+	fontSize: number = 15;
 
 	constructor(
 		private albumServe: AlbumService,
