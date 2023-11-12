@@ -83,15 +83,4 @@ export class AlbumComponent implements OnInit {
 			this.cdr.markForCheck();
 		});
 	}
-
-	onSubmit(): void {
-		console.log('onSubmit', this.form.value);
-	}
-
-	sizeChange(_size: number): void {
-		console.log('_size', _size);
-		console.log(this.form.value);
-	}
-
-	protected readonly onsubmit = onsubmit;
 }

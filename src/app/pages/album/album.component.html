@@ -1,13 +1,11 @@
 <div class="album-info">
-<!--	<app-size [ngModel]="size" (ngModelChange)="sizeChange($event)"></app-size>-->
-	<form [formGroup]="form" (ngSubmit)="onSubmit()">
+	<form [formGroup]="form">
 		<label for="type">
 			type:
 			<input id='type' type="text" formControlName="type">
 		</label>
 		<label for="size">
 			size:
-<!--			<input id='size' type="number" formControlName="size">-->
 			<app-size id='size' formControlName="size"></app-size>
 		</label>
 		<button appBtn type="submit">提交</button>
@@ -93,7 +91,8 @@
 				</div>
 				<div class="card-body">
 					<div class="albums">
-						<div class="album-item" [routerLink]="'../' + item.albumId" *ngFor="let item of anchor.anchorAlbumList">
+						<div class="album-item" [routerLink]="'../' + item.albumId"
+							 *ngFor="let item of anchor.anchorAlbumList">
 							<div class="thumbnail">
 								<img [src]="item.cover" [alt]="item.albumTitle">
 							</div>
