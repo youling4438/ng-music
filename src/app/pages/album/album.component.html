@@ -1,5 +1,8 @@
 <div class="album-info">
 	<div class="main" *ngIf="albumInfo">
+		checkbox checked: {{checked}}<app-checkbox [disabled]="disabled" [(ngModel)]="checked">苹果</app-checkbox>
+		<button appBtn (click)="checked = !checked">Toggle Checked</button>
+		<button appBtn (click)="disabled = !disabled">Toggle disabled</button>
 		<div class="info">
 			<div class="thumbnail">
 				<img [src]="albumInfo.cover" [alt]="albumInfo.albumTitle" class="cover">

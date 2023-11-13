@@ -1,0 +1,14 @@
+<div
+	class="app-checkbox-wrap"
+	[class.checked]="checked"
+	[class.disabled]="disabled"
+	(click)="checkBoxToggle($event)"
+>
+	<label class="app-checkbox">
+		<!--            <input class="app-checkbox-input" type="checkbox" />-->
+		<span class="app-checkbox-inner"></span>
+	</label>
+	<span class="app-checkbox-content">
+    <ng-content></ng-content>
+  </span>
+</div>

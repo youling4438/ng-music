@@ -36,6 +36,8 @@ export class AlbumComponent implements OnInit {
 		icon: 'arrow-down-line',
 	};
 	articleHeight: number;
+	checked: boolean = true;
+	disabled: boolean = true;
 
 	constructor(
 		private albumServe: AlbumService,
