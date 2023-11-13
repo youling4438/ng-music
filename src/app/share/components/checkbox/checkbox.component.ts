@@ -1,11 +1,19 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, forwardRef} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	forwardRef,
+	HostBinding, HostListener,
+	ViewEncapsulation
+} from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 
 @Component({
-	selector: 'app-checkbox',
+	selector: 'label[app-checkbox]',
 	templateUrl: './checkbox.component.html',
 	styleUrls: ['./checkbox.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	encapsulation: ViewEncapsulation.None,
 	providers: [
 		{
 			provide: NG_VALUE_ACCESSOR,
@@ -13,17 +21,21 @@ import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
 			multi: true,
 		}
 	],
+	host: {
+		'[class.app-checkbox-wrap]' : 'true',
+	}
 })
 export class CheckboxComponent implements ControlValueAccessor {
-	checked: boolean = false;
-	disabled: boolean = false;
+	@HostBinding('class.checked') checked: boolean = false;
+	@HostBinding('class.disabled') disabled: boolean = false;
 
 	constructor(private cdr: ChangeDetectorRef) {
 	}
 
-	checkBoxToggle(event: MouseEvent): void {
+	@HostListener('click', ['$event'])
+	hostClick(event: MouseEvent): void {
 		event.preventDefault();
-		if(!this.disabled){
+		if (!this.disabled) {
 			this.checked = !this.checked;
 			this.onChange(this.checked);
 		}
