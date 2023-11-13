@@ -12,9 +12,9 @@ export type CheckBoxValue = string | number;
         </div>
     `,
     styles: [`
-      .app-checkbox-group {
-        display: inline-block;
-      }
+        .app-checkbox-group {
+            display: inline-block;
+        }
     `],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
