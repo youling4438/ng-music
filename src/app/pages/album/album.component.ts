@@ -4,6 +4,7 @@ import {first, forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
+import {CheckBoxValue} from "../../share/components/checkbox/checkbox-group.component";
 
 interface MoreStatus {
 	full: boolean;
@@ -36,8 +37,12 @@ export class AlbumComponent implements OnInit {
 		icon: 'arrow-down-line',
 	};
 	articleHeight: number;
-	checked: boolean = true;
-	disabled: boolean = true;
+	checkOptions: { label: string, value: CheckBoxValue}[] = [
+		{label: '苹果', value: 'apple'},
+		{label: '梨', value: 'pear'},
+		{label: '橘子', value: 'orange'},
+	];
+	currentChecks: CheckBoxValue[] = ['apple', 'pear', 'orange'];
 
 	constructor(
 		private albumServe: AlbumService,

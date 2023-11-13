@@ -1,124 +1,125 @@
 <div class="album-info">
-	<div class="main" *ngIf="albumInfo">
-		checkbox:
-		<label app-checkbox [disabled]="disabled" [(ngModel)]="checked">苹果</label>
-		<button appBtn (click)="checked = !checked">Toggle Checked</button>
-		<button appBtn (click)="disabled = !disabled">Toggle disabled</button>
-		<div class="info">
-			<div class="thumbnail">
-				<img [src]="albumInfo.cover" [alt]="albumInfo.albumTitle" class="cover">
-				<div class="back-cover"></div>
-			</div>
-			<div class="contents">
-				<h1>
-					<app-tag tagColor="#5fa8fc" class="tag">连载</app-tag>
-					<span>{{albumInfo.albumTitle}}</span>
-				</h1>
-				<div class="record">
-					<div class="rate">
-						<div class="star-wrap">
-							star|star
-						</div>
-						<span class="score">{{score}}分</span>
-					</div>
-					<div class="play-count">
-						<i appIcon="headset" class="icon"></i>
-						<span>{{ albumInfo.playCount | numberFormat }}</span>
-					</div>
-				</div>
-				<div class="metas">
-					<app-tag class="meta" *ngFor="let meta of albumInfo.metas">{{meta.metaDisplayName}}</app-tag>
-				</div>
-				<div class="actions">
-					<button appBtn [btnCircle]="true" class="btn">
-						<i appIcon="play1" class="icon"></i>
-						播放全部
-					</button>
-				</div>
-			</div>
-		</div>
-		<div class="intro">
-			<article
-				[appToggleMore]="360"
-				[isFull]="moreStatus.full"
-				[content]="albumInfo.detailRichIntro | safeContent"
-				(domInitHeight)="articleHeight = $event"
-				[innerHTML]="albumInfo.detailRichIntro | safeContent"
-			></article>
-			<div class="more-arrow" *ngIf="articleHeight > 360" (click)="toggleMoreStatus()">
-				<div class="blur" [hidden]="moreStatus.full"></div>
-				<span>{{moreStatus.label}}</span>
-				<i [appIcon]="moreStatus.icon" class="icon"></i>
-			</div>
-		</div>
-	</div>
-	<div class="side">
-		<ng-container *ngIf="anchor">
-			<div class="card">
-				<div class="card-head">
-					<h3>专辑主播</h3>
-				</div>
-				<div class="card-body">
-					<div class="anchor-info">
-						<div class="anchor-head">
-							<div class="photo">
-								<img [src]="anchor.anchorCover" [alt]="anchor.anchorName"/>
-							</div>
-							<span class="name">{{ anchor.anchorName }}</span>
-						</div>
-						<ul class="anchor-stats">
-							<li>曲目：{{ anchor.anchorTracksCount }}</li>
-							<li>专辑：{{ anchor.anchorAlbumsCount }}</li>
-							<li>粉丝：{{ anchor.anchorFansCount | numberFormat }}</li>
-						</ul>
-						<p class="anchor-intro">
-							简介：
-							{{ anchor.personalIntroduction }}
-						</p>
-					</div>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-head">
-					<h3>TA的专辑</h3>
-				</div>
-				<div class="card-body">
-					<div class="albums">
-						<div class="album-item" [routerLink]="'../' + item.albumId" *ngFor="let item of anchor.anchorAlbumList">
-							<div class="thumbnail">
-								<img [src]="item.cover" [alt]="item.albumTitle">
-							</div>
-							<div class="content">
-								<div class="title">{{ item.albumTitle }}
-								</div>
-								<span class="count">
+    <div class="main" *ngIf="albumInfo">
+        currentChecks： {{currentChecks | json}}
+        <app-checkbox-group [(ngModel)]="currentChecks">
+            <label app-checkbox *ngFor="let item of checkOptions" [value]="item.value">{{item.label}}</label>
+        </app-checkbox-group>
+        <div class="info">
+            <div class="thumbnail">
+                <img [src]="albumInfo.cover" [alt]="albumInfo.albumTitle" class="cover">
+                <div class="back-cover"></div>
+            </div>
+            <div class="contents">
+                <h1>
+                    <app-tag tagColor="#5fa8fc" class="tag">连载</app-tag>
+                    <span>{{albumInfo.albumTitle}}</span>
+                </h1>
+                <div class="record">
+                    <div class="rate">
+                        <div class="star-wrap">
+                            star|star
+                        </div>
+                        <span class="score">{{score}}分</span>
+                    </div>
+                    <div class="play-count">
+                        <i appIcon="headset" class="icon"></i>
+                        <span>{{ albumInfo.playCount | numberFormat }}</span>
+                    </div>
+                </div>
+                <div class="metas">
+                    <app-tag class="meta" *ngFor="let meta of albumInfo.metas">{{meta.metaDisplayName}}</app-tag>
+                </div>
+                <div class="actions">
+                    <button appBtn [btnCircle]="true" class="btn">
+                        <i appIcon="play1" class="icon"></i>
+                        播放全部
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="intro">
+            <article
+                    [appToggleMore]="360"
+                    [isFull]="moreStatus.full"
+                    [content]="albumInfo.detailRichIntro | safeContent"
+                    (domInitHeight)="articleHeight = $event"
+                    [innerHTML]="albumInfo.detailRichIntro | safeContent"
+            ></article>
+            <div class="more-arrow" *ngIf="articleHeight > 360" (click)="toggleMoreStatus()">
+                <div class="blur" [hidden]="moreStatus.full"></div>
+                <span>{{moreStatus.label}}</span>
+                <i [appIcon]="moreStatus.icon" class="icon"></i>
+            </div>
+        </div>
+    </div>
+    <div class="side">
+        <ng-container *ngIf="anchor">
+            <div class="card">
+                <div class="card-head">
+                    <h3>专辑主播</h3>
+                </div>
+                <div class="card-body">
+                    <div class="anchor-info">
+                        <div class="anchor-head">
+                            <div class="photo">
+                                <img [src]="anchor.anchorCover" [alt]="anchor.anchorName"/>
+                            </div>
+                            <span class="name">{{ anchor.anchorName }}</span>
+                        </div>
+                        <ul class="anchor-stats">
+                            <li>曲目：{{ anchor.anchorTracksCount }}</li>
+                            <li>专辑：{{ anchor.anchorAlbumsCount }}</li>
+                            <li>粉丝：{{ anchor.anchorFansCount | numberFormat }}</li>
+                        </ul>
+                        <p class="anchor-intro">
+                            简介：
+                            {{ anchor.personalIntroduction }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-head">
+                    <h3>TA的专辑</h3>
+                </div>
+                <div class="card-body">
+                    <div class="albums">
+                        <div class="album-item" [routerLink]="'../' + item.albumId"
+                             *ngFor="let item of anchor.anchorAlbumList">
+                            <div class="thumbnail">
+                                <img [src]="item.cover" [alt]="item.albumTitle">
+                            </div>
+                            <div class="content">
+                                <div class="title">{{ item.albumTitle }}
+                                </div>
+                                <span class="count">
                						<i appIcon="headset" class="icon"></i>{{ item.playCount | numberFormat }}
 								</span>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</ng-container>
-		<div class="card">
-			<div class="card-head">
-				<h3>相关推荐</h3>
-			</div>
-			<div class="card-body">
-				<div class="albums">
-					<div class="album-item" [routerLink]="'../' + item.id" *ngFor="let item of relateAlbums">
-						<div class="thumbnail">
-							<img [src]="'//imagev2.xmcdn.com/' + item.coverPath" [alt]="item.title">
-						</div>
-						<div class="content">
-							<div class="title">{{ item.title }}</div>
-							<span class="count">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="card">
+            <div class="card-head">
+                <h3>相关推荐</h3>
+            </div>
+            <div class="card-body">
+                <div class="albums">
+                    <div class="album-item" [routerLink]="'../' + item.id" *ngFor="let item of relateAlbums">
+                        <div class="thumbnail">
+                            <img [src]="'//imagev2.xmcdn.com/' + item.coverPath" [alt]="item.title">
+                        </div>
+                        <div class="content">
+                            <div class="title">{{ item.title }}</div>
+                            <span class="count">
 							   <i appIcon="headset" class="icon"></i>{{ item.playCount | numberFormat }}
 							 </span>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
