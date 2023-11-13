@@ -4,7 +4,6 @@ import {first, forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 interface MoreStatus {
 	full: boolean;
@@ -37,11 +36,6 @@ export class AlbumComponent implements OnInit {
 		icon: 'arrow-down-line',
 	};
 	articleHeight: number;
-	size: number = 10;
-	form: FormGroup = new FormGroup({
-		size: new FormControl({value: 22, disabled: false}, Validators.required),
-		type: new FormControl('Drew', Validators.required)
-	});
 
 	constructor(
 		private albumServe: AlbumService,
@@ -84,14 +78,4 @@ export class AlbumComponent implements OnInit {
 		});
 	}
 
-	onSubmit(): void {
-		console.log('onSubmit', this.form.value);
-	}
-
-	sizeChange(_size: number): void {
-		console.log('_size', _size);
-		console.log(this.form.value);
-	}
-
-	protected readonly onsubmit = onsubmit;
 }
