@@ -36,6 +36,7 @@ export class AlbumComponent implements OnInit {
 		icon: 'arrow-down-line',
 	};
 	articleHeight: number;
+	checkedList: Track[] = [];
 
 	constructor(
 		private albumServe: AlbumService,
@@ -70,8 +71,7 @@ export class AlbumComponent implements OnInit {
 			this.score = score;
 			this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId,};
 			this.anchor = albumInfo.anchorInfo;
-			this.tracks = albumInfo.tracksInfo.tracks;
-			this.total = albumInfo.tracksInfo.trackTotalCount;
+			this.updateTracks();
 			this.relateAlbums = relateAlbums.slice(0, 10);
 			this.categoryServe.setSubCategory([this.albumInfo.albumTitle]);
 			this.cdr.markForCheck();
@@ -82,6 +82,50 @@ export class AlbumComponent implements OnInit {
 		if (newPage !== this.trackParams.pageNum) {
 			this.trackParams.pageNum = newPage;
 			this.updateTracks();
+		}
+	}
+
+	isChecked(trackId: number): boolean {
+		const targetIndex = this.getTrackIndex(trackId);
+		return targetIndex > -1;
+	}
+
+	checkAllChange(checked: boolean): void {
+		this.tracks.forEach(_track => {
+			const targetIndex = this.getTrackIndex(_track.trackId);
+			if (checked) {
+				if (targetIndex === -1) {
+					this.checkedList.push(_track);
+				}
+			} else {
+				if (targetIndex > -1) {
+					this.checkedList.splice(targetIndex, 1);
+				}
+			}
+		});
+	}
+
+	isCheckedAll(): boolean {
+		if (this.checkedList.length >= this.tracks.length) {
+			return this.tracks.every(_track => this.getTrackIndex(_track.trackId) > -1);
+		}
+		return false;
+	}
+
+	private getTrackIndex(id: number): number {
+		return this.checkedList.findIndex(track => track.trackId === id);
+	}
+
+	checkedChange(checked: boolean, _track: Track): void {
+		const targetIndex = this.getTrackIndex(_track.trackId);
+		if (checked) {
+			if (targetIndex < 0) {
+				this.checkedList.push(_track);
+			}
+		} else {
+			if (targetIndex > -1) {
+				this.checkedList.splice(targetIndex, 1);
+			}
 		}
 	}
 
