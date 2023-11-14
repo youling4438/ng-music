@@ -3,8 +3,7 @@ import {ActivatedRoute} from "@angular/router";
 import {first, forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
-import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
-import {CheckBoxValue} from "../../share/components/checkbox/checkbox-group.component";
+import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
 
 interface MoreStatus {
 	full: boolean;
@@ -37,12 +36,6 @@ export class AlbumComponent implements OnInit {
 		icon: 'arrow-down-line',
 	};
 	articleHeight: number;
-	checkOptions: { label: string, value: CheckBoxValue}[] = [
-		{label: '苹果', value: 'apple'},
-		{label: '梨', value: 'pear'},
-		{label: '橘子', value: 'orange'},
-	];
-	currentChecks: CheckBoxValue[] = ['apple', 'pear', 'orange'];
 
 	constructor(
 		private albumServe: AlbumService,
@@ -83,6 +76,27 @@ export class AlbumComponent implements OnInit {
 			this.categoryServe.setSubCategory([this.albumInfo.albumTitle]);
 			this.cdr.markForCheck();
 		});
+	}
+
+	changePage(newPage: number): void {
+		if (newPage !== this.trackParams.pageNum) {
+			this.trackParams.pageNum = newPage;
+			this.updateTracks();
+		}
+	}
+
+	private updateTracks(): void {
+		this.albumServe.tracks(this.trackParams)
+			.pipe(first())
+			.subscribe((trackData: TracksInfo) => {
+				this.total = trackData.trackTotalCount;
+				this.tracks = trackData.tracks;
+				this.cdr.markForCheck();
+			});
+	}
+
+	trackByTracks(_index: number, track: Track): number {
+		return track.trackId;
 	}
 
 }

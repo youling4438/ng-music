@@ -82,7 +82,7 @@ export class AlbumService {
 	// 专辑详情
 	album(albumId: string): Observable<AlbumRes> {
 		const params = new HttpParams().set('albumId', albumId);
-		return this.http.get(`${environment.baseUrl}${this.prefix}album`, { params })
+		return this.http.get(`${environment.baseUrl}${this.prefix}album`, {params})
 			.pipe(map((res: Base<AlbumRes>) => res.data));
 	}
 
@@ -95,7 +95,14 @@ export class AlbumService {
 	// 相关专辑列表
 	relateAlbums(albumId: string): Observable<RelateAlbum[]> {
 		const params = new HttpParams().set('id', albumId);
-		return this.http.get(`${environment.baseUrl}${this.prefix}album-relate`, { params })
+		return this.http.get(`${environment.baseUrl}${this.prefix}album-relate`, {params})
 			.pipe(map((res: Base<{ hotWordAlbums: RelateAlbum[] }>) => res.data.hotWordAlbums));
+	}
+
+	// 获取播单内容
+	tracks(args: AlbumTrackArgs): Observable<TracksInfo> {
+		const params = new HttpParams({fromString: stringify(args)});
+		return this.http.get(`${environment.baseUrl}${this.prefix}album-tracks`, {params})
+			.pipe(map((res: Base<TracksInfo>) => res.data));
 	}
 }
