@@ -7,13 +7,14 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} fr
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None,
 })
-export class RateComponent implements OnInit{
-	@Input() count:number = 5;
+export class RateComponent implements OnInit {
+	@Input() count: number = 5;
 	public iconArray: number[] = [];
 	private hoverValue: number;
 	private actualValue: number;
 	private hasHalf: boolean;
 	iconClassNameList: string[] = [];
+
 	constructor() {
 	}
 
@@ -28,6 +29,9 @@ export class RateComponent implements OnInit{
 	}
 
 	hoverItem(isHalf: boolean, index: number): void {
+		if (this.hoverValue === index + 1 && isHalf === this.hasHalf) {
+			return;
+		}
 		this.hoverValue = index + 1;
 		this.hasHalf = isHalf;
 		this.updateIconStyle();
@@ -42,9 +46,9 @@ export class RateComponent implements OnInit{
 	private updateIconStyle = () => {
 		this.iconClassNameList = this.iconClassNameList.map((className: string, index: number) => {
 			let newClass: string;
-			if(index + 1 < this.hoverValue || (index + 1 === this.hoverValue && !this.hasHalf)) {
+			if (index + 1 < this.hoverValue || (index + 1 === this.hoverValue && !this.hasHalf)) {
 				newClass = 'app-rate-item-full';
-			} else if(index + 1 === this.hoverValue && this.hasHalf) {
+			} else if (index + 1 === this.hoverValue && this.hasHalf) {
 				newClass = 'app-rate-item-half';
 			} else {
 				newClass = '';
