@@ -26,9 +26,16 @@ export class RateComponent implements OnInit{
 		console.log('isHalf: ', isHalf);
 		console.log('index: ', index);
 	}
+
 	hoverItem(isHalf: boolean, index: number): void {
 		this.hoverValue = index + 1;
 		this.hasHalf = isHalf;
+		this.updateIconStyle();
+	}
+
+	leaveItem(): void {
+		this.hoverValue = 0;
+		this.hasHalf = false;
 		this.updateIconStyle();
 	}
 
