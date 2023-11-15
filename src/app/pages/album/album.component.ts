@@ -143,4 +143,8 @@ export class AlbumComponent implements OnInit {
 		return track.trackId;
 	}
 
+	rateUpdate(rateValue: number) : void {
+		console.log('rateValue : ', rateValue);
+	}
+
 }

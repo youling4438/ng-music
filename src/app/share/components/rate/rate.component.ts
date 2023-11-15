@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+	ViewEncapsulation
+} from '@angular/core';
 
 @Component({
 	selector: 'app-rate',
@@ -9,6 +17,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation} fr
 })
 export class RateComponent implements OnInit {
 	@Input() count: number = 5;
+	@Output() rateChange = new EventEmitter<number>();
 	public iconArray: number[] = [];
 	private hoverValue: number;
 	private actualValue: number;
@@ -24,8 +33,14 @@ export class RateComponent implements OnInit {
 	}
 
 	clickItem(isHalf: boolean, index: number): void {
-		console.log('isHalf: ', isHalf);
-		console.log('index: ', index);
+		this.hoverValue = index + 1;
+		this.hasHalf = isHalf;
+		const newValue = isHalf ? index + 0.5 : index + 1;
+		if (newValue !== this.actualValue) {
+			this.actualValue = newValue;
+			this.updateIconStyle();
+			this.rateChange.emit(this.actualValue);
+		}
 	}
 
 	hoverItem(isHalf: boolean, index: number): void {
@@ -38,8 +53,8 @@ export class RateComponent implements OnInit {
 	}
 
 	leaveItem(): void {
-		this.hoverValue = 0;
-		this.hasHalf = false;
+		this.hasHalf = !Number.isInteger(this.actualValue);
+		this.hoverValue = Math.ceil(this.actualValue);
 		this.updateIconStyle();
 	}
 

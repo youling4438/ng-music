@@ -14,7 +14,7 @@
 					<div class="record">
 						<div class="rate">
 							<div class="star-wrap">
-								<app-rate></app-rate>
+								<app-rate (rateChange)="rateUpdate($event)"></app-rate>
 							</div>
 							<span class="score">{{score}}分</span>
 						</div>
