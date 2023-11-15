@@ -1,6 +1,9 @@
 <div class="app-rate-wrap">
-	<app-rate-item></app-rate-item>
-	<app-rate-item></app-rate-item>
-	<app-rate-item></app-rate-item>
-	<app-rate-item></app-rate-item>
+	<app-rate-item
+		*ngFor="let icon of iconArray; index as i"
+		(iconClickHandle)="clickItem($event, i)"
+		(iconHoverHandle)="hoverItem($event, i)"
+		[itemClassName]="iconClassNameList[i]"
+	>
+	</app-rate-item>
 </div>

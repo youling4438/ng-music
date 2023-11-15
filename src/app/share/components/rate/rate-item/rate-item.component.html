@@ -1,8 +1,8 @@
-<div class="app-rate-item">
-	<div class="star-wrap back">
+<div [class]="itemClassName">
+	<div class="star-wrap back" (click)="iconClick(false)" (mouseenter)="iconHover(false)">
 		<i class="icon" appIcon="Star"></i>
 	</div>
-	<div class="star-wrap front">
+	<div class="star-wrap front" (click)="iconClick(true)" (mouseenter)="iconHover(true)">
 		<i class="icon" appIcon="Star"></i>
 	</div>
 </div>
