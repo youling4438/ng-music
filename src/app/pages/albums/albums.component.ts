@@ -133,8 +133,8 @@ export class AlbumsComponent implements OnInit {
 		this.updateAlbums();
 	}
 
-	private updateAlbums():void {
-		this.albumServe.albums(this.searchParams).subscribe((albumsInfo: AlbumsInfo) =>{
+	private updateAlbums(): void {
+		this.albumServe.albums(this.searchParams).subscribe((albumsInfo: AlbumsInfo) => {
 			this.albumsInfo = albumsInfo;
 			this.total = albumsInfo.total;
 			this.cdr.markForCheck();
@@ -171,18 +171,18 @@ export class AlbumsComponent implements OnInit {
 	}
 
 	private setStatus(categoryInfo: CategoryInfo): void {
-		const { metadata, subcategories } = categoryInfo;
-		const  subCategory = subcategories.find(item => item.code === this.searchParams.subcategory);
-		if(subCategory) {
+		const {metadata, subcategories} = categoryInfo;
+		const subCategory = subcategories.find(item => item.code === this.searchParams.subcategory);
+		if (subCategory) {
 			this.categoryServe.setSubCategory([subCategory.displayValue]);
 		}
-		if(this.searchParams.meta) {
+		if (this.searchParams.meta) {
 			const metaMaps = this.searchParams.meta.split('-').map(_item => _item.split('_'));
 			metaMaps.forEach(meta => {
 				const targetRow = metadata.find(row => row.id === Number(meta[0]));
-				const { id: metaRowId, name, metaValues } = targetRow || metadata[0];
+				const {id: metaRowId, name, metaValues} = targetRow || metadata[0];
 				const targetMeta = metaValues.find(metaItem => metaItem.id === Number(meta[1]));
-				const { id, displayName } = targetMeta || metaValues[0];
+				const {id, displayName} = targetMeta || metaValues[0];
 				this.checkedMetas.push({
 					metaRowId: metaRowId,
 					metaRowName: name,
@@ -200,14 +200,15 @@ export class AlbumsComponent implements OnInit {
 		this.winServe.removeStorage(storageKeys.subcategoryCode);
 	}
 
-	public trackBySubCategory(index, subCategory: SubCategory): string {
+	public trackBySubCategory(index: number, subCategory: SubCategory): string {
 		return subCategory.code;
 	}
 
-	public trackByMetaValues(index, metaValue: MetaValue): number {
+	public trackByMetaValues(index: number, metaValue: MetaValue): number {
 		return metaValue.id;
 	}
-	public trackByAlbums(index, album: Album): number {
+
+	public trackByAlbums(index: number, album: Album): number {
 		return album.albumId;
 	}
 
