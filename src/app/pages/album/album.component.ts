@@ -68,7 +68,7 @@ export class AlbumComponent implements OnInit {
 			this.albumServe.album(this.trackParams.albumId),
 			this.albumServe.relateAlbums(this.trackParams.albumId),
 		]).pipe(first()).subscribe(([score, albumInfo, relateAlbums]) => {
-			this.score = score;
+			this.score = score / 2;
 			this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId,};
 			this.anchor = albumInfo.anchorInfo;
 			this.updateTracks();
@@ -141,10 +141,6 @@ export class AlbumComponent implements OnInit {
 
 	trackByTracks(_index: number, track: Track): number {
 		return track.trackId;
-	}
-
-	rateUpdate(rateValue: number) : void {
-		console.log('rateValue : ', rateValue);
 	}
 
 }

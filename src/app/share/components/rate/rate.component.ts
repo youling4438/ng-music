@@ -1,13 +1,15 @@
 import {
 	ChangeDetectionStrategy,
+	ChangeDetectorRef,
 	Component,
-	EventEmitter,
+	forwardRef,
 	Input,
 	OnInit,
-	Output,
 	ViewEncapsulation
 } from '@angular/core';
 import {RateItemTypeClass} from "./type";
+import {ControlValueAccessor, NG_VALUE_ACCESSOR} from "@angular/forms";
+
 
 @Component({
 	selector: 'app-rate',
@@ -15,17 +17,23 @@ import {RateItemTypeClass} from "./type";
 	styleUrls: ['./rate.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 	encapsulation: ViewEncapsulation.None,
+	providers: [
+		{
+			provide: NG_VALUE_ACCESSOR,
+			useExisting: forwardRef(() => RateComponent),
+			multi: true,
+		}
+	],
 })
-export class RateComponent implements OnInit {
+export class RateComponent implements OnInit, ControlValueAccessor {
 	@Input() count: number = 5;
-	@Output() rateChange = new EventEmitter<number>();
 	public iconArray: number[] = [];
 	private hoverValue: number;
 	private actualValue: number;
 	private hasHalf: boolean;
 	iconClassNameList: string[] = [];
 
-	constructor() {
+	constructor(private cdr: ChangeDetectorRef,) {
 	}
 
 	ngOnInit() {
@@ -39,8 +47,8 @@ export class RateComponent implements OnInit {
 		const newValue = isHalf ? index + 0.5 : index + 1;
 		if (newValue !== this.actualValue) {
 			this.actualValue = newValue;
+			this.onChange(this.actualValue);
 			this.updateIconStyle();
-			this.rateChange.emit(this.actualValue);
 		}
 	}
 
@@ -72,5 +80,26 @@ export class RateComponent implements OnInit {
 			className = `${RateItemTypeClass.Normal} ${newClass}`;
 			return className;
 		});
+	}
+
+	private onChange: (value: number) => void = () => {};
+	private onTouched: () => void = () => {};
+	registerOnChange(fn: (value: number) => void): void {
+		this.onChange = fn;
+	}
+
+	registerOnTouched(fn: () => void): void {
+		this.onTouched = fn;
+	}
+
+	setDisabledState(disabled: boolean): void {
+	}
+
+	writeValue(rate: number): void {
+		if(rate && rate !== this.actualValue){
+			this.actualValue = rate;
+			this.leaveItem();
+			this.cdr.markForCheck();
+		}
 	}
 }
