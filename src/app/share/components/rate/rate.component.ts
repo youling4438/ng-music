@@ -32,6 +32,7 @@ export class RateComponent implements OnInit, ControlValueAccessor {
 	private actualValue: number;
 	private hasHalf: boolean;
 	iconClassNameList: string[] = [];
+	private readonly: boolean;
 
 	constructor(private cdr: ChangeDetectorRef,) {
 	}
@@ -42,6 +43,9 @@ export class RateComponent implements OnInit, ControlValueAccessor {
 	}
 
 	clickItem(isHalf: boolean, index: number): void {
+		if (this.readonly) {
+			return;
+		}
 		this.hoverValue = index + 1;
 		this.hasHalf = isHalf;
 		const newValue = isHalf ? index + 0.5 : index + 1;
@@ -53,7 +57,7 @@ export class RateComponent implements OnInit, ControlValueAccessor {
 	}
 
 	hoverItem(isHalf: boolean, index: number): void {
-		if (this.hoverValue === index + 1 && isHalf === this.hasHalf) {
+		if (this.readonly || (this.hoverValue === index + 1 && isHalf === this.hasHalf)) {
 			return;
 		}
 		this.hoverValue = index + 1;
@@ -78,12 +82,18 @@ export class RateComponent implements OnInit, ControlValueAccessor {
 				newClass = '';
 			}
 			className = `${RateItemTypeClass.Normal} ${newClass}`;
+			if(this.readonly){
+				className += ` ${RateItemTypeClass.Readonly}`;
+			}
 			return className;
 		});
 	}
 
-	private onChange: (value: number) => void = () => {};
-	private onTouched: () => void = () => {};
+	private onChange: (value: number) => void = () => {
+	};
+	private onTouched: () => void = () => {
+	};
+
 	registerOnChange(fn: (value: number) => void): void {
 		this.onChange = fn;
 	}
@@ -93,10 +103,11 @@ export class RateComponent implements OnInit, ControlValueAccessor {
 	}
 
 	setDisabledState(disabled: boolean): void {
+		this.readonly = disabled;
 	}
 
 	writeValue(rate: number): void {
-		if(rate && rate !== this.actualValue){
+		if (rate && rate !== this.actualValue) {
 			this.actualValue = rate;
 			this.leaveItem();
 			this.cdr.markForCheck();

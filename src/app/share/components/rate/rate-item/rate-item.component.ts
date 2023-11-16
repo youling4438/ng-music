@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output} from '@angular/core';
+import {ChangeDetectionStrategy, Component, EventEmitter, Input, Output, TemplateRef} from '@angular/core';
 import {RateItemTypeClass} from "../type";
 
 @Component({
@@ -9,6 +9,7 @@ import {RateItemTypeClass} from "../type";
 })
 export class RateItemComponent {
 	@Input() itemClassName: string = RateItemTypeClass.Normal;
+	@Input() rateTemplate: TemplateRef<void>;
 	@Output() iconClickHandle = new EventEmitter<boolean>();
 	@Output() iconHoverHandle = new EventEmitter<boolean>();
 

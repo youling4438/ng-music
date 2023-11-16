@@ -1,9 +1,14 @@
 <div class="app-rate-wrap" (mouseleave)="leaveItem()">
 	<app-rate-item
 		*ngFor="let icon of iconArray; index as i"
+		[rateTemplate]=""
 		(iconClickHandle)="clickItem($event, i)"
 		(iconHoverHandle)="hoverItem($event, i)"
 		[itemClassName]="iconClassNameList[i]"
 	>
 	</app-rate-item>
 </div>
+<!--<ng-template #rateTpl>-->
+<!--	<i appIcon="play"></i>-->
+<!--</ng-template>-->
+

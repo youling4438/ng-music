@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {RateItemComponent} from './rate-item/rate-item.component';
 import {DirectivesModule} from "../../directives/directives.module";
 import {RateComponent} from './rate.component';
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgTemplateOutlet} from "@angular/common";
 
 @NgModule({
 	declarations: [
@@ -12,10 +12,11 @@ import {NgForOf} from "@angular/common";
 	exports: [
 		RateComponent,
 	],
-	imports: [
-		DirectivesModule,
-		NgForOf,
-	]
+    imports: [
+        DirectivesModule,
+        NgForOf,
+		NgTemplateOutlet,
+    ]
 })
 export class RateModule {
 }
