@@ -7,6 +7,7 @@ import {
 	Output,
 	ViewEncapsulation
 } from '@angular/core';
+import {RateItemTypeClass} from "./type";
 
 @Component({
 	selector: 'app-rate',
@@ -62,13 +63,13 @@ export class RateComponent implements OnInit {
 		this.iconClassNameList = this.iconClassNameList.map((className: string, index: number) => {
 			let newClass: string;
 			if (index + 1 < this.hoverValue || (index + 1 === this.hoverValue && !this.hasHalf)) {
-				newClass = 'app-rate-item-full';
+				newClass = RateItemTypeClass.Full;
 			} else if (index + 1 === this.hoverValue && this.hasHalf) {
-				newClass = 'app-rate-item-half';
+				newClass = RateItemTypeClass.Half;
 			} else {
 				newClass = '';
 			}
-			className = `app-rate-item ${newClass}`;
+			className = `${RateItemTypeClass.Normal} ${newClass}`;
 			return className;
 		});
 	}
