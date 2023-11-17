@@ -7,11 +7,16 @@ import {ShareModule} from "./share/share.module";
 import {HttpClientModule} from "@angular/common/http";
 import {PagesModule} from "./pages/pages.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {LoginComponent} from './layouts/login/login.component';
+import {DirectivesModule} from "./share/directives/directives.module";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {CheckboxModule} from "./share/components/checkbox/checkbox.module";
 
 
 @NgModule({
 	declarations: [
-		HeaderComponent
+		HeaderComponent,
+		LoginComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -21,12 +26,17 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 		BreadcrumbModule,
 		ShareModule,
 		BrowserAnimationsModule,
+		CheckboxModule,
+		DirectivesModule,
+		ReactiveFormsModule,
+		FormsModule,
 	],
 	exports: [
 		HeaderComponent,
 		BreadcrumbModule,
 		BrowserModule,
 		AppRoutingModule,
+		LoginComponent,
 	]
 })
 export class CoreModule {

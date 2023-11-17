@@ -1,0 +1,31 @@
+<div class="app-modal-wrap" #modalWrap>
+	<div class="app-modal">
+		<div class="head">
+			<p>Angular 10</p>
+		</div>
+		<div class="form-wrap">
+			<form class="form" [formGroup]="formValues">
+				<div class="form-item">
+					<input
+						formControlName="phone"
+						class="form-control app-input"
+						placeholder="手机号"
+						type="phone"/>
+				</div>
+				<div class="form-item">
+					<input
+						formControlName="password"
+						class="form-control app-input"
+						placeholder="密码"
+						type="text"/>
+				</div>
+				<div class="btn-wrap">
+					<button class="btn" appBtn [btnBlock]="true">登陆</button>
+				</div>
+			</form>
+			<div class="remember">
+				<label app-checkbox>下次自动登陆</label>
+			</div>
+		</div>
+	</div>
+</div>
