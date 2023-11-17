@@ -4,6 +4,7 @@ import {Category} from "./services/apis/types";
 import {CategoryService} from "./services/business/category.service";
 import {Router} from "@angular/router";
 import {combineLatest} from "rxjs";
+import {OverlayService} from "./services/tools/overlay.service";
 
 @Component({
 	selector: 'app-root',
@@ -23,6 +24,7 @@ export class AppComponent implements OnInit {
 		private cdr: ChangeDetectorRef,
 		private categoryServe: CategoryService,
 		private router: Router,
+		private overlayServe: OverlayService,
 	) {
 	}
 
@@ -42,6 +44,7 @@ export class AppComponent implements OnInit {
 				this.subcategory = subcategory;
 			});
 		this.getCategories();
+		this.overlayServe.create();
 	}
 
 	private setCurrentCategory(): void {

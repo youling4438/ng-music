@@ -73,7 +73,6 @@ export class CheckboxComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(value: boolean): void {
-        console.log('writeValue', value);
         this.checked = value;
         this.cdr.markForCheck();
     }
