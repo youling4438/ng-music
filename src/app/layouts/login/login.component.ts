@@ -1,7 +1,19 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, Renderer2, ViewChild} from '@angular/core';
 import {OverlayConfig, OverlayRef, OverlayService} from "../../services/tools/overlay.service";
 import {empty, first, merge, of, pluck, switchMap} from "rxjs";
-import {FormBuilder, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, ValidationErrors, Validators} from "@angular/forms";
+
+interface CostumeControlItem {
+	control: AbstractControl,
+	showError: boolean,
+	errors: ValidationErrors,
+}
+
+interface CostumeControls {
+	phone: CostumeControlItem,
+	password: CostumeControlItem,
+}
+
 
 @Component({
 	selector: 'app-login',
@@ -59,5 +71,28 @@ export class LoginComponent implements AfterViewInit {
 
 	ngAfterViewInit(): void {
 		this.createOverlay();
+	}
+
+	get formControls(): CostumeControls {
+		const controls = {
+			phone: this.formValues.get('phone'),
+			password: this.formValues.get('password'),
+		};
+		return {
+			phone: {
+				control: controls.phone,
+				showError: controls.phone.dirty && controls.phone.invalid,
+				errors: controls.phone.errors,
+			},
+			password: {
+				control: controls.password,
+				showError: controls.password.dirty && controls.password.invalid,
+				errors: controls.password.errors,
+			},
+		}
+	}
+
+	formSubmit() :void{
+		console.log('submit');
 	}
 }

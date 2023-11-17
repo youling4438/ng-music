@@ -4,23 +4,33 @@
 			<p>Angular 10</p>
 		</div>
 		<div class="form-wrap">
-			<form class="form" [formGroup]="formValues">
+			<form class="form" [formGroup]="formValues" (ngSubmit)="formSubmit()">
 				<div class="form-item">
 					<input
 						formControlName="phone"
 						class="form-control app-input"
+						[class.app-input-error]="formControls.phone.showError"
 						placeholder="手机号"
-						type="tel"/>
+						type="tel" maxlength="11"/>
+					<p class="form-control-err" *ngIf="formControls.phone.showError">
+						<span *ngIf="formControls.phone.errors['required']">请填写手机号</span>
+						<span *ngIf="formControls.phone.errors['pattern']">手机号格式不正确</span>
+					</p>
 				</div>
 				<div class="form-item">
 					<input
 						formControlName="password"
 						class="form-control app-input"
+						[class.app-input-error]="formControls.password.showError"
 						placeholder="密码"
 						type="text"/>
+					<p class="form-control-err" *ngIf="formControls.password.showError">
+						<span *ngIf="formControls.password.errors['required']">请填写密码</span>
+						<span *ngIf="formControls.password.errors['minlength']">密码长度不够</span>
+					</p>
 				</div>
 				<div class="btn-wrap">
-					<button class="btn" appBtn [btnBlock]="true">登陆</button>
+					<button class="btn" appBtn [btnBlock]="true" [disabled]="formValues.invalid">登陆</button>
 				</div>
 			</form>
 			<div class="remember">
