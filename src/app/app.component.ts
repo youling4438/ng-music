@@ -3,8 +3,8 @@ import {AlbumService} from "./services/apis/album.service";
 import {Category} from "./services/apis/types";
 import {CategoryService} from "./services/business/category.service";
 import {Router} from "@angular/router";
-import {combineLatest} from "rxjs";
-import {OverlayService} from "./services/tools/overlay.service";
+import {combineLatest, empty, first, merge, of, pluck, switchMap,} from "rxjs";
+import {OverlayConfig, OverlayRef, OverlayService} from "./services/tools/overlay.service";
 
 @Component({
 	selector: 'app-root',
@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
 	categories: Category[] = [];
 	categoryPinyin: string = '';
 	subcategory: string[] = [];
+	private overlayRef: OverlayRef;
 
 	constructor(
 		private albumServe: AlbumService,
@@ -44,7 +45,35 @@ export class AppComponent implements OnInit {
 				this.subcategory = subcategory;
 			});
 		this.getCategories();
-		this.overlayServe.create();
+	}
+
+	createOverlay(): void {
+		const overlayConfig: OverlayConfig = {
+			backgroundColor: 'rgba(255,0,0,.32)',
+			fade: true,
+		};
+		this.overlayRef = this.overlayServe.create(overlayConfig);
+		console.log('this.overlayRef', this.overlayRef);
+		merge(
+			this.overlayRef.backdropClick(),
+			this.overlayRef.backdropKeyup()
+				.pipe(
+					pluck('key'),
+					switchMap(key => {
+						return key.toUpperCase() === 'ESCAPE' ? of(key) : empty();
+					})
+				)
+		).pipe(first()).subscribe(() => {
+			console.log('listen event');
+			this.hideOverlay();
+		});
+	}
+
+	private hideOverlay(): void {
+		if (this.overlayRef) {
+			this.overlayRef.close();
+			this.overlayRef = null;
+		}
 	}
 
 	private setCurrentCategory(): void {
