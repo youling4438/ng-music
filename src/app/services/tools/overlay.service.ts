@@ -6,6 +6,7 @@ export interface OverlayConfig {
 	center?: boolean;
 	fade?: boolean;
 	backgroundColor?: string;
+	responseEvent?: boolean;
 }
 
 export interface OverlayRef {
@@ -20,10 +21,11 @@ export interface OverlayRef {
 })
 export class OverlayService {
 	private rd2: Renderer2;
-	private isBrowser: boolean;
+	readonly isBrowser: boolean;
 	readonly defaultConfig: Required<OverlayConfig> = {
 		center: false,
-		fade: false,
+		fade: true,
+		responseEvent: true,
 		backgroundColor: 'rgba(0,0,0,.32)',
 	};
 	config: Required<OverlayConfig>;
@@ -51,7 +53,6 @@ export class OverlayService {
 			this.rd2.appendChild(this.doc.body, container);
 			this.backdropElement = container.querySelector('.overlay-mask');
 			this.setConfig(container);
-			this.listenEvents();
 			this.overlayRef = {
 				container,
 				backdropClick: this.backdropClick.bind(this),
@@ -63,25 +64,6 @@ export class OverlayService {
 		return null;
 	}
 
-
-	private setConfig(container: HTMLDivElement): void {
-		const {fade, center, backgroundColor} = this.config;
-		if (center) {
-			this.rd2.addClass(container, 'overlay-center');
-		}
-		if (fade) {
-			timer(0)
-				.pipe(first())
-				.subscribe(() => {
-						this.rd2.addClass(this.backdropElement, 'overlay-mask-show');
-					}
-				);
-		}
-		if (backgroundColor) {
-			this.rd2.setStyle(this.backdropElement, 'backgroundColor', backgroundColor);
-		}
-
-	}
 
 	private listenEvents(): void {
 		merge(
@@ -104,13 +86,51 @@ export class OverlayService {
 		return this.backdropKeyup$.asObservable();
 	}
 
+	private setConfig(container: HTMLDivElement): void {
+		const {fade, center, backgroundColor, responseEvent} = this.config;
+		if (center) {
+			this.rd2.addClass(container, 'overlay-center');
+		}
+		if (responseEvent) {
+			this.rd2.setStyle(this.backdropElement, 'pointer-events', 'auto');
+			this.listenEvents();
+		}
+		if (fade) {
+			timer(0)
+				.pipe(first())
+				.subscribe(() => {
+						this.rd2.addClass(this.backdropElement, 'overlay-mask-show');
+					}
+				);
+		}
+		if (backgroundColor) {
+			this.rd2.setStyle(this.backdropElement, 'backgroundColor', backgroundColor);
+		}
+
+	}
+
 	closeOverlay(): void {
-		if(this.overlayRef){
+		if (this.overlayRef) {
+			if (this.config.fade) {
+				fromEvent(this.backdropElement, 'transitionend').pipe(
+					takeUntil(this.detachment$)
+				).subscribe(() => {
+					this.deleteOverlay();
+				});
+				this.rd2.removeClass(this.backdropElement, 'overlay-mask-show');
+			} else {
+				this.deleteOverlay();
+			}
+		}
+	}
+
+	private deleteOverlay(): void {
+		if(this.config.responseEvent) {
 			this.detachment$.next();
 			this.detachment$.complete();
-			this.rd2.removeChild(this.doc.body, this.overlayRef.container);
-			this.overlayRef = null;
 		}
+		this.rd2.removeChild(this.doc.body, this.overlayRef.container);
+		this.overlayRef = null;
 	}
 
 }

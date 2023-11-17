@@ -49,11 +49,9 @@ export class AppComponent implements OnInit {
 
 	createOverlay(): void {
 		const overlayConfig: OverlayConfig = {
-			backgroundColor: 'rgba(255,0,0,.32)',
-			fade: true,
+			center: true,
 		};
 		this.overlayRef = this.overlayServe.create(overlayConfig);
-		console.log('this.overlayRef', this.overlayRef);
 		merge(
 			this.overlayRef.backdropClick(),
 			this.overlayRef.backdropKeyup()
@@ -64,7 +62,6 @@ export class AppComponent implements OnInit {
 					})
 				)
 		).pipe(first()).subscribe(() => {
-			console.log('listen event');
 			this.hideOverlay();
 		});
 	}
