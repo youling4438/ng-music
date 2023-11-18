@@ -1,4 +1,12 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject,} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	ElementRef, EventEmitter,
+	Inject,
+	Output,
+} from '@angular/core';
 import {User} from "../../services/apis/types";
 import {DOCUMENT} from "@angular/common";
 import {debounceTime, distinctUntilChanged, fromEvent} from "rxjs";
@@ -30,7 +38,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 export class HeaderComponent implements AfterViewInit {
 	user: User = {} as User;
 	fix: boolean = false;
-
+	@Output() loginClickHandle = new EventEmitter<void>();
 	constructor(
 		private el: ElementRef,
 		@Inject(DOCUMENT) private doc: Document,

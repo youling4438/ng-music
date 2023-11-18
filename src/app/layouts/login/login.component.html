@@ -1,4 +1,9 @@
-<div class="app-modal-wrap" #modalWrap>
+<div
+	class="app-modal-wrap"
+	@dialogAni
+	(@dialogAni.done)="animationDone($event)"
+	#modalWrap
+	*ngIf="visible">
 	<div class="app-modal">
 		<div class="head">
 			<p>Angular 10</p>

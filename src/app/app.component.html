@@ -1,5 +1,5 @@
 <div id="music">
-	<app-header></app-header>
+	<app-header (loginClickHandle)="showDialog = true"></app-header>
 	<div class="content">
 		<div class="container">
 			<div class="breadcrumb-wrap">
@@ -13,13 +13,14 @@
 							</div>
 							<div class="category-box">
 								<ul>
-									<li (click)="changeCategory(item)" [class.checked]="item.id === currentCategory?.id" *ngFor="let item of categories;">{{item.displayName}}</li>
+									<li (click)="changeCategory(item)" [class.checked]="item.id === currentCategory?.id"
+										*ngFor="let item of categories;">{{item.displayName}}</li>
 								</ul>
 							</div>
 						</div>
 					</app-breadcrumb-item>
 					<ng-container *ngIf="subcategory.length">
-						<app-breadcrumb-item *ngFor="let item of subcategory" >{{ item }}</app-breadcrumb-item>
+						<app-breadcrumb-item *ngFor="let item of subcategory">{{ item }}</app-breadcrumb-item>
 					</ng-container>
 				</app-breadcrumb>
 			</div>
@@ -27,4 +28,4 @@
 		</div>
 	</div>
 </div>
-<app-login></app-login>
+<app-login [showDialog]="showDialog" (responseEvent)="showDialog = false"></app-login>
