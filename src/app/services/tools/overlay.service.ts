@@ -102,9 +102,11 @@ export class OverlayService {
 						this.rd2.addClass(this.backdropElement, 'overlay-mask-show');
 					}
 				);
+		} else {
+			this.rd2.addClass(this.backdropElement, 'overlay-mask-show');
 		}
 		if (backgroundColor) {
-			this.rd2.setStyle(this.backdropElement, 'backgroundColor', backgroundColor);
+			this.rd2.setStyle(this.backdropElement, 'background-color', backgroundColor);
 		}
 
 	}
