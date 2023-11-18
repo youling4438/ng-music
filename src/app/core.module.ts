@@ -4,13 +4,14 @@ import {AppRoutingModule} from "./app-routing.module";
 import {HeaderComponent} from './layouts/header/header.component';
 import {BreadcrumbModule} from "./share/components/breadcrumb/breadcrumb.module";
 import {ShareModule} from "./share/share.module";
-import {HttpClientModule} from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {PagesModule} from "./pages/pages.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {LoginComponent} from './layouts/login/login.component';
 import {DirectivesModule} from "./share/directives/directives.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CheckboxModule} from "./share/components/checkbox/checkbox.module";
+import {InterceptorService} from "./services/apis/interceptor.service";
 
 
 @NgModule({
@@ -37,7 +38,14 @@ import {CheckboxModule} from "./share/components/checkbox/checkbox.module";
 		BrowserModule,
 		AppRoutingModule,
 		LoginComponent,
-	]
+	],
+	providers: [
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: InterceptorService,
+			multi: true,
+		}
+	],
 })
 export class CoreModule {
 	constructor(@SkipSelf() @Optional() parentModule: CoreModule) {

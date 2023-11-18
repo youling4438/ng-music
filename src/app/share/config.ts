@@ -2,7 +2,7 @@ export const storageKeys = {
 	categoryPinyin: 'categoryPinyin',
 	subcategoryCode: 'subcategoryCode',
 	metas: 'metas',
-	auth: 'auth',
+	token: 'token',
 	remember: 'remember',
 	needToken: 'needToken'
 }

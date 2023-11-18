@@ -138,13 +138,11 @@ export class LoginComponent implements OnChanges {
 	formSubmit(): void {
 		this.userServe.login(this.formValues.value).subscribe((res: LoginRes) => {
 			this.responseEvent.emit();
-			this.windowServe.setStorage(storageKeys.auth, res.token);
+			this.windowServe.setStorage(storageKeys.token, res.token);
 			if (this.remember) {
 				this.windowServe.setStorage(storageKeys.remember, `${this.remember}`);
 			}
 			alert('登录成功');
-		}, _error => {
-			alert(_error.error.message || '登录失败');
 		});
 	}
 
