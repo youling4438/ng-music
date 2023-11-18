@@ -11,6 +11,9 @@ import {empty, first, merge, of, pluck, switchMap, timer} from "rxjs";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {isPlatformBrowser} from "@angular/common";
 import {animate, style, transition, trigger, AnimationEvent} from "@angular/animations";
+import {LoginRes, UserService} from "../../services/apis/user.service";
+import {WindowService} from "../../services/tools/window.service";
+import {storageKeys} from "../../share/config";
 
 interface CostumeControlItem {
 	control: AbstractControl,
@@ -53,6 +56,7 @@ interface CostumeControls {
 export class LoginComponent implements OnChanges {
 	@Input() showDialog: boolean = false;
 	visible: boolean;
+	remember: boolean = true;
 	@Output() responseEvent = new EventEmitter<void>();
 	private overlayRef: OverlayRef;
 	readonly isBrowser: boolean;
@@ -63,6 +67,8 @@ export class LoginComponent implements OnChanges {
 		private overlayServe: OverlayService,
 		private rd2: Renderer2,
 		private fb: FormBuilder,
+		private userServe: UserService,
+		private windowServe: WindowService,
 		@Inject(PLATFORM_ID) private platformId: object,
 	) {
 		this.isBrowser = isPlatformBrowser(this.platformId);
@@ -70,11 +76,11 @@ export class LoginComponent implements OnChanges {
 
 	getFormValues(): FormGroup {
 		return this.fb.group({
-			phone: ['', [
+			phone: ['15829269880', [
 				Validators.required,
 				Validators.pattern(/^1\d{10}$/),
 			]],
-			password: ['', [
+			password: ['angular10', [
 				Validators.required,
 				Validators.minLength(6),
 			]],
@@ -130,7 +136,16 @@ export class LoginComponent implements OnChanges {
 	}
 
 	formSubmit(): void {
-		console.log('submit');
+		this.userServe.login(this.formValues.value).subscribe((res: LoginRes) => {
+			this.responseEvent.emit();
+			this.windowServe.setStorage(storageKeys.auth, res.token);
+			if (this.remember) {
+				this.windowServe.setStorage(storageKeys.remember, `${this.remember}`);
+			}
+			alert('登录成功');
+		}, _error => {
+			alert(_error.error.message || '登录失败');
+		});
 	}
 
 	get formControls(): CostumeControls {
