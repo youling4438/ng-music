@@ -4,6 +4,10 @@ import {Category} from "./services/apis/types";
 import {CategoryService} from "./services/business/category.service";
 import {Router} from "@angular/router";
 import {combineLatest,} from "rxjs";
+import {WindowService} from "./services/tools/window.service";
+import {storageKeys} from "./share/config";
+import {UserService} from "./services/apis/user.service";
+import {ContextService} from "./services/business/context.service";
 
 @Component({
 	selector: 'app-root',
@@ -24,10 +28,22 @@ export class AppComponent implements OnInit {
 		private cdr: ChangeDetectorRef,
 		private categoryServe: CategoryService,
 		private router: Router,
+		private winServe: WindowService,
+		private userServe: UserService,
+		private contextServe: ContextService,
 	) {
 	}
 
 	ngOnInit() {
+		if (this.winServe.getStorage(storageKeys.remember)) {
+			this.userServe.userInfo().subscribe(({user, token,}) => {
+				this.contextServe.setUser(user);
+				this.winServe.setStorage(storageKeys.token, token);
+			}, error => {
+				console.error(error);
+				this.userLogout();
+			});
+		}
 		this.init();
 	}
 
@@ -45,7 +61,17 @@ export class AppComponent implements OnInit {
 		this.getCategories();
 	}
 
+	logout(): void {
+		this.userServe.logout().subscribe(() => {
+			this.userLogout();
+		});
+	}
 
+	private userLogout(): void {
+		this.winServe.removeStorage(storageKeys.remember);
+		this.winServe.removeStorage(storageKeys.token);
+		this.contextServe.setUser(null);
+	}
 
 	private setCurrentCategory(): void {
 		this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);

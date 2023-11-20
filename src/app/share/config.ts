@@ -4,5 +4,8 @@ export const storageKeys = {
 	metas: 'metas',
 	token: 'token',
 	remember: 'remember',
-	needToken: 'needToken'
+}
+
+export const HeaderKeys = {
+	needToken: 'needToken',
 }

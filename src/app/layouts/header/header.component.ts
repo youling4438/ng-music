@@ -4,13 +4,14 @@ import {
 	ChangeDetectorRef,
 	Component,
 	ElementRef, EventEmitter,
-	Inject,
+	Inject, OnInit,
 	Output,
 } from '@angular/core';
 import {User} from "../../services/apis/types";
 import {DOCUMENT} from "@angular/common";
 import {debounceTime, distinctUntilChanged, fromEvent} from "rxjs";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {ContextService} from "../../services/business/context.service";
 
 @Component({
 	selector: 'app-header',
@@ -35,15 +36,25 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 		])
 	]
 })
-export class HeaderComponent implements AfterViewInit {
-	user: User = {} as User;
+export class HeaderComponent implements OnInit, AfterViewInit {
+	user: User;
 	fix: boolean = false;
 	@Output() loginClickHandle = new EventEmitter<void>();
+	@Output() logoutClickHandle = new EventEmitter<void>();
+
 	constructor(
 		private el: ElementRef,
 		@Inject(DOCUMENT) private doc: Document,
 		private cdr: ChangeDetectorRef,
+		private ContextServe: ContextService,
 	) {
+	}
+
+	ngOnInit(): void {
+		this.ContextServe.getUser().subscribe(user => {
+			this.user = user;
+			this.cdr.markForCheck();
+		});
 	}
 
 	ngAfterViewInit(): void {

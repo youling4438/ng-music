@@ -10,7 +10,7 @@ import {
 import {Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {WindowService} from "../tools/window.service";
-import {storageKeys} from "../../share/config";
+import {HeaderKeys, storageKeys} from "../../share/config";
 
 interface CustomHttpConfig {
 	headers?: HttpHeaders;
@@ -25,8 +25,9 @@ export class InterceptorService implements HttpInterceptor {
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		const token = this.windowServe.getStorage(storageKeys.token);
 		let httpConfig: CustomHttpConfig = {};
-		if (token) {
-			httpConfig = {headers: req.headers.set(storageKeys.token, token)};
+		const needToken = req.headers.get(HeaderKeys.needToken);
+		if (needToken) {
+			httpConfig = {headers: req.headers.set(storageKeys.token, token || '')};
 		}
 		const copyReq = req.clone(httpConfig);
 		return next.handle(copyReq).pipe(catchError(error => this.handleError(error)));

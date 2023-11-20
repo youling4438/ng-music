@@ -8,10 +8,10 @@
 			<h1>Angular</h1>
 		</div>
 		<div class="user">
-			<a *ngIf="!user.name;else context" (click)="loginClickHandle.emit()">请登录</a>
+			<a *ngIf="!user;else context" (click)="loginClickHandle.emit()">请登录</a>
 			<ng-template #context>
-				张三
-				<a>退出</a>
+				{{user.name}}
+				<a (click)="logoutClickHandle.emit()">退出</a>
 			</ng-template>
 		</div>
 	</div>

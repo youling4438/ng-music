@@ -14,6 +14,7 @@ import {animate, style, transition, trigger, AnimationEvent} from "@angular/anim
 import {LoginRes, UserService} from "../../services/apis/user.service";
 import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
+import {ContextService} from "../../services/business/context.service";
 
 interface CostumeControlItem {
 	control: AbstractControl,
@@ -69,6 +70,7 @@ export class LoginComponent implements OnChanges {
 		private fb: FormBuilder,
 		private userServe: UserService,
 		private windowServe: WindowService,
+		private contextServe: ContextService,
 		@Inject(PLATFORM_ID) private platformId: object,
 	) {
 		this.isBrowser = isPlatformBrowser(this.platformId);
@@ -138,6 +140,7 @@ export class LoginComponent implements OnChanges {
 	formSubmit(): void {
 		this.userServe.login(this.formValues.value).subscribe((res: LoginRes) => {
 			this.responseEvent.emit();
+			this.contextServe.setUser(res.user);
 			this.windowServe.setStorage(storageKeys.token, res.token);
 			if (this.remember) {
 				this.windowServe.setStorage(storageKeys.remember, `${this.remember}`);
