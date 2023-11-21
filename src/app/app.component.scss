@@ -1,34 +1,42 @@
 #music {
 	.breadcrumb-wrap {
 		padding: 18px 0 30px;
+
 		.sub-category {
 			position: relative;
 			color: #72727b;
+
 			&:hover {
 				.handler {
 					border-bottom-color: transparent;
+
 					.current {
 						color: #f86442;
 					}
+
 					.arrow {
 						margin-top: 6px;
 						transform: rotate(-45deg);
 					}
 				}
+
 				.category-box {
 					display: block;
 				}
 			}
+
 			.handler {
 				display: flex;
 				padding: 4px 5px;
 				border-radius: 4px;
 				background-color: #fff;
 				border: 1px solid #e8e8e8;
+
 				.current {
 					display: block;
 					margin-right: 4px;
 				}
+
 				.arrow {
 					display: block;
 					width: 6px;
@@ -53,14 +61,17 @@
 				background-color: #fff;
 				border: 1px solid #e8e8e8;
 				border-radius: 0 4px 4px 4px;
+
 				ul li {
 					display: inline-block;
 					padding: 5px;
 					cursor: pointer;
+
 					&:hover, &.checked {
 						color: #f86442;
 					}
 				}
+
 				&:before {
 					position: absolute;
 					left: 0;
@@ -75,11 +86,33 @@
 		}
 	}
 }
-.test-drag{
+
+.test-drag {
 	position: absolute;
 	top: 30%;
 	left: 40%;
 	width: 350px;
-	height: 350px;
-	background-color: #ff997360;
+	padding: 30px;
+	background-color: rgba(24, 21, 20, .38);
+
+	.block {
+		height: 40px;
+		line-height: 40px;
+		background-color: #ff9973;
+		text-align: center;
+
+		span {
+			border: 1px solid rebeccapurple;
+		}
+
+		&.block2 {
+			background-color: #73faff;
+			margin: 30px 0;
+
+		}
+
+		&.block3 {
+			background-color: #d773ff;
+		}
+	}
 }

@@ -1,5 +1,15 @@
-import {AfterViewInit, Directive, ElementRef, HostListener, Inject, PLATFORM_ID, Renderer2} from '@angular/core';
+import {
+	AfterViewInit,
+	ContentChildren,
+	Directive,
+	ElementRef,
+	HostListener,
+	Inject,
+	PLATFORM_ID, QueryList,
+	Renderer2,
+} from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from "@angular/common";
+import {DragHandleDirective} from "./drag-handle.directive";
 
 interface StartPosition {
 	clientX: number,
@@ -18,6 +28,7 @@ export class DragDirective implements AfterViewInit {
 	private movable: boolean;
 	private mouseMoveHandle: () => void;
 	private mouseUpHandle: () => void;
+	@ContentChildren(DragHandleDirective, {descendants: true}) private handles: QueryList<DragHandleDirective>;
 
 	constructor(
 		private el: ElementRef,
@@ -33,15 +44,18 @@ export class DragDirective implements AfterViewInit {
 		if (this.isBrowser) {
 			event.preventDefault();
 			event.stopPropagation();
-			const {clientX, clientY} = event;
-			const {left, top,} = this.hostElement.getBoundingClientRect();
-			this.startPosition = {
-				clientX,
-				clientY,
-				left,
-				top,
-			};
-			this.toggleMove(true);
+			const canHandleMove = !this.handles.length || this.handles.some(handle => handle.el.nativeElement.contains(event.target));
+			if (canHandleMove) {
+				const {clientX, clientY} = event;
+				const {left, top,} = this.hostElement.getBoundingClientRect();
+				this.startPosition = {
+					clientX,
+					clientY,
+					left,
+					top,
+				};
+				this.toggleMove(true);
+			}
 		}
 	}
 
@@ -73,18 +87,28 @@ export class DragDirective implements AfterViewInit {
 		}
 	}
 
-	private calculate(diffX: number, diffY: number): {left: number, top: number,} {
+	private calculate(diffX: number, diffY: number): { left: number, top: number, } {
 		return {
 			left: this.startPosition.left + diffX,
-			top	: this.startPosition.top + diffY,
+			top: this.startPosition.top + diffY,
 		};
 	}
+
 	private mouseUp(): void {
 		this.toggleMove(false);
 	}
 
 	ngAfterViewInit(): void {
 		this.hostElement = this.el.nativeElement;
+		this.setHandleMouseStyle();
+	}
+
+	private setHandleMouseStyle(): void {
+		if (this.handles.length) {
+			this.handles.forEach(handle => this.rd2.setStyle(handle.el.nativeElement, 'cursor', 'move'));
+		} else {
+			this.rd2.setStyle(this.hostElement, 'cursor', 'move');
+		}
 	}
 
 }
