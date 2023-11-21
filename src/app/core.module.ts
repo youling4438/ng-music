@@ -38,6 +38,7 @@ import {InterceptorService} from "./services/apis/interceptor.service";
 		BrowserModule,
 		AppRoutingModule,
 		LoginComponent,
+		DirectivesModule,
 	],
 	providers: [
 		{
