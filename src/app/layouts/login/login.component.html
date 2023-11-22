@@ -1,11 +1,11 @@
 <div
 	class="app-modal-wrap"
-	@dialogAni
+	@dialogAni #modalWrap
 	(@dialogAni.done)="animationDone($event)"
-	#modalWrap
+	appDrag [limitInWindow]="true"
 	*ngIf="visible">
 	<div class="app-modal">
-		<div class="head">
+		<div class="head" appDragHandle>
 			<p>Angular 10</p>
 		</div>
 		<div class="form-wrap">

@@ -4,12 +4,13 @@ import {
 	Directive,
 	ElementRef,
 	HostListener,
-	Inject,
+	Inject, Input,
 	PLATFORM_ID, QueryList,
 	Renderer2,
 } from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {DragHandleDirective} from "./drag-handle.directive";
+import {clamp} from "lodash";
 
 interface StartPosition {
 	clientX: number,
@@ -22,6 +23,7 @@ interface StartPosition {
 	selector: '[appDrag]'
 })
 export class DragDirective implements AfterViewInit {
+	@Input() limitInWindow: boolean = false;
 	startPosition: StartPosition;
 	readonly isBrowser: boolean;
 	private hostElement: HTMLElement;
@@ -42,10 +44,10 @@ export class DragDirective implements AfterViewInit {
 	@HostListener('mousedown', ['$event'])
 	dragStart(event: MouseEvent): void {
 		if (this.isBrowser) {
-			event.preventDefault();
-			event.stopPropagation();
-			const canHandleMove = !this.handles.length || this.handles.some(handle => handle.el.nativeElement.contains(event.target));
+			const canHandleMove = event.button === 0 && (!this.handles.length || this.handles.some(handle => handle.el.nativeElement.contains(event.target)));
 			if (canHandleMove) {
+				event.preventDefault();
+				event.stopPropagation();
 				const {clientX, clientY} = event;
 				const {left, top,} = this.hostElement.getBoundingClientRect();
 				this.startPosition = {
@@ -88,9 +90,18 @@ export class DragDirective implements AfterViewInit {
 	}
 
 	private calculate(diffX: number, diffY: number): { left: number, top: number, } {
+		let newLeft: number = this.startPosition.left + diffX;
+		let newTop: number = this.startPosition.top + diffY;
+		if (this.limitInWindow) {
+			const {width, height} = this.hostElement.getBoundingClientRect();
+			const maxLeft = this.doc.documentElement.clientWidth - width;
+			const maxTop = this.doc.documentElement.clientHeight - height;
+			newLeft = clamp(newLeft, 0, maxLeft);
+			newTop = clamp(newTop, 0, maxTop);
+		}
 		return {
-			left: this.startPosition.left + diffX,
-			top: this.startPosition.top + diffY,
+			left: newLeft,
+			top: newTop,
 		};
 	}
 
