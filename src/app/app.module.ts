@@ -6,9 +6,9 @@ import {CoreModule} from "./core.module";
 	declarations: [
 		AppComponent,
 	],
-    imports: [
-        CoreModule,
-    ],
+	imports: [
+		CoreModule,
+	],
 	providers: [],
 	bootstrap: [AppComponent]
 })

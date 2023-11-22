@@ -12,6 +12,7 @@ import {DirectivesModule} from "./share/directives/directives.module";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CheckboxModule} from "./share/components/checkbox/checkbox.module";
 import {InterceptorService} from "./services/apis/interceptor.service";
+import {MessageModule} from "./share/components/message/message.module";
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {InterceptorService} from "./services/apis/interceptor.service";
 		DirectivesModule,
 		ReactiveFormsModule,
 		FormsModule,
+		MessageModule,
 	],
 	exports: [
 		HeaderComponent,
@@ -38,7 +40,7 @@ import {InterceptorService} from "./services/apis/interceptor.service";
 		BrowserModule,
 		AppRoutingModule,
 		LoginComponent,
-		DirectivesModule,
+		MessageModule,
 	],
 	providers: [
 		{
