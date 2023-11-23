@@ -40,7 +40,6 @@ import {MessageModule} from "./share/components/message/message.module";
 		BrowserModule,
 		AppRoutingModule,
 		LoginComponent,
-		MessageModule,
 	],
 	providers: [
 		{

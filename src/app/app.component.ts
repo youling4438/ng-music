@@ -8,6 +8,7 @@ import {WindowService} from "./services/tools/window.service";
 import {storageKeys} from "./share/config";
 import {UserService} from "./services/apis/user.service";
 import {ContextService} from "./services/business/context.service";
+import {MessageService} from "./share/components/message/message.service";
 
 @Component({
 	selector: 'app-root',
@@ -31,6 +32,7 @@ export class AppComponent implements OnInit {
 		private winServe: WindowService,
 		private userServe: UserService,
 		private contextServe: ContextService,
+		private messageServe: MessageService,
 	) {
 	}
 
@@ -87,5 +89,9 @@ export class AppComponent implements OnInit {
 
 	changeCategory(category: Category): void {
 		this.router.navigateByUrl('/albums/' + category.pinyin);
+	}
+
+	showMessage() : void {
+		this.messageServe.create();
 	}
 }
