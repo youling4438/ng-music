@@ -11,6 +11,8 @@ import {
 import {MessageModule} from "./message.module";
 import {MessageComponent} from "./message.component";
 import {DOCUMENT} from "@angular/common";
+import {uniqueId} from "lodash";
+import {Subject} from "rxjs";
 
 @Injectable({
 	providedIn: MessageModule,
@@ -34,6 +36,12 @@ export class MessageService {
 		if (!this.message) {
 			this.message = this.getMessage();
 		}
+		this.message.createMessage({
+			messageId: uniqueId('message_'),
+			content: uniqueId('Thomas_'),
+			onClose: new Subject<void>(),
+		});
+
 		return this.message;
 	}
 

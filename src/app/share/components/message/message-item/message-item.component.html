@@ -1,8 +1,8 @@
 <div class="app-message-wrap">
-	<div class="app-message clearfix">
+	<div [class]="className">
 		<div class="content">
-			<ng-container>content</ng-container>
+			<ng-container>{{message.content}}</ng-container>
 		</div>
-		<i appIcon="Close" class="close"></i>
+		<i appIcon="Close" class="close" *ngIf="message.options.showClose"></i>
 	</div>
 </div>

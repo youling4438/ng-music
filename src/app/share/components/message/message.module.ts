@@ -1,8 +1,7 @@
 import {NgModule} from '@angular/core';
 import {MessageComponent} from './message.component';
 import {DirectivesModule} from "../../directives/directives.module";
-import {NgForOf} from "@angular/common";
-import {PipesModule} from "../../pipes/pipes.module";
+import {NgForOf, NgIf} from "@angular/common";
 import {MessageItemComponent} from './message-item/message-item.component';
 
 
@@ -14,7 +13,7 @@ import {MessageItemComponent} from './message-item/message-item.component';
 	imports: [
 		DirectivesModule,
 		NgForOf,
-		PipesModule,
+		NgIf,
 	],
 })
 export class MessageModule {

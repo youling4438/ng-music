@@ -1,3 +1,6 @@
 <div class="app-message-container">
-	<app-message-item *ngFor=" let item of 3 | numberLoop"></app-message-item>
+	<app-message-item
+		*ngFor="let item of messageList; index as i"
+		[message]="item" [index]="i"
+	></app-message-item>
 </div>

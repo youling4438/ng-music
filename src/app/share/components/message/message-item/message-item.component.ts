@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {MessageItemData} from "../types";
 
 @Component({
 	selector: 'app-message-item',
@@ -8,5 +9,10 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 })
 
 export class MessageItemComponent {
+	@Input() message: MessageItemData;
+	@Input() index: number;
 
+	get className(): string {
+		return 'app-message clearfix ' + this.message.options.type;
+	}
 }
