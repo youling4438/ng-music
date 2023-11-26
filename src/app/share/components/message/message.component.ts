@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter} from '@angular/core';
 import {MessageItemData, MessageOptions} from "./types";
 
 @Component({
@@ -14,16 +14,29 @@ export class MessageComponent {
 		duration: 3000,
 		showClose: true,
 	};
+	destroyComponent = new EventEmitter<void>();
 
 	constructor(
 		private cdr: ChangeDetectorRef,
 	) {
 	}
 
-	createMessage(message: MessageItemData) {
+	createMessage(message: MessageItemData): MessageItemData {
 		message.options = {...this.defaultConfig, ...message.options};
 		this.messageList.push(message);
 		this.cdr.markForCheck();
+		return message;
 	}
 
+	removeMessage(id: string): void {
+		const targetIndex: number = this.messageList.findIndex(message => message.messageId === id);
+		if (targetIndex > -1) {
+			this.messageList[targetIndex].onClose.next();
+			this.messageList[targetIndex].onClose.complete();
+			this.messageList.splice(targetIndex, 1);
+		}
+		if (this.messageList.length === 0) {
+			this.destroyComponent.emit();
+		}
+	}
 }

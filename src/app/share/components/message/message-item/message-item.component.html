@@ -3,6 +3,6 @@
 		<div class="content">
 			<ng-container>{{message.content}}</ng-container>
 		</div>
-		<i appIcon="Close" class="close" *ngIf="message.options.showClose"></i>
+		<i appIcon="Close" class="close" *ngIf="message.options.showClose" (click)="close()"></i>
 	</div>
 </div>

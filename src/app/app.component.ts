@@ -91,7 +91,10 @@ export class AppComponent implements OnInit {
 		this.router.navigateByUrl('/albums/' + category.pinyin);
 	}
 
-	showMessage() : void {
-		this.messageServe.create();
+	showMessage(): void {
+		const messageData = this.messageServe.create('app component content');
+		messageData.onClose.subscribe(() => {
+			console.log('我被删除了 : ', messageData.messageId);
+		});
 	}
 }
