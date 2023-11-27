@@ -1,5 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, PLATFORM_ID} from '@angular/core';
 import {MessageItemData, MessageOptions} from "./types";
+import {isPlatformBrowser} from "@angular/common";
 
 @Component({
 	selector: 'app-message',
@@ -8,24 +9,33 @@ import {MessageItemData, MessageOptions} from "./types";
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessageComponent {
+	isBrowser: boolean;
 	messageList: MessageItemData[] = [];
 	readonly defaultConfig: MessageOptions = {
 		type: 'info',
 		duration: 3000,
 		showClose: true,
-		pauseOnHover: true,
+		pauseOnHover: false,
+		maxStack: 5,
 	};
 	destroyComponent = new EventEmitter<void>();
 
 	constructor(
 		private cdr: ChangeDetectorRef,
+		@Inject(PLATFORM_ID) private platformId: object,
 	) {
+		this.isBrowser = isPlatformBrowser(this.platformId);
 	}
 
 	createMessage(message: MessageItemData): MessageItemData {
-		message.options = {...this.defaultConfig, ...message.options};
-		this.messageList.push(message);
-		this.cdr.markForCheck();
+		if (this.isBrowser) {
+			message.options = {...this.defaultConfig, ...message.options};
+			if (message.options.maxStack > 0 && this.messageList.length >= message.options.maxStack) {
+				this.removeMessage(this.messageList[0].messageId);
+			}
+			this.messageList.push(message);
+			this.cdr.markForCheck();
+		}
 		return message;
 	}
 

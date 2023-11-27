@@ -4,13 +4,13 @@ import {
 	ComponentRef,
 	Inject,
 	Injectable,
-	Injector,
+	Injector, PLATFORM_ID,
 	Renderer2,
 	RendererFactory2, TemplateRef
 } from '@angular/core';
 import {MessageModule} from "./message.module";
 import {MessageComponent} from "./message.component";
-import {DOCUMENT} from "@angular/common";
+import {DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {uniqueId} from "lodash";
 import {Subject} from "rxjs";
 import {MessageItemData, MessageOptions} from "./types";
@@ -25,6 +25,7 @@ export class MessageService {
 
 	constructor(
 		@Inject(DOCUMENT) private doc: Document,
+		@Inject(PLATFORM_ID) private platformId: object,
 		private rd2Factory: RendererFactory2,
 		private cfr: ComponentFactoryResolver,
 		private injector: Injector,
@@ -33,17 +34,49 @@ export class MessageService {
 		this.rd2 = this.rd2Factory.createRenderer(null, null);
 	}
 
-	create(content: string | TemplateRef<void>, options?: MessageOptions): MessageItemData {
+
+	info(content: string | TemplateRef<void>, options?: MessageOptions): MessageItemData {
+		return this.create(content, {
+			...options,
+			type: 'info',
+		});
+	}
+
+	success(content: string | TemplateRef<void>, options?: MessageOptions): MessageItemData {
+		return this.create(content, {
+			...options,
+			type: 'success',
+		});
+	}
+
+	warning(content: string | TemplateRef<void>, options?: MessageOptions): MessageItemData {
+		return this.create(content, {
+			...options,
+			type: 'warning',
+		});
+	}
+
+	error(content: string | TemplateRef<void>, options?: MessageOptions): MessageItemData {
+		return this.create(content, {
+			...options,
+			type: 'error',
+		});
+	}
+
+	private create(content: string | TemplateRef<void>, options?: MessageOptions): MessageItemData {
 		if (!this.message) {
 			this.message = this.getMessage();
 		}
 		const messageConfig: MessageItemData = {
 			messageId: uniqueId('message_'),
-			content,
+			content: content + uniqueId('_'),
 			onClose: new Subject<void>(),
 			options,
 		};
-		return this.message.createMessage(messageConfig);
+		if (isPlatformBrowser(this.platformId)) {
+			this.message.createMessage(messageConfig);
+		}
+		return messageConfig;
 	}
 
 	private getMessage(): MessageComponent {

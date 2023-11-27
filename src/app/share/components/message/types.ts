@@ -8,6 +8,7 @@ export interface MessageOptions {
 	showClose?: boolean;
 	duration?: number;
 	pauseOnHover?: boolean;
+	maxStack?: number;
 }
 
 export interface MessageItemData {
