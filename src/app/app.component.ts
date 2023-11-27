@@ -97,6 +97,7 @@ export class AppComponent implements OnInit {
 			duration: 2500,
 			pauseOnHover: true,
 			maxStack: 5,
+			type: 'error',
 		});
 		messageData.onClose.subscribe(() => {
 			console.log('我被删除了 : ', messageData.messageId);
