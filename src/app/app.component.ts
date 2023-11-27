@@ -92,7 +92,9 @@ export class AppComponent implements OnInit {
 	}
 
 	showMessage(): void {
-		const messageData = this.messageServe.create('app component content');
+		const messageData = this.messageServe.create('app component content', {
+			pauseOnHover: true,
+		});
 		messageData.onClose.subscribe(() => {
 			console.log('我被删除了 : ', messageData.messageId);
 		});

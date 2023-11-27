@@ -1,4 +1,7 @@
-<div class="app-message-wrap">
+<div
+	(mouseenter)="enter()"
+	(mouseleave)="leave()"
+	class="app-message-wrap">
 	<div [class]="className">
 		<div class="content">
 			<ng-container>{{message.content}}</ng-container>

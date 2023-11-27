@@ -7,6 +7,7 @@ export interface MessageOptions {
 	type?: MessageType;
 	showClose?: boolean;
 	duration?: number;
+	pauseOnHover?: boolean;
 }
 
 export interface MessageItemData {

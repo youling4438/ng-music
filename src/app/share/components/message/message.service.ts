@@ -41,7 +41,7 @@ export class MessageService {
 			messageId: uniqueId('message_'),
 			content,
 			onClose: new Subject<void>(),
-			...options,
+			options,
 		};
 		return this.message.createMessage(messageConfig);
 	}

@@ -13,6 +13,7 @@ export class MessageComponent {
 		type: 'info',
 		duration: 3000,
 		showClose: true,
+		pauseOnHover: true,
 	};
 	destroyComponent = new EventEmitter<void>();
 
@@ -34,6 +35,7 @@ export class MessageComponent {
 			this.messageList[targetIndex].onClose.next();
 			this.messageList[targetIndex].onClose.complete();
 			this.messageList.splice(targetIndex, 1);
+			this.cdr.markForCheck();
 		}
 		if (this.messageList.length === 0) {
 			this.destroyComponent.emit();
