@@ -17,6 +17,8 @@ export class MessageComponent {
 		showClose: true,
 		pauseOnHover: false,
 		maxStack: 5,
+		state: 'enter',
+		disableAnimate: false,
 	};
 	destroyComponent = new EventEmitter<void>();
 

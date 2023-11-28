@@ -1,6 +1,9 @@
 <div
 	(mouseenter)="enter()"
 	(mouseleave)="leave()"
+	[@.disabled]="message.options.disableAnimate"
+	[@moveUpDown]="message.options.state"
+	(@moveUpDown.done)="animationDone($event)"
 	class="app-message-wrap">
 	<div [class]="className">
 		<div class="content">

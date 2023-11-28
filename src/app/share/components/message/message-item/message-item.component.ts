@@ -1,13 +1,34 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit,} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit,} from '@angular/core';
 import {MessageItemData} from "../types";
 import {MessageComponent} from "../message.component";
 import {first, Subscription, timer} from "rxjs";
+import {animate, AnimationEvent, style, transition, trigger} from "@angular/animations";
 
 @Component({
 	selector: 'app-message-item',
 	templateUrl: './message-item.component.html',
 	styleUrls: ['./message-item.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations: [
+		trigger('moveUpDown', [
+			transition('* => enter', [
+				style({
+					opacity: 0,
+					transform: 'translateY(-100%)',
+				}),
+				animate('.3s', style({
+					opacity: 1,
+					transform: 'translateY(0)',
+				})),
+			]),
+			transition('* => leave', [
+				animate('.3s', style({
+					opacity: 0,
+					transform: 'translateY(-100%)',
+				})),
+			])
+		])
+	],
 })
 
 export class MessageItemComponent implements OnInit, OnDestroy {
@@ -16,7 +37,10 @@ export class MessageItemComponent implements OnInit, OnDestroy {
 	private autoClose: boolean = false;
 	private timerSub: Subscription;
 
-	constructor(private parent: MessageComponent) {
+	constructor(
+		private parent: MessageComponent,
+		private cdr: ChangeDetectorRef,
+	) {
 	}
 
 	ngOnInit(): void {
@@ -42,7 +66,8 @@ export class MessageItemComponent implements OnInit, OnDestroy {
 	}
 
 	close(): void {
-		this.parent.removeMessage(this.message.messageId);
+		this.message.options.state = 'leave';
+		this.cdr.markForCheck();
 	}
 
 	enter(): void {
@@ -54,6 +79,12 @@ export class MessageItemComponent implements OnInit, OnDestroy {
 	leave(): void {
 		if (this.autoClose && this.message.options.pauseOnHover) {
 			this.createTimer(this.message.options.duration);
+		}
+	}
+
+	animationDone(event: AnimationEvent): void {
+		if(event.toState === 'leave'){
+			this.parent.removeMessage(this.message.messageId);
 		}
 	}
 

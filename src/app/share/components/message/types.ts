@@ -9,6 +9,8 @@ export interface MessageOptions {
 	duration?: number;
 	pauseOnHover?: boolean;
 	maxStack?: number;
+	state?: 'enter' | 'leave';
+	disableAnimate?: boolean;
 }
 
 export interface MessageItemData {
