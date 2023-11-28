@@ -15,6 +15,7 @@ import {LoginRes, UserService} from "../../services/apis/user.service";
 import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
 import {ContextService} from "../../services/business/context.service";
+import {MessageService} from "../../share/components/message/message.service";
 
 interface CostumeControlItem {
 	control: AbstractControl,
@@ -72,6 +73,7 @@ export class LoginComponent implements OnChanges {
 		private windowServe: WindowService,
 		private contextServe: ContextService,
 		@Inject(PLATFORM_ID) private platformId: object,
+		private messageServe: MessageService,
 	) {
 		this.isBrowser = isPlatformBrowser(this.platformId);
 	}
@@ -145,7 +147,7 @@ export class LoginComponent implements OnChanges {
 			if (this.remember) {
 				this.windowServe.setStorage(storageKeys.remember, `${this.remember}`);
 			}
-			alert('登录成功');
+			this.messageServe.success('登录成功');
 		});
 	}
 

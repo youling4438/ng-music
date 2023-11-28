@@ -15,7 +15,7 @@ export class MessageComponent {
 		type: 'info',
 		duration: 3000,
 		showClose: true,
-		pauseOnHover: false,
+		pauseOnHover: true,
 		maxStack: 5,
 		state: 'enter',
 		disableAnimate: false,

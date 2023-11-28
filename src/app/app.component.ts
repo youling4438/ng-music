@@ -67,6 +67,7 @@ export class AppComponent implements OnInit {
 	logout(): void {
 		this.userServe.logout().subscribe(() => {
 			this.userLogout();
+			this.messageServe.success('退出登录成功');
 		});
 	}
 

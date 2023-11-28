@@ -69,7 +69,7 @@ export class MessageService {
 		}
 		const messageConfig: MessageItemData = {
 			messageId: uniqueId('message_'),
-			content: content + uniqueId('_'),
+			content,
 			onClose: new Subject<void>(),
 			options,
 		};
