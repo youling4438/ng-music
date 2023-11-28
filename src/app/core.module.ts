@@ -13,12 +13,15 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {CheckboxModule} from "./share/components/checkbox/checkbox.module";
 import {InterceptorService} from "./services/apis/interceptor.service";
 import {MessageModule} from "./share/components/message/message.module";
+import {PlayerComponent} from './layouts/player/player.component';
+import {PipesModule} from "./share/pipes/pipes.module";
 
 
 @NgModule({
 	declarations: [
 		HeaderComponent,
 		LoginComponent,
+		PlayerComponent,
 	],
 	imports: [
 		BrowserModule,
@@ -33,6 +36,7 @@ import {MessageModule} from "./share/components/message/message.module";
 		ReactiveFormsModule,
 		FormsModule,
 		MessageModule,
+		PipesModule,
 	],
 	exports: [
 		HeaderComponent,
@@ -40,6 +44,7 @@ import {MessageModule} from "./share/components/message/message.module";
 		BrowserModule,
 		AppRoutingModule,
 		LoginComponent,
+		PlayerComponent,
 	],
 	providers: [
 		{

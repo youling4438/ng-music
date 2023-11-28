@@ -1,0 +1,30 @@
+<div class="app-player-box" appDrag>
+	<div class="app-player" #player>
+		<div class="thumbnail">
+			<img appDragHandle src="../../../assets/images/default-pic.jpg"/>
+		</div>
+		<div class="middle">
+			<div class="operate">
+				<i class="icon icon-prev" appIcon="previous"></i>
+				<i class="icon icon-toggle" appIcon="play"></i>
+				<i class="icon icon-next" appIcon="next"></i>
+			</div>
+		</div>
+		<div class="list">
+			<i class="icon" appIcon="mulu"></i>
+		</div>
+		<div class="close">
+			<i class="icon" appIcon="Close"></i>
+		</div>
+	</div>
+	<div class="app-player-panel down">
+		<div class="panel-wrap">
+			<ul>
+				<li *ngFor="let n of 99 | numberLoop; index as i">
+					<p class="title ellipsis">{{ 'title' + i }}</p>
+					<i class="icon" appIcon="delete"></i>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

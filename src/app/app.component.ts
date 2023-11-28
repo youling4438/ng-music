@@ -9,7 +9,7 @@ import {storageKeys} from "./share/config";
 import {UserService} from "./services/apis/user.service";
 import {ContextService} from "./services/business/context.service";
 import {MessageService} from "./share/components/message/message.service";
-import {MessageType} from "./share/components/message/types";
+// import {MessageType} from "./share/components/message/types";
 
 @Component({
 	selector: 'app-root',
@@ -93,15 +93,15 @@ export class AppComponent implements OnInit {
 		this.router.navigateByUrl('/albums/' + category.pinyin);
 	}
 
-	showMessage(type: MessageType = 'info'): void {
-		const messageData = this.messageServe[type]('app component content', {
-			duration: 2500,
-			pauseOnHover: true,
-			maxStack: 5,
-			type: 'error',
-		});
-		messageData.onClose.subscribe(() => {
-			console.log('我被删除了 : ', messageData.messageId);
-		});
-	}
+	// showMessage(type: MessageType = 'info'): void {
+	// 	const messageData = this.messageServe[type]('app component content', {
+	// 		duration: 2500,
+	// 		pauseOnHover: true,
+	// 		maxStack: 5,
+	// 		type: 'error',
+	// 	});
+	// 	messageData.onClose.subscribe(() => {
+	// 		console.log('我被删除了 : ', messageData.messageId);
+	// 	});
+	// }
 }
