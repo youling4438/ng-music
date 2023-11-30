@@ -4,6 +4,7 @@ import {first, forkJoin} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
+import {PlayerService} from "../../services/business/player.service";
 
 interface MoreStatus {
 	full: boolean;
@@ -43,6 +44,7 @@ export class AlbumComponent implements OnInit {
 		private route: ActivatedRoute,
 		private cdr: ChangeDetectorRef,
 		private categoryServe: CategoryService,
+		private playerServe: PlayerService,
 	) {
 	}
 
@@ -143,4 +145,9 @@ export class AlbumComponent implements OnInit {
 		return track.trackId;
 	}
 
+	playAll(): void {
+		this.playerServe.setTrackList(this.tracks);
+		this.playerServe.setAlbum(this.albumInfo);
+		this.playerServe.setCurrentIndex(0);
+	}
 }

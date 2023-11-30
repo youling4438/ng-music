@@ -27,7 +27,7 @@
 						<app-tag class="meta" *ngFor="let meta of albumInfo.metas">{{meta.metaDisplayName}}</app-tag>
 					</div>
 					<div class="actions">
-						<button appBtn [btnCircle]="true" class="btn">
+						<button appBtn [btnCircle]="true" class="btn" (click)="playAll()">
 							<i appIcon="play1" class="icon"></i>
 							播放全部
 						</button>

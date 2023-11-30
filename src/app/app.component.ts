@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumService} from "./services/apis/album.service";
-import {Category} from "./services/apis/types";
+import {AlbumInfo, Category, Track} from "./services/apis/types";
 import {CategoryService} from "./services/business/category.service";
 import {Router} from "@angular/router";
 import {combineLatest,} from "rxjs";
@@ -9,6 +9,8 @@ import {storageKeys} from "./share/config";
 import {UserService} from "./services/apis/user.service";
 import {ContextService} from "./services/business/context.service";
 import {MessageService} from "./share/components/message/message.service";
+import {PlayerService} from "./services/business/player.service";
+
 // import {MessageType} from "./share/components/message/types";
 
 @Component({
@@ -24,6 +26,14 @@ export class AppComponent implements OnInit {
 	categoryPinyin: string = '';
 	subcategory: string[] = [];
 	showDialog: boolean = false;
+	showPlayer: boolean = false;
+	playerInfo: {
+		trackList: Track[];
+		currentTrack: Track;
+		album: AlbumInfo;
+		currentIndex: number;
+		playing: boolean;
+	};
 
 	constructor(
 		private albumServe: AlbumService,
@@ -34,6 +44,7 @@ export class AppComponent implements OnInit {
 		private userServe: UserService,
 		private contextServe: ContextService,
 		private messageServe: MessageService,
+		private playerServe: PlayerService,
 	) {
 	}
 
@@ -48,6 +59,7 @@ export class AppComponent implements OnInit {
 			});
 		}
 		this.init();
+		this.listenPlayer();
 	}
 
 	private init(): void {
@@ -104,4 +116,25 @@ export class AppComponent implements OnInit {
 	// 		console.log('我被删除了 : ', messageData.messageId);
 	// 	});
 	// }
+
+	private listenPlayer(): void {
+		combineLatest(
+			this.playerServe.getTrackList(),
+			this.playerServe.getAlbum(),
+			this.playerServe.getCurrentTrack(),
+			this.playerServe.getCurrentIndex(),
+			this.playerServe.getPlaying(),
+		).subscribe(([trackList, album, currentTrack, currentIndex, playing]) => {
+			this.playerInfo = {
+				trackList,
+				album,
+				currentTrack,
+				currentIndex,
+				playing,
+			};
+			if (currentTrack) {
+				this.showPlayer = true;
+			}
+		});
+	}
 }

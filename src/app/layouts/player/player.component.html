@@ -1,7 +1,7 @@
 <div class="app-player-box" appDrag>
 	<div class="app-player" #player>
 		<div class="thumbnail">
-			<img appDragHandle src="../../../assets/images/default-pic.jpg"/>
+			<img appDragHandle [src]="album.cover || '../../../assets/images/default-pic.jpg'"/>
 		</div>
 		<div class="middle">
 			<div class="operate">
@@ -20,8 +20,8 @@
 	<div class="app-player-panel down">
 		<div class="panel-wrap">
 			<ul>
-				<li *ngFor="let n of 99 | numberLoop; index as i">
-					<p class="title ellipsis">{{ 'title' + i }}</p>
+				<li *ngFor="let track of trackList;">
+					<p class="title ellipsis" [title]="track.title">{{ track.title }}</p>
 					<i class="icon" appIcon="delete"></i>
 				</li>
 			</ul>

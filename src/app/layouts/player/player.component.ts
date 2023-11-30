@@ -1,4 +1,5 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {AlbumInfo, Track} from "../../services/apis/types";
 
 @Component({
 	selector: 'app-player',
@@ -7,5 +8,9 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlayerComponent {
-
+	@Input() trackList: Track[];
+	@Input() currentIndex: number;
+	@Input() currentTrack: Track;
+	@Input() album: AlbumInfo;
+	@Input() playing: boolean;
 }
