@@ -43,8 +43,8 @@ export class PlayerService {
 	setCurrentTrack(track: Track): void {
 		if (track) {
 			const target: Track = this.trackList.find(item => item.trackId === track.trackId);
-			if(target){
-				if(target.src){
+			if (target) {
+				if (target.src) {
 					this.currentTrack$.next(track);
 				} else {
 					this.getAudio(track);
@@ -52,6 +52,8 @@ export class PlayerService {
 			} else {
 				this.getAudio(track);
 			}
+		} else {
+			this.currentTrack$.next(null);
 		}
 	}
 
@@ -80,7 +82,7 @@ export class PlayerService {
 
 	private getAudio(track: Track): void {
 		this.albumServe.trackAudio(track.trackId).subscribe((audio: TrackAudio) => {
-			if(!audio.src && audio.isPaid){
+			if (!audio.src && audio.isPaid) {
 				this.messageServe.warning('请先购买专辑');
 			} else {
 				track.src = audio.src;
@@ -88,5 +90,13 @@ export class PlayerService {
 				this.currentTrack$.next(track);
 			}
 		});
+	}
+
+	clear(): void {
+		this.setAlbum(null);
+		this.setTrackList([]);
+		this.setCurrentIndex(-1);
+		this.setCurrentTrack(null);
+		this.setPlaying(false);
 	}
 }

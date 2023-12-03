@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, ElementRef, Input, OnInit, ViewChild} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	EventEmitter,
+	Input,
+	OnInit,
+	Output,
+	ViewChild
+} from '@angular/core';
 import {AlbumInfo, Track} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
 
@@ -17,8 +26,8 @@ export class PlayerComponent implements OnInit {
 	private canPlay: boolean = false;
 	@ViewChild('audio', {static: true}) protected audioRef: ElementRef;
 	private audioEl: HTMLAudioElement;
-	hidePanel: boolean = true;
-
+	showPanel: boolean = false;
+	@Output() closePlayer = new EventEmitter<void>();
 	constructor(
 		private playerServe: PlayerService,
 	) {
@@ -42,8 +51,8 @@ export class PlayerComponent implements OnInit {
 		// this.playerServe.setPlaying(false);
 	}
 
-	togglePanel(hidePanel: boolean): void {
-		this.hidePanel = hidePanel;
+	togglePanel(showPanel: boolean): void {
+		this.showPanel = showPanel;
 	}
 
 	togglePlay(): void {
@@ -51,6 +60,9 @@ export class PlayerComponent implements OnInit {
 			if (this.canPlay) {
 				const playing = !this.playing;
 				this.playerServe.setPlaying(playing);
+				if (!this.audioEl) {
+					this.audioEl = this.audioRef.nativeElement;
+				}
 				if (playing) {
 					this.audioEl.play();
 				} else {
@@ -71,9 +83,9 @@ export class PlayerComponent implements OnInit {
 		this.audioEl.play();
 	}
 
-	private updateIndex(index: number): void {
+	private updateIndex(index: number, canplay = false): void {
 		this.playerServe.setCurrentIndex(index);
-		this.canPlay = false;
+		this.canPlay = canplay;
 	}
 
 	trackByTracks(_index: number, track: Track): number {
@@ -89,7 +101,7 @@ export class PlayerComponent implements OnInit {
 	}
 
 	private loop(): void {
-		if(this.canPlay) {
+		if (this.canPlay) {
 			this.audioEl.currentTime = 0;
 			this.play();
 		}
@@ -109,5 +121,37 @@ export class PlayerComponent implements OnInit {
 		} else {
 			this.updateIndex(index > this.trackList.length - 1 ? 0 : index);
 		}
+	}
+
+	deleteTrack(deleteIndex: number): void {
+		let newTrack = this.trackList.slice();
+		let newIndex = this.currentIndex;
+		let canPlay = true;
+		if (newTrack.length <= 1) {
+			newTrack = [];
+			newIndex = -1;
+		} else {
+			if (deleteIndex < this.currentIndex) {
+				newIndex--;
+			} else if (deleteIndex > this.currentIndex) {
+				// 	不处理当前播放的索引 直接刷新列表即可
+			} else {
+				if (this.playing) {
+					if (this.trackList[deleteIndex + 1]) {
+						// 	不处理当前播放的索引 后面的歌曲会顶上来
+					} else {
+						newIndex--;
+						canPlay = false;
+					}
+				} else {
+					newIndex = -1;
+					canPlay = false;
+				}
+			}
+			newTrack.splice(deleteIndex, 1);
+		}
+		this.canPlay = canPlay;
+		this.playerServe.setTrackList(newTrack);
+		this.updateIndex(newIndex, canPlay);
 	}
 }

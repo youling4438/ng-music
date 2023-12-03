@@ -1,7 +1,7 @@
 <div class="app-player-box" appDrag>
 	<div class="app-player" #player>
 		<div class="thumbnail">
-			<img appDragHandle [src]="album.cover || '../../../assets/images/default-pic.jpg'"/>
+			<img appDragHandle [src]="album?.cover || '../../../assets/images/default-pic.jpg'"/>
 		</div>
 		<div class="middle">
 			<div class="operate">
@@ -11,25 +11,25 @@
 			</div>
 		</div>
 		<div class="list">
-			<i class="icon" appIcon="mulu" (click)="togglePanel(!hidePanel)"></i>
+			<i class="icon" appIcon="mulu" (click)="togglePanel(!showPanel)"></i>
 		</div>
 		<div class="close">
-			<i class="icon" appIcon="Close"></i>
+			<i class="icon" appIcon="Close" (click)="closePlayer.emit()"></i>
 		</div>
 	</div>
-	<div class="app-player-panel down" [hidden]="hidePanel">
+	<div class="app-player-panel down" *ngIf="trackList.length && showPanel">
 		<div class="panel-wrap">
 			<ul>
 				<li
-					*ngFor="let track of trackList; index as i ; trackBy: trackByTracks"
-					[class.current]="track.trackId === currentTrack.trackId"
+					*ngFor="let track of trackList;index as i; trackBy: trackByTracks"
+					[class.current]="track.trackId === currentTrack?.trackId"
 				>
 					<p
 						class="title ellipsis"
 					   	[title]="track.title"
 						(click)="changeTrack(i)"
 						>{{ track.title }}</p>
-					<i class="icon" appIcon="delete"></i>
+					<i class="icon" appIcon="delete" (click)="deleteTrack(i)"></i>
 				</li>
 			</ul>
 		</div>

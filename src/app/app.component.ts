@@ -138,4 +138,9 @@ export class AppComponent implements OnInit {
 			}
 		});
 	}
+
+	closePlayer() : void {
+		this.playerServe.clear();
+		this.showPlayer = false;
+	}
 }
