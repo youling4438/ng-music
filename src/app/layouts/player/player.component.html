@@ -5,26 +5,30 @@
 		</div>
 		<div class="middle">
 			<div class="operate">
-				<i class="icon icon-prev" appIcon="previous"></i>
+				<i class="icon icon-prev" (click)="prev(currentIndex - 1)" appIcon="previous"></i>
 				<i class="icon icon-toggle" (click)="togglePlay()" [appIcon]="playing ? 'pause' : 'play'"></i>
-				<i class="icon icon-next" appIcon="next"></i>
+				<i class="icon icon-next" (click)="next(currentIndex + 1)" appIcon="next"></i>
 			</div>
 		</div>
 		<div class="list">
-			<i class="icon" appIcon="mulu"></i>
+			<i class="icon" appIcon="mulu" (click)="togglePanel(!hidePanel)"></i>
 		</div>
 		<div class="close">
 			<i class="icon" appIcon="Close"></i>
 		</div>
 	</div>
-	<div class="app-player-panel down">
+	<div class="app-player-panel down" [hidden]="hidePanel">
 		<div class="panel-wrap">
 			<ul>
 				<li
-					*ngFor="let track of trackList;trackBy: trackByTracks"
+					*ngFor="let track of trackList; index as i ; trackBy: trackByTracks"
 					[class.current]="track.trackId === currentTrack.trackId"
 				>
-					<p class="title ellipsis" [title]="track.title">{{ track.title }}</p>
+					<p
+						class="title ellipsis"
+					   	[title]="track.title"
+						(click)="changeTrack(i)"
+						>{{ track.title }}</p>
 					<i class="icon" appIcon="delete"></i>
 				</li>
 			</ul>

@@ -17,6 +17,7 @@ export class PlayerComponent implements OnInit {
 	private canPlay: boolean = false;
 	@ViewChild('audio', {static: true}) protected audioRef: ElementRef;
 	private audioEl: HTMLAudioElement;
+	hidePanel: boolean = true;
 
 	constructor(
 		private playerServe: PlayerService,
@@ -34,11 +35,15 @@ export class PlayerComponent implements OnInit {
 	}
 
 	ended(): void {
-		this.playerServe.setPlaying(false);
+		// this.playerServe.setPlaying(false);
 	}
 
 	error(): void {
-		this.playerServe.setPlaying(false);
+		// this.playerServe.setPlaying(false);
+	}
+
+	togglePanel(hidePanel: boolean): void {
+		this.hidePanel = hidePanel;
 	}
 
 	togglePlay(): void {
@@ -71,7 +76,38 @@ export class PlayerComponent implements OnInit {
 		this.canPlay = false;
 	}
 
-	trackByTracks(_index: number, track: Track): number{
+	trackByTracks(_index: number, track: Track): number {
 		return track.trackId;
+	}
+
+	changeTrack(index: number): void {
+		if (index !== this.currentIndex) {
+			this.updateIndex(index);
+		} else {
+			this.loop();
+		}
+	}
+
+	private loop(): void {
+		if(this.canPlay) {
+			this.audioEl.currentTime = 0;
+			this.play();
+		}
+	}
+
+	prev(index: number): void {
+		if (this.trackList.length === 1) {
+			this.loop();
+		} else {
+			this.updateIndex(index < 0 ? this.trackList.length - 1 : index);
+		}
+	}
+
+	next(index: number): void {
+		if (this.trackList.length === 1) {
+			this.loop();
+		} else {
+			this.updateIndex(index > this.trackList.length - 1 ? 0 : index);
+		}
 	}
 }
