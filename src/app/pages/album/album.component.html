@@ -89,8 +89,8 @@
 						<th><label app-checkbox [ngModel]="isCheckedAll()"
 								   (ngModelChange)="checkAllChange($event)"></label></th>
 						<th class="item-name">
-							<button appBtn [btnCircle]="true">播放选中歌曲</button>
-							<button class="btn-add" appBtn [btnCircle]="true">添加到播放列表</button>
+							<button appBtn [btnCircle]="true" [disabled]="!checkedList.length" (click)="play(true)">播放选中歌曲</button>
+							<button class="btn-add" appBtn [btnCircle]="true" [disabled]="!checkedList.length" (click)="play(false)">添加到播放列表</button>
 						</th>
 					</tr>
 					</tfoot>

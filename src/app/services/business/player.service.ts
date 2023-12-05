@@ -94,8 +94,8 @@ export class PlayerService {
 
 	playTrack(track: Track): void {
 		const targetIndex: number = this.trackList.findIndex(_track => _track.trackId === track.trackId);
-		if(targetIndex > -1){
-			if(targetIndex === this.currentIndex){
+		if (targetIndex > -1) {
+			if (targetIndex === this.currentIndex) {
 				this.setPlaying(true);
 			} else {
 				this.setCurrentIndex(targetIndex);
@@ -103,6 +103,31 @@ export class PlayerService {
 		} else {
 			this.setTrackList(this.trackList.concat(track));
 			this.setCurrentIndex(this.trackList.length - 1);
+		}
+	}
+
+	playTracks(trackList: Track[], index: number = 0): void {
+		this.addTracks(trackList);
+		const playIndex: number = this.trackList.findIndex(item => item.trackId === trackList[index].trackId);
+		this.setCurrentIndex(playIndex);
+	}
+
+	addTracks(trackList: Track[]): void {
+		if (this.trackList.length) {
+			const newTrack: Track[] = this.trackList.slice();
+			let needUpdateTrackList: boolean = false;
+			trackList.forEach(_track => {
+				const target = this.trackList.find(item => item.trackId === _track.trackId);
+				if (!target) {
+					newTrack.push(_track);
+					needUpdateTrackList = true;
+				}
+			});
+			if (needUpdateTrackList) {
+				this.setTrackList(newTrack.slice());
+			}
+		} else {
+			this.setTrackList(trackList.slice());
 		}
 	}
 

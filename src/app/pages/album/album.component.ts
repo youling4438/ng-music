@@ -5,6 +5,7 @@ import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
+import {MessageService} from "../../share/components/message/message.service";
 
 interface MoreStatus {
 	full: boolean;
@@ -48,6 +49,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 		private cdr: ChangeDetectorRef,
 		private categoryServe: CategoryService,
 		private playerServe: PlayerService,
+		private messageServe: MessageService,
 	) {
 	}
 
@@ -56,9 +58,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 		if (action === 'pause') {
 			this.playerServe.setPlaying(false);
 		} else {
-			if (!this.currentTrack) {
-				this.playerServe.setAlbum(this.albumInfo);
-			}
+			this.setAlbumInfo();
 			this.playerServe.playTrack(track);
 		}
 	}
@@ -122,6 +122,27 @@ export class AlbumComponent implements OnInit, OnDestroy {
 			this.categoryServe.setSubCategory([this.albumInfo.albumTitle]);
 			this.cdr.markForCheck();
 		});
+	}
+
+	play(needPlay: boolean): void {
+		if (this.checkedList.length) {
+			if (needPlay) {
+				this.playerServe.playTracks(this.checkedList);
+			} else {
+				this.playerServe.addTracks(this.checkedList);
+				this.messageServe.info('已添加曲目');
+			}
+			this.setAlbumInfo();
+			this.checkAllChange(false);
+		} else {
+			this.messageServe.warning('请先勾选曲目');
+		}
+	}
+
+	private setAlbumInfo(): void {
+		if (!this.currentTrack) {
+			this.playerServe.setAlbum(this.albumInfo);
+		}
 	}
 
 	changePage(newPage: number): void {
@@ -191,7 +212,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
 	playAll(): void {
 		this.playerServe.setTrackList(this.tracks);
-		this.playerServe.setAlbum(this.albumInfo);
+		this.setAlbumInfo();
 		this.playerServe.setCurrentIndex(0);
 	}
 

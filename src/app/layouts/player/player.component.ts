@@ -55,15 +55,14 @@ export class PlayerComponent implements OnInit, OnChanges {
 
 	ngOnChanges(changes: SimpleChanges): void {
 		const {playing} = changes;
-		if(playing && !playing.firstChange){
-			if(playing.currentValue){
+		if (playing && !playing.firstChange) {
+			if (playing.currentValue) {
 				this.audioEl = this.audioRef.nativeElement;
 				this.audioEl.play();
 			} else {
 				this.audioEl.pause();
 			}
 		}
-
 	}
 
 	togglePanel(showPanel: boolean): void {

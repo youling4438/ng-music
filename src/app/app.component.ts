@@ -132,7 +132,7 @@ export class AppComponent implements OnInit {
 				currentIndex,
 				playing,
 			};
-			if (currentTrack) {
+			if (trackList.length) {
 				this.showPlayer = true;
 				this.cdr.markForCheck();
 			}
