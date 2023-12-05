@@ -61,12 +61,18 @@
 					</thead>
 					<tbody>
 					<tr *ngFor="let track of tracks; trackBy: trackByTracks">
-						<td class="item-checkbox"><label app-checkbox [ngModel]="isChecked(track.trackId)"
-														 (ngModelChange)="checkedChange($event, track)"></label></td>
-						<td class="item-name">
+						<td class="item-checkbox">
+							<label
+								app-checkbox
+								[ngModel]="isChecked(track.trackId)"
+								(ngModelChange)="checkedChange($event, track)"
+							>
+							</label>
+						</td>
+						<td [class]="className(track.trackId)">
 							<span class="prefix number">{{ track.index }}</span>
-							<i appIcon="play1" class="prefix icon icon-play"></i>
-							<!--						<i appIcon="pause" class="prefix icon icon-pause"></i>-->
+							<i appIcon="play1" class="prefix icon icon-play" (click)="togglePlay(track, 'play')"></i>
+							<i appIcon="pause" class="prefix icon icon-pause" (click)="togglePlay(track, 'pause')"></i>
 							<div class="prefix icon icon-playing"><i></i><i></i><i></i><i></i></div>
 							<span>{{ track.title }}</span>
 						</td>

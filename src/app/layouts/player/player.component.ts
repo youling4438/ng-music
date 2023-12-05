@@ -3,9 +3,10 @@ import {
 	Component,
 	ElementRef,
 	EventEmitter,
-	Input,
+	Input, OnChanges,
 	OnInit,
 	Output,
+	SimpleChanges,
 	ViewChild
 } from '@angular/core';
 import {AlbumInfo, Track} from "../../services/apis/types";
@@ -17,7 +18,7 @@ import {PlayerService} from "../../services/business/player.service";
 	styleUrls: ['./player.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlayerComponent implements OnInit {
+export class PlayerComponent implements OnInit, OnChanges {
 	@Input() trackList: Track[];
 	@Input() currentIndex: number;
 	@Input() currentTrack: Track;
@@ -28,6 +29,7 @@ export class PlayerComponent implements OnInit {
 	private audioEl: HTMLAudioElement;
 	showPanel: boolean = false;
 	@Output() closePlayer = new EventEmitter<void>();
+
 	constructor(
 		private playerServe: PlayerService,
 	) {
@@ -49,6 +51,19 @@ export class PlayerComponent implements OnInit {
 
 	error(): void {
 		// this.playerServe.setPlaying(false);
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		const {playing} = changes;
+		if(playing && !playing.firstChange){
+			if(playing.currentValue){
+				this.audioEl = this.audioRef.nativeElement;
+				this.audioEl.play();
+			} else {
+				this.audioEl.pause();
+			}
+		}
+
 	}
 
 	togglePanel(showPanel: boolean): void {

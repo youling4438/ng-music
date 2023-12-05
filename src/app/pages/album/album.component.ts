@@ -1,6 +1,6 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {first, forkJoin} from "rxjs";
+import {combineLatest, first, forkJoin, Subject, takeUntil} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
@@ -18,7 +18,7 @@ interface MoreStatus {
 	styleUrls: ['./album.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AlbumComponent implements OnInit {
+export class AlbumComponent implements OnInit, OnDestroy {
 	albumInfo: AlbumInfo;
 	score: number;
 	anchor: Anchor;
@@ -38,6 +38,9 @@ export class AlbumComponent implements OnInit {
 	};
 	articleHeight: number;
 	checkedList: Track[] = [];
+	private currentTrack: Track;
+	private playing: boolean;
+	destroy$ = new Subject<void>();
 
 	constructor(
 		private albumServe: AlbumService,
@@ -48,6 +51,18 @@ export class AlbumComponent implements OnInit {
 	) {
 	}
 
+
+	togglePlay(track: Track, action: 'play' | 'pause'): void {
+		if (action === 'pause') {
+			this.playerServe.setPlaying(false);
+		} else {
+			if (!this.currentTrack) {
+				this.playerServe.setAlbum(this.albumInfo);
+			}
+			this.playerServe.playTrack(track);
+		}
+	}
+
 	toggleMoreStatus(): void {
 		this.moreStatus.full = !this.moreStatus.full;
 		this.moreStatus.label = this.moreStatus.full ? '收起' : '显示全部';
@@ -55,12 +70,41 @@ export class AlbumComponent implements OnInit {
 	}
 
 	ngOnInit(): void {
-		this.route.paramMap.subscribe(paramMap => {
+		this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(paramMap => {
 			this.trackParams.albumId = paramMap.get('albumId');
 			if (this.moreStatus.full) {
 				this.toggleMoreStatus();
 			}
 			this.initAlbum();
+			this.listenPlayer();
+		});
+
+	}
+
+	className(id: number): string {
+		let result = 'item-name ';
+		if (this.currentTrack) {
+			if (this.playing) {
+				if (id === this.currentTrack.trackId) {
+					result += 'item-name-playing';
+				}
+			} else {
+				if (id === this.currentTrack.trackId) {
+					result += 'item-name-pause';
+				}
+			}
+		}
+		return result;
+	}
+
+	private listenPlayer(): void {
+		combineLatest(
+			this.playerServe.getCurrentTrack(),
+			this.playerServe.getPlaying(),
+		).pipe(takeUntil(this.destroy$)).subscribe(([track, playing]) => {
+			this.currentTrack = track;
+			this.playing = playing;
+			this.cdr.markForCheck();
 		});
 	}
 
@@ -150,4 +194,10 @@ export class AlbumComponent implements OnInit {
 		this.playerServe.setAlbum(this.albumInfo);
 		this.playerServe.setCurrentIndex(0);
 	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
+
 }

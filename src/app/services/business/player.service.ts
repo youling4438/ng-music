@@ -92,6 +92,20 @@ export class PlayerService {
 		});
 	}
 
+	playTrack(track: Track): void {
+		const targetIndex: number = this.trackList.findIndex(_track => _track.trackId === track.trackId);
+		if(targetIndex > -1){
+			if(targetIndex === this.currentIndex){
+				this.setPlaying(true);
+			} else {
+				this.setCurrentIndex(targetIndex);
+			}
+		} else {
+			this.setTrackList(this.trackList.concat(track));
+			this.setCurrentIndex(this.trackList.length - 1);
+		}
+	}
+
 	clear(): void {
 		this.setAlbum(null);
 		this.setTrackList([]);
