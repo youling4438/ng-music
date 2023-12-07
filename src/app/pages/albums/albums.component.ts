@@ -8,6 +8,7 @@ import {storageKeys} from "../../share/config";
 import {forkJoin} from "rxjs";
 import {IconType} from "../../share/directives/icon/types";
 import {ActivatedRoute} from "@angular/router";
+import {PlayerService} from "../../services/business/player.service";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -44,6 +45,7 @@ export class AlbumsComponent implements OnInit {
 		private route: ActivatedRoute,
 		private categoryServe: CategoryService,
 		private winServe: WindowService,
+		private playerServe: PlayerService,
 	) {
 	}
 
@@ -99,6 +101,15 @@ export class AlbumsComponent implements OnInit {
 		this.winServe.setStorage(storageKeys.metas, this.searchParams.meta);
 		this.searchParams.sort = 0;
 		this.updatePageData();
+	}
+
+	playAlbum(event: MouseEvent, albumId: number): void {
+		event.stopPropagation();
+		this.albumServe.album(`${albumId}`).subscribe(({mainInfo, tracksInfo}) => {
+			this.playerServe.setAlbum({ ...mainInfo, albumId});
+			this.playerServe.setTrackList(tracksInfo.tracks);
+			this.playerServe.setCurrentIndex(0);
+		});
 	}
 
 	private getMetaParam(): string {
