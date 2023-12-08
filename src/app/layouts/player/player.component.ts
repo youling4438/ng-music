@@ -11,12 +11,38 @@ import {
 } from '@angular/core';
 import {AlbumInfo, Track} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
+import {animate, style, transition, trigger} from "@angular/animations";
+
+const PLAYER_PANEL_HEIGHT = 280;
 
 @Component({
 	selector: 'app-player',
 	templateUrl: './player.component.html',
 	styleUrls: ['./player.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations: [
+		trigger('playerPanel', [
+			transition(':enter', [
+				style({
+					opacity: 0,
+					height: 0,
+				}),
+				animate('.3s', style({
+					opacity: 1,
+					height: '*',
+				})),
+			]),
+			transition(':leave', [
+				style({
+					overflow: 'hidden',
+				}),
+				animate('.3s', style({
+					opacity: 0,
+					height: 0,
+				})),
+			])
+		])
+	],
 })
 export class PlayerComponent implements OnInit, OnChanges {
 	@Input() trackList: Track[];
@@ -25,10 +51,12 @@ export class PlayerComponent implements OnInit, OnChanges {
 	@Input() album: AlbumInfo;
 	@Input() playing: boolean;
 	private canPlay: boolean = false;
-	@ViewChild('audio', {static: true}) protected audioRef: ElementRef;
+	@ViewChild('audio', {static: true}) readonly audioRef: ElementRef;
+	@ViewChild('player', {static: true}) readonly playerRef: ElementRef;
 	private audioEl: HTMLAudioElement;
 	showPanel: boolean = false;
 	@Output() closePlayer = new EventEmitter<void>();
+	isDown: boolean = true;
 
 	constructor(
 		private playerServe: PlayerService,
@@ -36,7 +64,6 @@ export class PlayerComponent implements OnInit, OnChanges {
 	}
 
 	ngOnInit(): void {
-		console.log('currentTrack : ', this.currentTrack);
 	}
 
 	canplay(): void {
@@ -66,7 +93,13 @@ export class PlayerComponent implements OnInit, OnChanges {
 	}
 
 	togglePanel(showPanel: boolean): void {
-		this.showPanel = showPanel;
+		if (showPanel) {
+			const {top} = this.playerRef.nativeElement.getBoundingClientRect();
+			this.isDown = top < PLAYER_PANEL_HEIGHT + 10;
+			this.showPanel = true;
+		} else {
+			this.showPanel = false;
+		}
 	}
 
 	togglePlay(): void {

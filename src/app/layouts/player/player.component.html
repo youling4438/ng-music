@@ -17,7 +17,10 @@
 			<i class="icon" appIcon="Close" (click)="closePlayer.emit()"></i>
 		</div>
 	</div>
-	<div class="app-player-panel down" *ngIf="trackList.length && showPanel">
+	<div
+		class="app-player-panel" @playerPanel
+		[class.down]="isDown" *ngIf="trackList.length && showPanel"
+	>
 		<div class="panel-wrap">
 			<ul>
 				<li

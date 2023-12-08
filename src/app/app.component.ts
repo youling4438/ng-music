@@ -10,6 +10,7 @@ import {UserService} from "./services/apis/user.service";
 import {ContextService} from "./services/business/context.service";
 import {MessageService} from "./share/components/message/message.service";
 import {PlayerService} from "./services/business/player.service";
+import {animate, style, transition, trigger} from "@angular/animations";
 
 // import {MessageType} from "./share/components/message/types";
 
@@ -18,6 +19,21 @@ import {PlayerService} from "./services/business/player.service";
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations:[
+		trigger('fadePlayer',[
+			transition(':enter', [
+				style({opacity: 0}),
+				animate('.3s', style({
+					opacity: 1,
+				}))
+			]),
+			transition(':leave', [
+				animate('.3s', style({
+					opacity: 0,
+				}))
+			]),
+		])
+	],
 })
 export class AppComponent implements OnInit {
 	title = 'ng-music';
