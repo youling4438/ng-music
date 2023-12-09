@@ -150,6 +150,7 @@ export class PlayerComponent implements OnInit, OnChanges {
 				if (left > (maxLeft + width / 2)) {
 					this.rd2.setStyle(dragItem, 'left', this.doc.documentElement.clientWidth - THUMBNAIL_WIDTH + 'px');
 					this.sidePlayer = true;
+					this.togglePanel(false);
 				}
 			}
 		}
