@@ -10,11 +10,11 @@ import {MessageItemComponent} from './message-item/message-item.component';
 		MessageComponent,
 		MessageItemComponent,
 	],
-	imports: [
-		DirectivesModule,
-		NgForOf,
-		NgIf,
-	],
+    imports: [
+        DirectivesModule,
+        NgForOf,
+        NgIf,
+    ],
 })
 export class MessageModule {
 }

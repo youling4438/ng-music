@@ -7,7 +7,7 @@
 	class="app-message-wrap">
 	<div [class]="className">
 		<div class="content">
-			<ng-container>{{message.content}}</ng-container>
+			<ng-container *appStrTplOutLet="message.content">{{ message.content }}</ng-container>
 		</div>
 		<i appIcon="Close" class="close" *ngIf="message.options.showClose" (click)="close()"></i>
 	</div>

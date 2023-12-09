@@ -1,4 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	OnDestroy,
+	OnInit,
+} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {combineLatest, first, forkJoin, Subject, takeUntil} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
@@ -42,7 +48,6 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	private currentTrack: Track;
 	private playing: boolean;
 	destroy$ = new Subject<void>();
-
 	constructor(
 		private albumServe: AlbumService,
 		private route: ActivatedRoute,
@@ -78,7 +83,6 @@ export class AlbumComponent implements OnInit, OnDestroy {
 			this.initAlbum();
 			this.listenPlayer();
 		});
-
 	}
 
 	className(id: number): string {
