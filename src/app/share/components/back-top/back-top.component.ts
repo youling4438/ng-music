@@ -8,7 +8,7 @@ import {
 	OnChanges,
 	OnDestroy,
 	PLATFORM_ID,
-	SimpleChanges
+	SimpleChanges, TemplateRef
 } from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {debounceTime, fromEvent, Subscription} from "rxjs";
@@ -35,6 +35,7 @@ import {ScrollEl, ScrollService} from "../../../services/tools/scroll.service";
 export class BackTopComponent implements OnChanges, AfterViewInit, OnDestroy {
 	@Input() target: string | HTMLElement;
 	@Input() visibleHeight: number = 450;
+	@Input() tpl:TemplateRef<any>;
 	private scrollElement: ScrollEl;
 	visible: boolean = false;
 	scrollSubscription: Subscription;

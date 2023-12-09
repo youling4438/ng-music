@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BackTopComponent} from './back-top.component';
-import {NgIf} from "@angular/common";
+import {NgIf, NgTemplateOutlet} from "@angular/common";
 
 
 @NgModule({
@@ -8,7 +8,8 @@ import {NgIf} from "@angular/common";
 		BackTopComponent
 	],
 	imports: [
-		NgIf
+		NgIf,
+		NgTemplateOutlet
 	],
 	exports: [
 		BackTopComponent,

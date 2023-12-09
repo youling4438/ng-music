@@ -1,5 +1,8 @@
 <div class="app-back-top" (click)="clickHandle()" *ngIf="visible" @fadeInOut>
+	<ng-container *ngTemplateOutlet="tpl || defaultTpl"></ng-container>
+</div>
+<ng-template #defaultTpl>
 	<div class="content">
 		<div class="icon"></div>
 	</div>
-</div>
+</ng-template>
