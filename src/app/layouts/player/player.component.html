@@ -1,4 +1,4 @@
-<div class="app-player-box" appDrag>
+<div class="app-player-box" appDrag (dragEnd)="dragEnd($event)" (mouseenter)="hoverPlayer()">
 	<div class="app-player" #player>
 		<div class="thumbnail">
 			<img appDragHandle [src]="album?.cover || '../../../assets/images/default-pic.jpg'"/>

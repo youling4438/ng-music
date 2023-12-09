@@ -2,9 +2,9 @@ import {
 	AfterViewInit,
 	ContentChildren,
 	Directive,
-	ElementRef,
+	ElementRef, EventEmitter,
 	HostListener,
-	Inject, Input,
+	Inject, Input, Output,
 	PLATFORM_ID, QueryList,
 	Renderer2,
 } from '@angular/core';
@@ -30,6 +30,7 @@ export class DragDirective implements AfterViewInit {
 	private movable: boolean;
 	private mouseMoveHandle: () => void;
 	private mouseUpHandle: () => void;
+	@Output() dragEnd = new EventEmitter<HTMLElement>();
 	@ContentChildren(DragHandleDirective, {descendants: true}) private handles: QueryList<DragHandleDirective>;
 
 	constructor(
@@ -73,6 +74,7 @@ export class DragDirective implements AfterViewInit {
 			if (this.mouseUpHandle) {
 				this.mouseUpHandle();
 			}
+			this.dragEnd.emit(this.hostElement);
 		}
 	}
 
@@ -84,6 +86,7 @@ export class DragDirective implements AfterViewInit {
 			const diffX = clientX - this.startPosition.clientX;
 			const diffY = clientY - this.startPosition.clientY;
 			const {top, left} = this.calculate(diffX, diffY);
+			this.rd2.setStyle(this.hostElement, 'transition', 'none');
 			this.rd2.setStyle(this.hostElement, 'right', 'unset');
 			this.rd2.setStyle(this.hostElement, 'left', left + 'px');
 			this.rd2.setStyle(this.hostElement, 'top', top + 'px');

@@ -2,18 +2,20 @@ import {
 	ChangeDetectionStrategy,
 	Component,
 	ElementRef,
-	EventEmitter,
+	EventEmitter, Inject,
 	Input, OnChanges,
 	OnInit,
-	Output,
+	Output, Renderer2,
 	SimpleChanges,
 	ViewChild
 } from '@angular/core';
 import {AlbumInfo, Track} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
+import {DOCUMENT} from "@angular/common";
 
-const PLAYER_PANEL_HEIGHT = 280;
+const PANEL_HEIGHT = 280;
+const THUMBNAIL_WIDTH = 50;
 
 @Component({
 	selector: 'app-player',
@@ -57,9 +59,13 @@ export class PlayerComponent implements OnInit, OnChanges {
 	showPanel: boolean = false;
 	@Output() closePlayer = new EventEmitter<void>();
 	isDown: boolean = true;
+	private sidePlayer: boolean = false;
+	private plyerEl: HTMLElement;
 
 	constructor(
 		private playerServe: PlayerService,
+		private rd2: Renderer2,
+		@Inject(DOCUMENT) private doc: Document,
 	) {
 	}
 
@@ -73,11 +79,12 @@ export class PlayerComponent implements OnInit, OnChanges {
 	}
 
 	ended(): void {
-		// this.playerServe.setPlaying(false);
+		this.playerServe.setPlaying(false);
+		this.next(this.currentIndex + 1);
 	}
 
 	error(): void {
-		// this.playerServe.setPlaying(false);
+		this.playerServe.setPlaying(false);
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
@@ -95,7 +102,7 @@ export class PlayerComponent implements OnInit, OnChanges {
 	togglePanel(showPanel: boolean): void {
 		if (showPanel) {
 			const {top} = this.playerRef.nativeElement.getBoundingClientRect();
-			this.isDown = top < PLAYER_PANEL_HEIGHT + 10;
+			this.isDown = top < PANEL_HEIGHT + 10;
 			this.showPanel = true;
 		} else {
 			this.showPanel = false;
@@ -119,6 +126,31 @@ export class PlayerComponent implements OnInit, OnChanges {
 		} else {
 			if (this.trackList.length) {
 				this.updateIndex(0);
+			}
+		}
+	}
+
+	dragEnd(dragItem: HTMLElement): void {
+		if (dragItem) {
+			this.plyerEl = dragItem;
+			const {top, left, width, height,} = dragItem.getBoundingClientRect();
+			const maxTop: number = this.doc.documentElement.clientHeight - height;
+			const maxLeft: number = this.doc.documentElement.clientWidth - width;
+			this.rd2.setStyle(dragItem, 'transition', 'all 0.3s');
+			if (top < 0) {
+				this.rd2.setStyle(dragItem, 'top', '0');
+			}
+			if (top > maxTop) {
+				this.rd2.setStyle(dragItem, 'top', maxTop + 'px');
+			}
+			if (left < 0) {
+				this.rd2.setStyle(dragItem, 'left', '0');
+			}
+			if (left > maxLeft) {
+				if (left > (maxLeft + width / 2)) {
+					this.rd2.setStyle(dragItem, 'left', this.doc.documentElement.clientWidth - THUMBNAIL_WIDTH + 'px');
+					this.sidePlayer = true;
+				}
 			}
 		}
 	}
@@ -159,6 +191,13 @@ export class PlayerComponent implements OnInit, OnChanges {
 			this.loop();
 		} else {
 			this.updateIndex(index < 0 ? this.trackList.length - 1 : index);
+		}
+	}
+
+	hoverPlayer(): void {
+		if (this.sidePlayer) {
+			this.rd2.setStyle(this.plyerEl, 'left', this.doc.documentElement.clientWidth - this.plyerEl.getBoundingClientRect().width + 'px');
+			this.sidePlayer = false;
 		}
 	}
 
