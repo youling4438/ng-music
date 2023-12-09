@@ -15,6 +15,7 @@ import {InterceptorService} from "./services/apis/interceptor.service";
 import {MessageModule} from "./share/components/message/message.module";
 import {PlayerComponent} from './layouts/player/player.component';
 import {PipesModule} from "./share/pipes/pipes.module";
+import {BackTopModule} from "./share/components/back-top/back-top.module";
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import {PipesModule} from "./share/pipes/pipes.module";
         FormsModule,
         MessageModule,
         PipesModule,
+		BackTopModule,
     ],
 	exports: [
 		HeaderComponent,
@@ -45,6 +47,7 @@ import {PipesModule} from "./share/pipes/pipes.module";
 		AppRoutingModule,
 		LoginComponent,
 		PlayerComponent,
+		BackTopModule,
 	],
 	providers: [
 		{
