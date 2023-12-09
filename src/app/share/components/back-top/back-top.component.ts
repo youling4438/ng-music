@@ -12,81 +12,54 @@ import {
 } from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from "@angular/common";
 import {debounceTime, fromEvent, Subscription} from "rxjs";
-
-export type ScrollEl = Element | Window;
-export type EasingFn = (t: number, b: number, c: number, d: number) => number;
-
-function easeInOutCubic(t: number, b: number, c: number, d: number): number {
-	const cc = c - b;
-	let tt = t / (d / 2);
-	if (tt < 1) {
-		return (cc / 2) * tt * tt * tt + b;
-	} else {
-		return (cc / 2) * ((tt -= 2) * tt * tt + 2) + b;
-	}
-}
+import {animate, style, transition, trigger} from "@angular/animations";
+import {ScrollEl, ScrollService} from "../../../services/tools/scroll.service";
 
 @Component({
 	selector: 'app-back-top',
 	templateUrl: './back-top.component.html',
 	styleUrls: ['./back-top.component.scss'],
-	changeDetection: ChangeDetectionStrategy.OnPush
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	animations: [
+		trigger('fadeInOut', [
+			transition(':enter', [
+				style({opacity: 0}),
+				animate('.2s', style({opacity: 1})),
+			]),
+			transition(':leave', [
+				animate('.2s', style({opacity: 0})),
+			]),
+		])
+	],
 })
-export class BackTopComponent implements OnChanges , AfterViewInit, OnDestroy{
+export class BackTopComponent implements OnChanges, AfterViewInit, OnDestroy {
 	@Input() target: string | HTMLElement;
 	@Input() visibleHeight: number = 450;
 	private scrollElement: ScrollEl;
-	visible:boolean = false;
+	visible: boolean = false;
 	scrollSubscription: Subscription;
+
 	constructor(
 		@Inject(PLATFORM_ID) private platformId: object,
 		@Inject(DOCUMENT) private doc: Document,
-		private cdr:ChangeDetectorRef,
+		private cdr: ChangeDetectorRef,
+		private scrollServe:ScrollService,
 	) {
 		this.scrollElement = window;
 	}
+
 	clickHandle(): void {
 		if (isPlatformBrowser(this.platformId)) {
-			this.scrollTo(this.scrollElement);
+			this.scrollServe.scrollTo(this.scrollElement);
 		}
 	}
 
-	private scrollTo(container: ScrollEl, targetTop?: number, easing?: EasingFn, callback?: () => void): void {
-		const scrollTop = this.getScroll(container, true);
-		const startScrollTime: number = Date.now();
-		const frameFunc = () => {
-			const durationTime: number = Date.now() - startScrollTime;
-			const topValue: number = (easing || easeInOutCubic)(durationTime, scrollTop, targetTop || 0, 500);
-			this.setScroll(container, topValue);
-			if (durationTime < 500) {
-				requestAnimationFrame(frameFunc);
-			} else {
-				callback && callback();
-			}
-		};
-		requestAnimationFrame(frameFunc);
-	}
 
-	private getScroll(target: ScrollEl, isTop: boolean): number {
-		const windowProp = isTop ? 'pageYOffset' : 'pageXOffset';
-		const elementProp = isTop ? 'scrollTop' : 'scrollLeft';
-		return target === window ? target[windowProp] : target[elementProp];
-	}
-
-	private setScroll(target: ScrollEl, topValue: number): void {
-		if (target === window) {
-			this.doc.body.scrollTop = topValue;
-			this.doc.documentElement.scrollTop = topValue;
-		} else {
-			(target as HTMLElement).scrollTop = topValue;
-		}
-	}
-
-	private addListerScrollEvent() : void {
+	private addListerScrollEvent(): void {
 		this.scrollSubscription = fromEvent(this.scrollElement, 'scroll')
 			.pipe(debounceTime(200))
 			.subscribe(() => {
-				const scrollTop = this.getScroll(this.scrollElement, true);
+				const scrollTop = this.scrollServe.getScroll(this.scrollElement, true);
 				this.visible = scrollTop > this.visibleHeight;
 				this.cdr.markForCheck();
 			})
