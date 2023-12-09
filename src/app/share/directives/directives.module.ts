@@ -5,6 +5,7 @@ import {BtnDirective} from "./btn.directive";
 import {ToggleMoreDirective} from './toggle-more.directive';
 import {DragModule} from "./drag/drag.module";
 import {ImgLazyDirective} from './img-lazy.directive';
+import {RipplesDirective} from './ripples.directive';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import {ImgLazyDirective} from './img-lazy.directive';
 		BtnDirective,
 		ToggleMoreDirective,
 		ImgLazyDirective,
+		RipplesDirective,
 	],
 	exports: [
 		StrTplOutLetDirective,
@@ -22,6 +24,7 @@ import {ImgLazyDirective} from './img-lazy.directive';
 		ToggleMoreDirective,
 		DragModule,
 		ImgLazyDirective,
+		RipplesDirective,
 	]
 })
 export class DirectivesModule {

@@ -23,6 +23,6 @@
 		<input type="number" class="app-input"
 			   (keyup.enter)="changePage(+pageInput.value)"
 			   [min]="1" [max]="lastNum" #pageInput/>
-		<button appBtn (click)="changePage(+pageInput.value)">跳转</button>
+		<button appBtn appRipples (click)="changePage(+pageInput.value)">跳转</button>
 	</div>
 </div>

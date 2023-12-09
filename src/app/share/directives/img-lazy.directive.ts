@@ -39,7 +39,7 @@ export class ImgLazyDirective implements AfterViewInit, OnDestroy {
 
 	ngOnDestroy(): void {
 		this.io.unobserve(this.hostEl);
-		this.imgLoadHandle();
+		this.imgLoadHandle && this.imgLoadHandle();
 	}
 
 }

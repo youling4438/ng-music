@@ -27,7 +27,7 @@
 						<app-tag class="meta" *ngFor="let meta of albumInfo.metas">{{meta.metaDisplayName}}</app-tag>
 					</div>
 					<div class="actions">
-						<button appBtn [btnCircle]="true" class="btn" (click)="playAll()">
+						<button appBtn appRipples [btnCircle]="true" class="btn" (click)="playAll()">
 							<i appIcon="play1" class="icon"></i>
 							播放全部
 						</button>
@@ -89,8 +89,12 @@
 						<th><label app-checkbox [ngModel]="isCheckedAll()"
 								   (ngModelChange)="checkAllChange($event)"></label></th>
 						<th class="item-name">
-							<button appBtn [btnCircle]="true" [disabled]="!checkedList.length" (click)="play(true)">播放选中歌曲</button>
-							<button class="btn-add" appBtn [btnCircle]="true" [disabled]="!checkedList.length" (click)="play(false)">添加到播放列表</button>
+							<button appBtn appRipples [btnCircle]="true" [disabled]="!checkedList.length"
+									(click)="play(true)">播放选中歌曲
+							</button>
+							<button class="btn-add" appBtn appRipples [btnCircle]="true"
+									[disabled]="!checkedList.length" (click)="play(false)">添加到播放列表
+							</button>
 						</th>
 					</tr>
 					</tfoot>
@@ -145,7 +149,7 @@
 					<div class="anchor-info">
 						<div class="anchor-head">
 							<div class="photo">
-								<img [src]="anchor.anchorCover" [alt]="anchor.anchorName"/>
+								<img [appImgLazy]="anchor.anchorCover" [alt]="anchor.anchorName"/>
 							</div>
 							<span class="name">{{ anchor.anchorName }}</span>
 						</div>
@@ -170,7 +174,7 @@
 						<div class="album-item" [routerLink]="'../' + item.albumId"
 							 *ngFor="let item of anchor.anchorAlbumList">
 							<div class="thumbnail">
-								<img [src]="item.cover" [alt]="item.albumTitle">
+								<img [appImgLazy]="item.cover" [alt]="item.albumTitle">
 							</div>
 							<div class="content">
 								<div class="title">{{ item.albumTitle }}
@@ -192,7 +196,7 @@
 				<div class="albums">
 					<div class="album-item" [routerLink]="'../' + item.id" *ngFor="let item of relateAlbums">
 						<div class="thumbnail">
-							<img [src]="'//imagev2.xmcdn.com/' + item.coverPath" [alt]="item.title">
+							<img [appImgLazy]="'//imagev2.xmcdn.com/' + item.coverPath" [alt]="item.title">
 						</div>
 						<div class="content">
 							<div class="title">{{ item.title }}</div>
