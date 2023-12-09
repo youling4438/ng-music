@@ -1,5 +1,17 @@
-import {ChangeDetectionStrategy, Component, Inject, Input, OnChanges, PLATFORM_ID, SimpleChanges} from '@angular/core';
+import {
+	AfterViewInit,
+	ChangeDetectionStrategy,
+	ChangeDetectorRef,
+	Component,
+	Inject,
+	Input,
+	OnChanges,
+	OnDestroy,
+	PLATFORM_ID,
+	SimpleChanges
+} from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from "@angular/common";
+import {debounceTime, fromEvent, Subscription} from "rxjs";
 
 export type ScrollEl = Element | Window;
 export type EasingFn = (t: number, b: number, c: number, d: number) => number;
@@ -20,25 +32,19 @@ function easeInOutCubic(t: number, b: number, c: number, d: number): number {
 	styleUrls: ['./back-top.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BackTopComponent implements OnChanges {
+export class BackTopComponent implements OnChanges , AfterViewInit, OnDestroy{
 	@Input() target: string | HTMLElement;
+	@Input() visibleHeight: number = 450;
 	private scrollElement: ScrollEl;
-
+	visible:boolean = false;
+	scrollSubscription: Subscription;
 	constructor(
 		@Inject(PLATFORM_ID) private platformId: object,
 		@Inject(DOCUMENT) private doc: Document,
+		private cdr:ChangeDetectorRef,
 	) {
 		this.scrollElement = window;
 	}
-
-	ngOnChanges(changes: SimpleChanges): void {
-		const {target} = changes;
-		if (target) {
-			const tempTarget = typeof target.currentValue === 'string' ? this.doc.documentElement.querySelector(target.currentValue) : target.currentValue;
-			this.scrollElement = tempTarget || window;
-		}
-	}
-
 	clickHandle(): void {
 		if (isPlatformBrowser(this.platformId)) {
 			this.scrollTo(this.scrollElement);
@@ -75,4 +81,33 @@ export class BackTopComponent implements OnChanges {
 			(target as HTMLElement).scrollTop = topValue;
 		}
 	}
+
+	private addListerScrollEvent() : void {
+		this.scrollSubscription = fromEvent(this.scrollElement, 'scroll')
+			.pipe(debounceTime(200))
+			.subscribe(() => {
+				const scrollTop = this.getScroll(this.scrollElement, true);
+				this.visible = scrollTop > this.visibleHeight;
+				this.cdr.markForCheck();
+			})
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		const {target} = changes;
+		if (target) {
+			const tempTarget = typeof target.currentValue === 'string' ? this.doc.documentElement.querySelector(target.currentValue) : target.currentValue;
+			this.scrollElement = tempTarget || window;
+		}
+	}
+
+	ngAfterViewInit(): void {
+		if (isPlatformBrowser(this.platformId)) {
+			this.addListerScrollEvent();
+		}
+	}
+
+	ngOnDestroy(): void {
+		this.scrollSubscription && this.scrollSubscription.unsubscribe();
+	}
+
 }
