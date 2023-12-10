@@ -1,5 +1,7 @@
 # NgMusic
 
+Angular practice project based on Angular 10. Back service here [ng-music-api](https://github.com/youling4438/ng-music-api)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.0.0.
 
 ## Development server
