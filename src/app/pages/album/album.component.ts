@@ -12,6 +12,7 @@ import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
 import {MessageService} from "../../share/components/message/message.service";
+import {PageInfoService} from "../../services/tools/page-info.service";
 
 interface MoreStatus {
 	full: boolean;
@@ -55,6 +56,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 		private categoryServe: CategoryService,
 		private playerServe: PlayerService,
 		private messageServe: MessageService,
+		private pageInfoServe: PageInfoService,
 	) {
 	}
 
@@ -125,6 +127,11 @@ export class AlbumComponent implements OnInit, OnDestroy {
 			this.relateAlbums = relateAlbums.slice(0, 10);
 			this.categoryServe.setSubCategory([this.albumInfo.albumTitle]);
 			this.cdr.markForCheck();
+			this.pageInfoServe.setPageInfo(
+				this.albumInfo.albumTitle,
+				'Angular仿喜马拉雅专辑详情页面',
+				'Angular10 喜马拉雅 有声书 小说 音乐 评书',
+			);
 		});
 	}
 

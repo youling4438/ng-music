@@ -9,6 +9,7 @@ import {forkJoin} from "rxjs";
 import {IconType} from "../../share/directives/icon/types";
 import {ActivatedRoute} from "@angular/router";
 import {PlayerService} from "../../services/business/player.service";
+import {PageInfoService} from "../../services/tools/page-info.service";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -46,6 +47,7 @@ export class AlbumsComponent implements OnInit {
 		private categoryServe: CategoryService,
 		private winServe: WindowService,
 		private playerServe: PlayerService,
+		private pageInfoServe: PageInfoService,
 	) {
 	}
 
@@ -76,6 +78,11 @@ export class AlbumsComponent implements OnInit {
 					this.updatePageData(needSetStatus);
 				}
 			)
+		this.pageInfoServe.setPageInfo(
+			'喜马拉雅专辑分类页面',
+			'Angular仿喜马拉雅专辑分类页面',
+			'Angular10 喜马拉雅 有声书 小说 音乐 评书',
+		);
 	}
 
 	public changeSubCategory(subCategory?: SubCategory): void {
