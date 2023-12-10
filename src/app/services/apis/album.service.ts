@@ -120,6 +120,6 @@ export class AlbumService {
 	// 播放地址
 	trackAudio(trackId: number): Observable<TrackAudio> {
 		return this.http.get(`${environment.baseUrl}${this.prefix}album-track-url/${trackId}`)
-			.pipe(map((res: Base<TrackAudio>) => res.data));
+			.pipe(map((res: Base<{tracksForAudioPlay: TrackAudio[]}>) => res.data.tracksForAudioPlay[0]));
 	}
 }
