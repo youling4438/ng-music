@@ -7,14 +7,10 @@ import {combineLatest,} from "rxjs";
 import {WindowService} from "./services/tools/window.service";
 import {storageKeys} from "./share/config";
 import {UserService} from "./services/apis/user.service";
-import {ContextService} from "./services/business/context.service";
 import {MessageService} from "./share/components/message/message.service";
 import {PlayerService} from "./services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
-import {select, Store} from "@ngrx/store";
-import {ContextStoreModule} from "./store/context";
-import {getUser, selectContextFeature} from "./store/context/selectors";
-import {setUser} from "./store/context/action";
+import {ContextStoreService} from "./services/business/context.store.service";
 
 // import {MessageType} from "./share/components/message/types";
 
@@ -62,20 +58,16 @@ export class AppComponent implements OnInit {
 		private router: Router,
 		private winServe: WindowService,
 		private userServe: UserService,
-		private contextServe: ContextService,
+		private contextStoreServe: ContextStoreService,
 		private messageServe: MessageService,
 		private playerServe: PlayerService,
-		private store$: Store<ContextStoreModule>,
 	) {
-		this.store$.select(selectContextFeature).pipe(select(getUser)).subscribe(user => {
-			console.log('user: ', user);
-		})
 	}
 
 	ngOnInit() {
 		if (this.winServe.getStorage(storageKeys.remember)) {
 			this.userServe.userInfo().subscribe(({user, token,}) => {
-				this.contextServe.setUser(user);
+				this.contextStoreServe.setUser(user);
 				this.winServe.setStorage(storageKeys.token, token);
 			}, error => {
 				console.error(error);
@@ -85,15 +77,6 @@ export class AppComponent implements OnInit {
 		this.init();
 		this.listenPlayer();
 	}
-
-	setUser(): void {
-		this.store$.dispatch(setUser({
-			name: 'Thomas',
-			phone: '1120',
-			password: '456789',
-		}));
-	}
-
 	private init(): void {
 		combineLatest([this.categoryServe.getCategory(), this.categoryServe.getSubCategory()])
 			.subscribe(([category, subcategory]) => {
@@ -118,7 +101,7 @@ export class AppComponent implements OnInit {
 	private userLogout(): void {
 		this.winServe.removeStorage(storageKeys.remember);
 		this.winServe.removeStorage(storageKeys.token);
-		this.contextServe.setUser(null);
+		this.contextStoreServe.setUser(null);
 	}
 
 	private setCurrentCategory(): void {
