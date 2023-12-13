@@ -11,6 +11,10 @@ import {ContextService} from "./services/business/context.service";
 import {MessageService} from "./share/components/message/message.service";
 import {PlayerService} from "./services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
+import {select, Store} from "@ngrx/store";
+import {ContextStoreModule} from "./store/context";
+import {getUser, selectContextFeature} from "./store/context/selectors";
+import {setUser} from "./store/context/action";
 
 // import {MessageType} from "./share/components/message/types";
 
@@ -19,8 +23,8 @@ import {animate, style, transition, trigger} from "@angular/animations";
 	templateUrl: './app.component.html',
 	styleUrls: ['./app.component.scss'],
 	changeDetection: ChangeDetectionStrategy.OnPush,
-	animations:[
-		trigger('fadePlayer',[
+	animations: [
+		trigger('fadePlayer', [
 			transition(':enter', [
 				style({opacity: 0}),
 				animate('.3s', style({
@@ -61,7 +65,11 @@ export class AppComponent implements OnInit {
 		private contextServe: ContextService,
 		private messageServe: MessageService,
 		private playerServe: PlayerService,
+		private store$: Store<ContextStoreModule>,
 	) {
+		this.store$.select(selectContextFeature).pipe(select(getUser)).subscribe(user => {
+			console.log('user: ', user);
+		})
 	}
 
 	ngOnInit() {
@@ -76,6 +84,14 @@ export class AppComponent implements OnInit {
 		}
 		this.init();
 		this.listenPlayer();
+	}
+
+	setUser(): void {
+		this.store$.dispatch(setUser({
+			name: 'Thomas',
+			phone: '1120',
+			password: '456789',
+		}));
 	}
 
 	private init(): void {
@@ -155,7 +171,7 @@ export class AppComponent implements OnInit {
 		});
 	}
 
-	closePlayer() : void {
+	closePlayer(): void {
 		this.playerServe.clear();
 		this.showPlayer = false;
 	}
