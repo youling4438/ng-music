@@ -94,14 +94,18 @@ export class AppComponent implements OnInit {
 	logout(): void {
 		this.userServe.logout().subscribe(() => {
 			this.userLogout();
-			this.messageServe.success('退出登录成功');
 		});
 	}
 
-	private userLogout(): void {
+	private clearStorages() :void {
 		this.winServe.removeStorage(storageKeys.remember);
 		this.winServe.removeStorage(storageKeys.token);
+	}
+
+	private userLogout(): void {
 		this.contextStoreServe.setUser(null);
+		this.messageServe.success('退出登录成功');
+		this.clearStorages();
 	}
 
 	private setCurrentCategory(): void {
