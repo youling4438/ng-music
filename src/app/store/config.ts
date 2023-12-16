@@ -9,4 +9,9 @@ export function debug(reducer: ActionReducer<any>): ActionReducer<any> {
     };
 }
 
+export function metaReducerFactory(): MetaReducer<any> {
+    return debug;
+}
+
+
 export const metaReducers: MetaReducer<any>[] = [debug];
