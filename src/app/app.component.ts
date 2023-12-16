@@ -6,7 +6,6 @@ import {Router} from "@angular/router";
 import {combineLatest,} from "rxjs";
 import {WindowService} from "./services/tools/window.service";
 import {storageKeys} from "./share/config";
-import {UserService} from "./services/apis/user.service";
 import {MessageService} from "./share/components/message/message.service";
 import {PlayerService} from "./services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
@@ -57,7 +56,6 @@ export class AppComponent implements OnInit {
 		private categoryServe: CategoryService,
 		private router: Router,
 		private winServe: WindowService,
-		private userServe: UserService,
 		private contextStoreServe: ContextStoreService,
 		private messageServe: MessageService,
 		private playerServe: PlayerService,
@@ -66,13 +64,7 @@ export class AppComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.winServe.getStorage(storageKeys.remember)) {
-			this.userServe.userInfo().subscribe(({user, token,}) => {
-				this.contextStoreServe.setUser(user);
-				this.winServe.setStorage(storageKeys.token, token);
-			}, error => {
-				console.error(error);
-				this.userLogout();
-			});
+			this.contextStoreServe.userInfo();
 		}
 		this.init();
 		this.listenPlayer();
@@ -92,20 +84,7 @@ export class AppComponent implements OnInit {
 	}
 
 	logout(): void {
-		this.userServe.logout().subscribe(() => {
-			this.userLogout();
-		});
-	}
-
-	private clearStorages() :void {
-		this.winServe.removeStorage(storageKeys.remember);
-		this.winServe.removeStorage(storageKeys.token);
-	}
-
-	private userLogout(): void {
-		this.contextStoreServe.setUser(null);
-		this.messageServe.success('退出登录成功');
-		this.clearStorages();
+		this.contextStoreServe.logout();
 	}
 
 	private setCurrentCategory(): void {

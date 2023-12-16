@@ -7,14 +7,13 @@ import {
     ViewChild
 } from '@angular/core';
 import {OverlayConfig, OverlayRef, OverlayService} from "../../services/tools/overlay.service";
-import {empty, first, merge, of, pluck, switchMap, timer} from "rxjs";
+import {empty, merge, of, pluck, Subject, switchMap, takeUntil, timer} from "rxjs";
 import {AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators} from "@angular/forms";
 import {isPlatformBrowser} from "@angular/common";
 import {animate, style, transition, trigger, AnimationEvent} from "@angular/animations";
-import {LoginRes, UserService} from "../../services/apis/user.service";
+import {UserService} from "../../services/apis/user.service";
 import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
-// import {ContextService} from "../../services/business/context.service";
 import {MessageService} from "../../share/components/message/message.service";
 import {ContextStoreService} from "../../services/business/context.store.service";
 
@@ -65,6 +64,7 @@ export class LoginComponent implements OnChanges {
     readonly isBrowser: boolean;
     formValues: FormGroup = this.getFormValues();
     @ViewChild('modalWrap', {static: false}) readonly modalWrap: ElementRef;
+    hide$ = new Subject<void>();
 
     constructor(
         private overlayServe: OverlayService,
@@ -96,9 +96,24 @@ export class LoginComponent implements OnChanges {
     ngOnChanges(): void {
         if (this.showDialog) {
             this.createOverlay();
+            this.listenLogin();
         } else {
             this.visible = false;
         }
+    }
+
+    private listenLogin(): void {
+        this.hide$ = new Subject<void>();
+        this.contextStoreServe.context$.pipe(takeUntil(this.hide$)).subscribe(context => {
+            if (context.token) {
+                this.responseEvent.emit();
+                this.windowServe.setStorage(storageKeys.token, context.token);
+                if (this.remember) {
+                    this.windowServe.setStorage(storageKeys.remember, `${this.remember}`);
+                }
+                this.messageServe.success('登录成功');
+            }
+        });
     }
 
     createOverlay(): void {
@@ -118,7 +133,7 @@ export class LoginComponent implements OnChanges {
                             return key.toUpperCase() === 'ESCAPE' ? of(key) : empty();
                         })
                     ),
-            ).pipe(first()).subscribe(() => {
+            ).pipe(takeUntil(this.hide$)).subscribe(() => {
                 this.responseEvent.emit();
             });
             this.visible = true;
@@ -137,20 +152,14 @@ export class LoginComponent implements OnChanges {
 
     animationDone(event: AnimationEvent): void {
         if (event.toState === 'void') {
+            this.hide$.next();
+            this.hide$.complete();
             this.hideOverlay();
         }
     }
 
     formSubmit(): void {
-        this.userServe.login(this.formValues.value).subscribe((res: LoginRes) => {
-            this.responseEvent.emit();
-            this.contextStoreServe.setUser(res.user);
-            this.windowServe.setStorage(storageKeys.token, res.token);
-            if (this.remember) {
-                this.windowServe.setStorage(storageKeys.remember, `${this.remember}`);
-            }
-            this.messageServe.success('登录成功');
-        });
+        this.contextStoreServe.login(this.formValues.value);
     }
 
     get formControls(): CostumeControls {

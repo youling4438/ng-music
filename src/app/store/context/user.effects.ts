@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Actions, createEffect, ofType} from "@ngrx/effects";
-import {getUserInfo, login, loginSuccess, logout, setUser} from "./action";
-import {EMPTY, mergeMap, tap, throwError} from "rxjs";
+import {getUserInfo, login, loginSuccess, logout, logoutSuccess,} from "./action";
+import {mergeMap, tap, throwError} from "rxjs";
 import {UserService} from "../../services/apis/user.service";
 import {catchError, map} from "rxjs/operators";
 import {storageKeys} from "../../share/config";
@@ -23,7 +23,7 @@ export class UserEffects{
 		mergeMap(payload => this.userServe.login(payload)),
 		map(res => loginSuccess(res)),
 		catchError(error => {
-			return EMPTY;
+			return throwError(error);
 		})
 	))
 
@@ -43,13 +43,12 @@ export class UserEffects{
 	logout$ = createEffect(() => this.cation$.pipe(
 		ofType(logout),
 		mergeMap(() => this.userServe.logout()),
-		map(() => setUser(null)),
-		tap(res => {
+		map(() => logoutSuccess()),
+		tap(() => {
 			this.clearStorages();
+			this.messageServe.success('退出登录成功');
 		}),
 		catchError(error => {
-			this.messageServe.success('退出登录成功');
-			this.clearStorages();
 			return throwError(error);
 		})
 	))

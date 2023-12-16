@@ -1,6 +1,6 @@
 import {User} from "../../services/apis/types";
 import {Action, createReducer, on} from "@ngrx/store";
-import {loginSuccess, setUser} from "./action";
+import {loginSuccess, logoutSuccess, setUser} from "./action";
 import {LoginRes} from "../../services/apis/user.service";
 
 export const ContextFeatureKey = 'context';
@@ -18,6 +18,7 @@ const reducer = createReducer(
 	initialState,
 	on(setUser, (state: ContextState, user: User) => ({...state, user,})),
 	on(loginSuccess, (_state: ContextState, {user, token}: LoginRes) => ({user, token})),
+	on(logoutSuccess, (_state: ContextState) => ({user: null, token: '',})),
 );
 
 export function contextReducerFunc(state: ContextState, action: Action): ContextState {
