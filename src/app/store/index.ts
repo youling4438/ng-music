@@ -1,9 +1,9 @@
-import {NgModule} from '@angular/core';
+import {isDevMode, NgModule} from '@angular/core';
 import {META_REDUCERS, StoreModule} from "@ngrx/store";
 import {ContextStoreModule} from "./context";
 import {EffectsModule} from "@ngrx/effects";
 import {metaReducerFactory, runtimeChecks} from "./config";
-
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
 	declarations: [],
@@ -13,6 +13,7 @@ import {metaReducerFactory, runtimeChecks} from "./config";
 		}),
 		EffectsModule.forRoot(),
 		ContextStoreModule,
+		StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
 	],
 	providers: [
 		{
