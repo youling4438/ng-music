@@ -12,6 +12,10 @@ const routes: Routes = [
 		path: 'book',
 		loadChildren: () => import('./pages/book/book.module').then(m => m.BookModule),
 	},
+	{
+		path: 'movie',
+		loadChildren: () => import('./pages/movie/movie.module').then(m => m.MovieModule),
+	},
 	{ path: '**', redirectTo: '/albums/youshengshu' }
 ];
 
