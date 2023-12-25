@@ -1,6 +1,7 @@
 import {NgModule} from '@angular/core';
 import {AppComponent} from './app.component';
 import {CoreModule} from "./core.module";
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
 
 @NgModule({
 	declarations: [
@@ -8,6 +9,7 @@ import {CoreModule} from "./core.module";
 	],
 	imports: [
 		CoreModule,
+		StoreRouterConnectingModule.forRoot(),
 	],
 	providers: [],
 	bootstrap: [AppComponent]
