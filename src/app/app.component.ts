@@ -10,6 +10,9 @@ import {MessageService} from "./share/components/message/message.service";
 import {PlayerService} from "./services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {ContextStoreService} from "./services/business/context.store.service";
+import {RouterStoreModule} from "./store/router";
+import {Store} from "@ngrx/store";
+import {selectCustomRouter, selectUrl, selectRouteParams,} from "./store/router/custom.reducer";
 
 // import {MessageType} from "./share/components/message/types";
 
@@ -59,7 +62,17 @@ export class AppComponent implements OnInit {
 		private contextStoreServe: ContextStoreService,
 		private messageServe: MessageService,
 		private playerServe: PlayerService,
+		readonly routerStore$: Store<RouterStoreModule>,
 	) {
+		this.routerStore$.select(selectCustomRouter).subscribe(routerState => {
+			console.log('selectRouter : ', routerState);
+		});
+		this.routerStore$.select(selectUrl).subscribe(url => {
+			console.log('selectUrl : ', url);
+		});
+		this.routerStore$.select(selectRouteParams).subscribe(params => {
+			console.log('selectRouteParams : ', params);
+		});
 	}
 
 	ngOnInit() {
