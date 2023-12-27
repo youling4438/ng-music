@@ -17,11 +17,11 @@ import {MovieStore} from "./movie-store.service";
 		</div>
 		<h3>影片列表：</h3>
 		<ul>
-			<li *ngFor="let movie of movies$ | async ">{{ movie.title }}</li>
+			<li *ngFor="let movie of movies$ | ngrxPush ">{{ movie.title }}</li>
 		</ul>
 		<h4>热门影片：</h4>
 		<ul>
-			<li *ngFor="let movie of hotMovies$ | async ">{{ movie.title }}</li>
+			<li *ngFor="let movie of hotMovies$ | ngrxPush ">{{ movie.title }}</li>
 		</ul>
 	`,
 	styles: ``,

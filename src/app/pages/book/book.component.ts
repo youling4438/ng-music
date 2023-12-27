@@ -19,11 +19,11 @@ let count: number = 0;
 		<button appBtn appRipples (click)="selectBook('id_3')">select a book2</button> |
 
 		<ul>
-			<li *ngFor="let book of book$ | async">{{ book.title }}</li>
+			<li *ngFor="let book of book$ | ngrxPush">{{ book.title }}</li>
 		</ul>
-		<p>
+		<p *ngrxLet="selectedBook$ as book">
 			当前选择书籍：
-			{{(selectedBook$ | async)?.title}}
+			{{book?.title}}
 		</p>
 	`,
 	styles: ``,
