@@ -11,14 +11,14 @@ import {MessageService} from "../../share/components/message/message.service";
 @Injectable()
 export class UserEffects{
 	constructor(
-		private cation$: Actions,
+		private action$: Actions,
 		private userServe: UserService,
 		private winServe: WindowService,
 		private messageServe: MessageService,
 	) {
 	}
 
-	login$ = createEffect(() => this.cation$.pipe(
+	login$ = createEffect(() => this.action$.pipe(
 		ofType(login),
 		mergeMap(payload => this.userServe.login(payload)),
 		map(res => loginSuccess(res)),
@@ -27,7 +27,7 @@ export class UserEffects{
 		})
 	))
 
-	info$ = createEffect(() => this.cation$.pipe(
+	info$ = createEffect(() => this.action$.pipe(
 		ofType(getUserInfo),
 		mergeMap(() => this.userServe.userInfo()),
 		map(res => loginSuccess(res)),
@@ -40,7 +40,7 @@ export class UserEffects{
 		})
 	))
 
-	logout$ = createEffect(() => this.cation$.pipe(
+	logout$ = createEffect(() => this.action$.pipe(
 		ofType(logout),
 		mergeMap(() => this.userServe.logout()),
 		map(() => logoutSuccess()),

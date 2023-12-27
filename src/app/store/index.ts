@@ -6,6 +6,7 @@ import {metaReducerFactory, runtimeChecks} from "./config";
 import {environment} from "../../environments/environment";
 import {BookStoreModule} from "./book";
 import {RouterStoreModule} from "./router";
+import {CategoryStoreModule} from "./category";
 @NgModule({
 	declarations: [],
 	imports: [
@@ -14,6 +15,7 @@ import {RouterStoreModule} from "./router";
 		}),
 		EffectsModule.forRoot(),
 		ContextStoreModule,
+		CategoryStoreModule,
 		BookStoreModule,
 		environment.imports,
 		RouterStoreModule,
