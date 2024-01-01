@@ -1,9 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {AlbumService} from "./services/apis/album.service";
 import {AlbumInfo, Category, Track} from "./services/apis/types";
-import {CategoryService} from "./services/business/category.service";
 import {Router} from "@angular/router";
-import {combineLatest,} from "rxjs";
+import {combineLatest, Observable,} from "rxjs";
 import {WindowService} from "./services/tools/window.service";
 import {storageKeys} from "./share/config";
 import {MessageService} from "./share/components/message/message.service";
@@ -13,6 +11,7 @@ import {ContextStoreService} from "./services/business/context.store.service";
 import {RouterStoreModule} from "./store/router";
 import {Store} from "@ngrx/store";
 import {selectCustomRouter, selectUrl, selectRouteParams,} from "./store/router/custom.reducer";
+import {CategoryStoreService} from "./services/business/category.store.service";
 
 // import {MessageType} from "./share/components/message/types";
 
@@ -39,10 +38,10 @@ import {selectCustomRouter, selectUrl, selectRouteParams,} from "./store/router/
 })
 export class AppComponent implements OnInit {
 	title = 'ng-music';
-	currentCategory: Category;
-	categories: Category[] = [];
+	currentCategory$: Observable<Category>;
+	categories$: Observable<Category[]>;
 	categoryPinyin: string = '';
-	subcategory: string[] = [];
+	subCategory$: Observable<string[]>
 	showDialog: boolean = false;
 	showPlayer: boolean = false;
 	playerInfo: {
@@ -54,15 +53,14 @@ export class AppComponent implements OnInit {
 	};
 
 	constructor(
-		private albumServe: AlbumService,
 		private cdr: ChangeDetectorRef,
-		private categoryServe: CategoryService,
 		private router: Router,
 		private winServe: WindowService,
 		private contextStoreServe: ContextStoreService,
 		private messageServe: MessageService,
 		private playerServe: PlayerService,
 		readonly routerStore$: Store<RouterStoreModule>,
+		readonly categoryStoreServe: CategoryStoreService,
 	) {
 		this.routerStore$.select(selectCustomRouter).subscribe(routerState => {
 			console.log('selectRouter : ', routerState);
@@ -73,6 +71,9 @@ export class AppComponent implements OnInit {
 		this.routerStore$.select(selectRouteParams).subscribe(params => {
 			console.log('selectRouteParams : ', params);
 		});
+		this.categories$ = this.categoryStoreServe.getCategories();
+		this.currentCategory$ = this.categoryStoreServe.getCurrentCategory();
+		this.subCategory$ = this.categoryStoreServe.getSubCategory();
 	}
 
 	ngOnInit() {
@@ -83,34 +84,20 @@ export class AppComponent implements OnInit {
 		this.listenPlayer();
 	}
 	private init(): void {
-		combineLatest([this.categoryServe.getCategory(), this.categoryServe.getSubCategory()])
+		this.categoryStoreServe.initCategories();
+		this.categoryStoreServe.getCategories();
+		combineLatest([this.categoryStoreServe.getCategory(), this.categoryStoreServe.getSubCategory()])
 			.subscribe(([category, subcategory]) => {
 				if (category !== this.categoryPinyin) {
 					this.categoryPinyin = category;
-					if (this.categories.length) {
-						this.setCurrentCategory();
-					}
 				}
-				this.subcategory = subcategory;
 			});
-		this.getCategories();
 	}
 
 	logout(): void {
 		this.contextStoreServe.logout();
 	}
 
-	private setCurrentCategory(): void {
-		this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);
-	}
-
-	private getCategories(): void {
-		this.albumServe.categories().subscribe(categories => {
-			this.categories = categories;
-			this.setCurrentCategory();
-			this.cdr.markForCheck();
-		});
-	}
 
 	changeCategory(category: Category): void {
 		this.router.navigateByUrl('/albums/' + category.pinyin);

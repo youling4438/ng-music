@@ -8,11 +8,11 @@ import {
 import {ActivatedRoute} from "@angular/router";
 import {combineLatest, first, forkJoin, Subject, takeUntil} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
-import {CategoryService} from "../../services/business/category.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
 import {MessageService} from "../../share/components/message/message.service";
 import {PageInfoService} from "../../services/tools/page-info.service";
+import {CategoryStoreService} from "../../services/business/category.store.service";
 
 interface MoreStatus {
 	full: boolean;
@@ -53,7 +53,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 		private albumServe: AlbumService,
 		private route: ActivatedRoute,
 		private cdr: ChangeDetectorRef,
-		private categoryServe: CategoryService,
+		private categoryStoreServe: CategoryStoreService,
 		private playerServe: PlayerService,
 		private messageServe: MessageService,
 		private pageInfoServe: PageInfoService,
@@ -125,7 +125,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 			this.anchor = albumInfo.anchorInfo;
 			this.updateTracks();
 			this.relateAlbums = relateAlbums.slice(0, 10);
-			this.categoryServe.setSubCategory([this.albumInfo.albumTitle]);
+			this.categoryStoreServe.setSubCategory([this.albumInfo.albumTitle]);
 			this.cdr.markForCheck();
 			this.pageInfoServe.setPageInfo(
 				this.albumInfo.albumTitle,

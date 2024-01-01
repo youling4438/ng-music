@@ -1,7 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumArgs, AlbumService, AlbumsInfo, CategoryInfo} from "../../services/apis/album.service";
 import {Album, MetaData, MetaValue, SubCategory} from "../../services/apis/types";
-import {CategoryService} from "../../services/business/category.service";
 import {withLatestFrom} from "rxjs/operators";
 import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
@@ -10,6 +9,7 @@ import {IconType} from "../../share/directives/icon/types";
 import {ActivatedRoute} from "@angular/router";
 import {PlayerService} from "../../services/business/player.service";
 import {PageInfoService} from "../../services/tools/page-info.service";
+import {CategoryStoreService} from "../../services/business/category.store.service";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -44,7 +44,7 @@ export class AlbumsComponent implements OnInit {
 		private albumServe: AlbumService,
 		private cdr: ChangeDetectorRef,
 		private route: ActivatedRoute,
-		private categoryServe: CategoryService,
+		private categoryStoreServe: CategoryStoreService,
 		private winServe: WindowService,
 		private playerServe: PlayerService,
 		private pageInfoServe: PageInfoService,
@@ -52,13 +52,13 @@ export class AlbumsComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		this.route.paramMap.pipe(withLatestFrom(this.categoryServe.getCategory()))
+		this.route.paramMap.pipe(withLatestFrom(this.categoryStoreServe.getCategory()))
 			.subscribe(([paramsMap, category]) => {
 					const pinyin = paramsMap.get('pinyin');
 					this.searchParams.category = pinyin;
 					let needSetStatus: boolean = false;
 					if (pinyin !== category) {
-						this.categoryServe.setCategory(pinyin);
+						this.categoryStoreServe.setCategory(pinyin);
 						this.clearSubcategory();
 						this.unCheckMeta('clear');
 					} else {
@@ -88,7 +88,7 @@ export class AlbumsComponent implements OnInit {
 	public changeSubCategory(subCategory?: SubCategory): void {
 		if (subCategory) {
 			this.searchParams.subcategory = subCategory.code;
-			this.categoryServe.setSubCategory([subCategory.displayValue]);
+			this.categoryStoreServe.setSubCategory([subCategory.displayValue]);
 			this.winServe.setStorage(storageKeys.subcategoryCode, this.searchParams.subcategory);
 		} else {
 			this.clearSubcategory();
@@ -192,7 +192,7 @@ export class AlbumsComponent implements OnInit {
 		const {metadata, subcategories} = categoryInfo;
 		const subCategory = subcategories.find(item => item.code === this.searchParams.subcategory);
 		if (subCategory) {
-			this.categoryServe.setSubCategory([subCategory.displayValue]);
+			this.categoryStoreServe.setSubCategory([subCategory.displayValue]);
 		}
 		if (this.searchParams.meta) {
 			const metaMaps = this.searchParams.meta.split('-').map(_item => _item.split('_'));
@@ -214,7 +214,7 @@ export class AlbumsComponent implements OnInit {
 
 	private clearSubcategory(): void {
 		this.searchParams.subcategory = '';
-		this.categoryServe.setSubCategory([]);
+		this.categoryStoreServe.setSubCategory([]);
 		this.winServe.removeStorage(storageKeys.subcategoryCode);
 	}
 
