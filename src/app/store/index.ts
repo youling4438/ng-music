@@ -7,6 +7,7 @@ import {environment} from "../../environments/environment";
 import {BookStoreModule} from "./book";
 import {RouterStoreModule} from "./router";
 import {CategoryStoreModule} from "./category";
+import {AlbumStoreModule} from "./album";
 @NgModule({
 	declarations: [],
 	imports: [
@@ -16,6 +17,7 @@ import {CategoryStoreModule} from "./category";
 		EffectsModule.forRoot(),
 		ContextStoreModule,
 		CategoryStoreModule,
+		AlbumStoreModule,
 		BookStoreModule,
 		environment.imports,
 		RouterStoreModule,
