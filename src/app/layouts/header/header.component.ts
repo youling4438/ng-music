@@ -11,7 +11,8 @@ import {User} from "../../services/apis/types";
 import {DOCUMENT} from "@angular/common";
 import {debounceTime, distinctUntilChanged, fromEvent} from "rxjs";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import {ContextService} from "../../services/business/context.service";
+// import {ContextService} from "../../services/business/context.service";
+import {ContextStoreService} from "../../services/business/context.store.service";
 
 @Component({
 	selector: 'app-header',
@@ -46,12 +47,13 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 		private el: ElementRef,
 		@Inject(DOCUMENT) private doc: Document,
 		private cdr: ChangeDetectorRef,
-		private ContextServe: ContextService,
+		// private ContextServe: ContextService,
+		private contextStoreServe: ContextStoreService,
 	) {
 	}
 
 	ngOnInit(): void {
-		this.ContextServe.getUser().subscribe(user => {
+		this.contextStoreServe.getUser().subscribe(user => {
 			this.user = user;
 			this.cdr.markForCheck();
 		});

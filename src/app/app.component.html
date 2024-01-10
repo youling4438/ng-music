@@ -10,7 +10,7 @@
 				<app-breadcrumb>
 					<app-breadcrumb-item>全部分类</app-breadcrumb-item>
 					<app-breadcrumb-item>
-						<div class="sub-category">
+						<div class="sub-category" *ngrxLet="currentCategory$ as currentCategory">
 							<div class="handler">
 								<span class="current">{{currentCategory?.displayName}}</span>
 								<i class="arrow"></i>
@@ -18,12 +18,12 @@
 							<div class="category-box">
 								<ul>
 									<li (click)="changeCategory(item)" [class.checked]="item.id === currentCategory?.id"
-										*ngFor="let item of categories;">{{item.displayName}}</li>
+										*ngFor="let item of categories$ | ngrxPush">{{item.displayName}}</li>
 								</ul>
 							</div>
 						</div>
 					</app-breadcrumb-item>
-					<ng-container *ngIf="subcategory.length">
+					<ng-container *ngIf="subCategory$ | ngrxPush as subcategory">
 						<app-breadcrumb-item *ngFor="let item of subcategory">{{ item }}</app-breadcrumb-item>
 					</ng-container>
 				</app-breadcrumb>

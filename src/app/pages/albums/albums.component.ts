@@ -1,15 +1,16 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumArgs, AlbumService, AlbumsInfo, CategoryInfo} from "../../services/apis/album.service";
 import {Album, MetaData, MetaValue, SubCategory} from "../../services/apis/types";
-import {CategoryService} from "../../services/business/category.service";
-import {withLatestFrom} from "rxjs/operators";
+import {skip, take, withLatestFrom} from "rxjs/operators";
 import {WindowService} from "../../services/tools/window.service";
 import {storageKeys} from "../../share/config";
-import {forkJoin} from "rxjs";
+import {Observable} from "rxjs";
 import {IconType} from "../../share/directives/icon/types";
 import {ActivatedRoute} from "@angular/router";
 import {PlayerService} from "../../services/business/player.service";
 import {PageInfoService} from "../../services/tools/page-info.service";
+import {CategoryStoreService} from "../../services/business/category.store.service";
+import {AlbumStoreService} from "../../services/business/album.store.service";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -34,9 +35,10 @@ export class AlbumsComponent implements OnInit {
 		perPage: 30,
 	};
 	total: number = 0;
-	categoryInfo: CategoryInfo;
+	categoryInfo$: Observable<CategoryInfo>;
+	albumsInfo$: Observable<AlbumsInfo>;
 	checkedMetas: CheckedMeta[] = [];
-	albumsInfo: AlbumsInfo;
+
 	sorts = ['综合排序', '最近更新', '播放最多'];
 	currentIcon: IconType = 'headset';
 
@@ -44,21 +46,22 @@ export class AlbumsComponent implements OnInit {
 		private albumServe: AlbumService,
 		private cdr: ChangeDetectorRef,
 		private route: ActivatedRoute,
-		private categoryServe: CategoryService,
+		private categoryStoreServe: CategoryStoreService,
 		private winServe: WindowService,
 		private playerServe: PlayerService,
 		private pageInfoServe: PageInfoService,
+		private albumStoreServe: AlbumStoreService,
 	) {
 	}
 
 	ngOnInit() {
-		this.route.paramMap.pipe(withLatestFrom(this.categoryServe.getCategory()))
+		this.route.paramMap.pipe(withLatestFrom(this.categoryStoreServe.getCategory()))
 			.subscribe(([paramsMap, category]) => {
 					const pinyin = paramsMap.get('pinyin');
 					this.searchParams.category = pinyin;
 					let needSetStatus: boolean = false;
 					if (pinyin !== category) {
-						this.categoryServe.setCategory(pinyin);
+						this.categoryStoreServe.setCategory(pinyin);
 						this.clearSubcategory();
 						this.unCheckMeta('clear');
 					} else {
@@ -75,6 +78,8 @@ export class AlbumsComponent implements OnInit {
 							this.searchParams.meta = cacheMetas;
 						}
 					}
+					this.categoryInfo$ = this.categoryStoreServe.getCategoryInfo();
+					this.albumsInfo$ = this.albumStoreServe.getAlbumsInfo();
 					this.updatePageData(needSetStatus);
 				}
 			)
@@ -88,7 +93,7 @@ export class AlbumsComponent implements OnInit {
 	public changeSubCategory(subCategory?: SubCategory): void {
 		if (subCategory) {
 			this.searchParams.subcategory = subCategory.code;
-			this.categoryServe.setSubCategory([subCategory.displayValue]);
+			this.categoryStoreServe.setSubCategory([subCategory.displayValue]);
 			this.winServe.setStorage(storageKeys.subcategoryCode, this.searchParams.subcategory);
 		} else {
 			this.clearSubcategory();
@@ -113,7 +118,7 @@ export class AlbumsComponent implements OnInit {
 	playAlbum(event: MouseEvent, albumId: number): void {
 		event.stopPropagation();
 		this.albumServe.album(`${albumId}`).subscribe(({mainInfo, tracksInfo}) => {
-			this.playerServe.setAlbum({ ...mainInfo, albumId});
+			this.playerServe.setAlbum({...mainInfo, albumId});
 			this.playerServe.setTrackList(tracksInfo.tracks);
 			this.playerServe.setCurrentIndex(0);
 		});
@@ -152,11 +157,7 @@ export class AlbumsComponent implements OnInit {
 	}
 
 	private updateAlbums(): void {
-		this.albumServe.albums(this.searchParams).subscribe((albumsInfo: AlbumsInfo) => {
-			this.albumsInfo = albumsInfo;
-			this.total = albumsInfo.total;
-			this.cdr.markForCheck();
-		});
+		this.albumStoreServe.requestAlbumsInfo(this.searchParams);
 	}
 
 	changeSort(sortIndex: number): void {
@@ -174,47 +175,42 @@ export class AlbumsComponent implements OnInit {
 
 	private updatePageData(needSetStatus: boolean = false): void {
 		this.searchParams.page = 1;
-		forkJoin([
-			this.albumServe.albums(this.searchParams),
-			this.albumServe.detailCategoryPageInfo(this.searchParams),
-		]).subscribe(([albumsInfo, categoryInfo]) => {
-			this.albumsInfo = albumsInfo;
-			this.total = albumsInfo.total;
-			this.categoryInfo = categoryInfo;
-			if (needSetStatus) {
-				this.setStatus(categoryInfo);
-			}
-			this.cdr.markForCheck();
-		});
+		this.albumStoreServe.requestAlbumsInfo(this.searchParams);
+		this.categoryStoreServe.initCategory(this.searchParams);
+		if (needSetStatus) {
+			this.setStatus();
+		}
 	}
 
-	private setStatus(categoryInfo: CategoryInfo): void {
-		const {metadata, subcategories} = categoryInfo;
-		const subCategory = subcategories.find(item => item.code === this.searchParams.subcategory);
-		if (subCategory) {
-			this.categoryServe.setSubCategory([subCategory.displayValue]);
-		}
-		if (this.searchParams.meta) {
-			const metaMaps = this.searchParams.meta.split('-').map(_item => _item.split('_'));
-			metaMaps.forEach(meta => {
-				const targetRow = metadata.find(row => row.id === Number(meta[0]));
-				const {id: metaRowId, name, metaValues} = targetRow || metadata[0];
-				const targetMeta = metaValues.find(metaItem => metaItem.id === Number(meta[1]));
-				const {id, displayName} = targetMeta || metaValues[0];
-				this.checkedMetas.push({
-					metaRowId: metaRowId,
-					metaRowName: name,
-					metaId: id,
-					metaName: displayName,
-				});
-			})
-		}
+	private setStatus(): void {
+		this.categoryInfo$.pipe(skip(1), take(1)).subscribe(res => {
+			const {subcategories, metadata,} = res;
+			const subCategory = subcategories.find(item => item.code === this.searchParams.subcategory);
+			if (subCategory) {
+				this.categoryStoreServe.setSubCategory([subCategory.displayValue]);
+			}
+			if (this.searchParams.meta) {
+				const metaMaps = this.searchParams.meta.split('-').map(_item => _item.split('_'));
+				metaMaps.forEach(meta => {
+					const targetRow = metadata.find(row => row.id === Number(meta[0]));
+					const {id: metaRowId, name, metaValues} = targetRow || metadata[0];
+					const targetMeta = metaValues.find(metaItem => metaItem.id === Number(meta[1]));
+					const {id, displayName} = targetMeta || metaValues[0];
+					this.checkedMetas.push({
+						metaRowId: metaRowId,
+						metaRowName: name,
+						metaId: id,
+						metaName: displayName,
+					});
+				})
+			}
+		})
 	}
 
 
 	private clearSubcategory(): void {
 		this.searchParams.subcategory = '';
-		this.categoryServe.setSubCategory([]);
+		this.categoryStoreServe.setSubCategory([]);
 		this.winServe.removeStorage(storageKeys.subcategoryCode);
 	}
 

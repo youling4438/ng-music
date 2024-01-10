@@ -7,8 +7,12 @@
 			<img src="../../../assets/images/logo2.png" alt="ng-music" />
 			<h1>Angular</h1>
 		</div>
+		<div class="mid">
+			<a routerLink="/book">Book</a> |
+			<a routerLink="/movie">Movie</a>
+		</div>
 		<div class="user">
-			<a *ngIf="!user;else context" (click)="loginClickHandle.emit()">请登录</a>
+			<a *ngIf="!user?.name;else context" (click)="loginClickHandle.emit()">请登录</a>
 			<ng-template #context>
 				{{user.name}}
 				<a (click)="logoutClickHandle.emit()">退出</a>

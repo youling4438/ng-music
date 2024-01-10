@@ -16,6 +16,7 @@ import {MessageModule} from "./share/components/message/message.module";
 import {PlayerComponent} from './layouts/player/player.component';
 import {PipesModule} from "./share/pipes/pipes.module";
 import {BackTopModule} from "./share/components/back-top/back-top.module";
+import {AppStoreModule} from "./store";
 
 
 @NgModule({
@@ -24,22 +25,23 @@ import {BackTopModule} from "./share/components/back-top/back-top.module";
 		LoginComponent,
 		PlayerComponent,
 	],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        PagesModule,
-        AppRoutingModule,
-        BreadcrumbModule,
-        ShareModule,
-        BrowserAnimationsModule,
-        CheckboxModule,
-        DirectivesModule,
-        ReactiveFormsModule,
-        FormsModule,
-        MessageModule,
-        PipesModule,
+	imports: [
+		BrowserModule,
+		HttpClientModule,
+		PagesModule,
+		AppRoutingModule,
+		BreadcrumbModule,
+		ShareModule,
+		BrowserAnimationsModule,
+		CheckboxModule,
+		DirectivesModule,
+		ReactiveFormsModule,
+		FormsModule,
+		MessageModule,
+		PipesModule,
 		BackTopModule,
-    ],
+		AppStoreModule,
+	],
 	exports: [
 		HeaderComponent,
 		BreadcrumbModule,

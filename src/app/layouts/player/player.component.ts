@@ -60,7 +60,7 @@ export class PlayerComponent implements OnInit, OnChanges {
 	@Output() closePlayer = new EventEmitter<void>();
 	isDown: boolean = true;
 	private sidePlayer: boolean = false;
-	private plyerEl: HTMLElement;
+	private playerEl: HTMLElement;
 
 	constructor(
 		private playerServe: PlayerService,
@@ -132,7 +132,7 @@ export class PlayerComponent implements OnInit, OnChanges {
 
 	dragEnd(dragItem: HTMLElement): void {
 		if (dragItem) {
-			this.plyerEl = dragItem;
+			this.playerEl = dragItem;
 			const {top, left, width, height,} = dragItem.getBoundingClientRect();
 			const maxTop: number = this.doc.documentElement.clientHeight - height;
 			const maxLeft: number = this.doc.documentElement.clientWidth - width;
@@ -197,7 +197,7 @@ export class PlayerComponent implements OnInit, OnChanges {
 
 	hoverPlayer(): void {
 		if (this.sidePlayer) {
-			this.rd2.setStyle(this.plyerEl, 'left', this.doc.documentElement.clientWidth - this.plyerEl.getBoundingClientRect().width + 'px');
+			this.rd2.setStyle(this.playerEl, 'left', this.doc.documentElement.clientWidth - this.playerEl.getBoundingClientRect().width + 'px');
 			this.sidePlayer = false;
 		}
 	}
