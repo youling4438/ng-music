@@ -6,13 +6,15 @@ import {
 	OnInit,
 } from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
-import {combineLatest, first, forkJoin, Subject, takeUntil} from "rxjs";
+import {combineLatest, Observable, Subject, takeUntil} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
-import {AlbumInfo, Anchor, RelateAlbum, Track, TracksInfo} from "../../services/apis/types";
+import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
 import {PlayerService} from "../../services/business/player.service";
 import {MessageService} from "../../share/components/message/message.service";
 import {PageInfoService} from "../../services/tools/page-info.service";
 import {CategoryStoreService} from "../../services/business/category.store.service";
+import {AlbumStoreService} from "../../services/business/album.store.service";
+import {skip, take} from "rxjs/operators";
 
 interface MoreStatus {
 	full: boolean;
@@ -28,9 +30,9 @@ interface MoreStatus {
 })
 export class AlbumComponent implements OnInit, OnDestroy {
 	albumInfo: AlbumInfo;
-	score: number;
+	score$: Observable<number>;
 	anchor: Anchor;
-	relateAlbums: RelateAlbum[];
+	relateAlbums$: Observable<RelateAlbum[]>;
 	tracks: Track[] = [];
 	total = 0;
 	trackParams: AlbumTrackArgs = {
@@ -49,8 +51,10 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	private currentTrack: Track;
 	private playing: boolean;
 	destroy$ = new Subject<void>();
+
 	constructor(
 		private albumServe: AlbumService,
+		private albumStoreServe: AlbumStoreService,
 		private route: ActivatedRoute,
 		private cdr: ChangeDetectorRef,
 		private categoryStoreServe: CategoryStoreService,
@@ -79,14 +83,24 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(paramMap => {
 			this.trackParams.albumId = paramMap.get('albumId');
+			this.trackParams.pageNum = 1;
 			if (this.moreStatus.full) {
 				this.toggleMoreStatus();
 			}
 			this.initAlbum();
 			this.listenPlayer();
+			this.updateTracks();
+			this.listenTracksInfo();
 		});
 	}
 
+	private listenTracksInfo() : void {
+		this.albumStoreServe.getTracksInfo().pipe(skip(1),takeUntil(this.destroy$)).subscribe(tracksInfo => {
+			this.tracks = tracksInfo.tracks;
+			this.total = tracksInfo.trackTotalCount;
+			this.cdr.markForCheck();
+		});
+	}
 	className(id: number): string {
 		let result = 'item-name ';
 		if (this.currentTrack) {
@@ -115,24 +129,27 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	}
 
 	initAlbum(): void {
-		forkJoin([
-			this.albumServe.albumScore(this.trackParams.albumId),
-			this.albumServe.album(this.trackParams.albumId),
-			this.albumServe.relateAlbums(this.trackParams.albumId),
-		]).pipe(first()).subscribe(([score, albumInfo, relateAlbums]) => {
-			this.score = score / 2;
-			this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId,};
+		this.albumStoreServe.requestAlbum(this.trackParams.albumId);
+		this.albumStoreServe.getAlbumInfo().pipe(skip(1), take(1)).subscribe(albumInfo => {
+			this.albumInfo = albumInfo;
+			console.log('albumInfo : ', albumInfo);
 			this.anchor = albumInfo.anchorInfo;
-			this.updateTracks();
-			this.relateAlbums = relateAlbums.slice(0, 10);
+			// this.categoryStoreServe.getCategory().pipe(take(1)).subscribe(category => {
+			// 	const {categoryPinyin} = this.albumInfo.crumbs;
+			// 	if(category !== categoryPinyin){
+			// 		this.categoryStoreServe.setCategory(categoryPinyin);
+			// 	}
+			// })
 			this.categoryStoreServe.setSubCategory([this.albumInfo.albumTitle]);
-			this.cdr.markForCheck();
 			this.pageInfoServe.setPageInfo(
 				this.albumInfo.albumTitle,
 				'Angular仿喜马拉雅专辑详情页面',
 				'Angular10 喜马拉雅 有声书 小说 音乐 评书',
 			);
+			this.cdr.markForCheck();
 		});
+		this.score$ = this.albumStoreServe.getScore();
+		this.relateAlbums$ = this.albumStoreServe.getRelateAlbum();
 	}
 
 	play(needPlay: boolean): void {
@@ -208,13 +225,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	}
 
 	private updateTracks(): void {
-		this.albumServe.tracks(this.trackParams)
-			.pipe(first())
-			.subscribe((trackData: TracksInfo) => {
-				this.total = trackData.trackTotalCount;
-				this.tracks = trackData.tracks;
-				this.cdr.markForCheck();
-			});
+		this.albumStoreServe.requestTracksInfo(this.trackParams);
 	}
 
 	trackByTracks(_index: number, track: Track): number {

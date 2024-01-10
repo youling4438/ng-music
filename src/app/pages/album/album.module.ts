@@ -10,6 +10,7 @@ import {FormsModule} from "@angular/forms";
 import {CheckboxModule} from "../../share/components/checkbox/checkbox.module";
 import {PaginationModule} from "../../share/components/pagination/pagination.module";
 import {RateModule} from "../../share/components/rate/rate.module";
+import {PushPipe} from "@ngrx/component";
 
 
 @NgModule({
@@ -17,19 +18,20 @@ import {RateModule} from "../../share/components/rate/rate.module";
 		AlbumComponent,
 		SizeComponent,
 	],
-	imports: [
-		AlbumRoutingModule,
-		TagModule,
-		DirectivesModule,
-		NgIf,
-		PipesModule,
-		NgForOf,
-		CheckboxModule,
-		FormsModule,
-		JsonPipe,
-		PaginationModule,
-		RateModule,
-	]
+    imports: [
+        AlbumRoutingModule,
+        TagModule,
+        DirectivesModule,
+        NgIf,
+        PipesModule,
+        NgForOf,
+        CheckboxModule,
+        FormsModule,
+        JsonPipe,
+        PaginationModule,
+        RateModule,
+        PushPipe,
+    ]
 })
 export class AlbumModule {
 }
