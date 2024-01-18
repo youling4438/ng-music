@@ -42,13 +42,8 @@ export class PlayerService {
 
 	setCurrentTrack(track: Track): void {
 		if (track) {
-			const target: Track = this.trackList.find(item => item.trackId === track.trackId);
-			if (target) {
-				if (target.src) {
-					this.currentTrack$.next(track);
-				} else {
-					this.getAudio(track);
-				}
+			if (track.src) {
+				this.currentTrack$.next(track);
 			} else {
 				this.getAudio(track);
 			}

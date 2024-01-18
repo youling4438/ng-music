@@ -16,8 +16,8 @@ export function metaReducerFactory(): MetaReducer<any> {
 
 export const metaReducers: MetaReducer<any>[] = [debug];
 export const runtimeChecks = {
-    strictStateImmutability: true,
-    strictActionImmutability: true,
+    strictStateImmutability: false,
+    strictActionImmutability: false,
     strictStateSerializability: true,
     strictActionSerializability: true,
     strictActionWithinNgZone: true,

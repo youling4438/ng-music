@@ -8,6 +8,7 @@ import {BookStoreModule} from "./book";
 import {RouterStoreModule} from "./router";
 import {CategoryStoreModule} from "./category";
 import {AlbumStoreModule} from "./album";
+import {PlayerStoreModule} from "./player";
 @NgModule({
 	declarations: [],
 	imports: [
@@ -19,6 +20,7 @@ import {AlbumStoreModule} from "./album";
 		CategoryStoreModule,
 		AlbumStoreModule,
 		BookStoreModule,
+		PlayerStoreModule,
 		environment.imports,
 		RouterStoreModule,
 	],
