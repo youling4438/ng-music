@@ -1,17 +1,17 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {AlbumInfo, Category, Track} from "./services/apis/types";
+import {Category, Track} from "./services/apis/types";
 import {Router} from "@angular/router";
 import {combineLatest, Observable,} from "rxjs";
 import {WindowService} from "./services/tools/window.service";
 import {storageKeys} from "./share/config";
 import {MessageService} from "./share/components/message/message.service";
-import {PlayerService} from "./services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {ContextStoreService} from "./services/business/context.store.service";
 import {RouterStoreModule} from "./store/router";
 import {Store} from "@ngrx/store";
 import {selectCustomRouter, selectUrl, selectRouteParams,} from "./store/router/custom.reducer";
 import {CategoryStoreService} from "./services/business/category.store.service";
+import {PlayerStoreService} from "./services/business/player.store.service";
 
 // import {MessageType} from "./share/components/message/types";
 
@@ -44,23 +44,16 @@ export class AppComponent implements OnInit {
 	subCategory$: Observable<string[]>
 	showDialog: boolean = false;
 	showPlayer: boolean = false;
-	playerInfo: {
-		trackList: Track[];
-		currentTrack: Track;
-		album: AlbumInfo;
-		currentIndex: number;
-		playing: boolean;
-	};
-
+	trackList: Track[];
 	constructor(
 		private cdr: ChangeDetectorRef,
 		private router: Router,
 		private winServe: WindowService,
 		private contextStoreServe: ContextStoreService,
-		private messageServe: MessageService,
-		private playerServe: PlayerService,
+		// private messageServe: MessageService,
 		readonly routerStore$: Store<RouterStoreModule>,
 		readonly categoryStoreServe: CategoryStoreService,
+		readonly playerStoreServe: PlayerStoreService,
 	) {
 		this.routerStore$.select(selectCustomRouter).subscribe(routerState => {
 			console.log('selectRouter : ', routerState);
@@ -87,7 +80,7 @@ export class AppComponent implements OnInit {
 		this.categoryStoreServe.initCategories();
 		this.categoryStoreServe.getCategories();
 		combineLatest([this.categoryStoreServe.getCategory(), this.categoryStoreServe.getSubCategory()])
-			.subscribe(([category, subcategory]) => {
+			.subscribe(([category,]) => {
 				if (category !== this.categoryPinyin) {
 					this.categoryPinyin = category;
 				}
@@ -116,20 +109,9 @@ export class AppComponent implements OnInit {
 	// }
 
 	private listenPlayer(): void {
-		combineLatest(
-			this.playerServe.getTrackList(),
-			this.playerServe.getAlbum(),
-			this.playerServe.getCurrentTrack(),
-			this.playerServe.getCurrentIndex(),
-			this.playerServe.getPlaying(),
-		).subscribe(([trackList, album, currentTrack, currentIndex, playing]) => {
-			this.playerInfo = {
-				trackList,
-				album,
-				currentTrack,
-				currentIndex,
-				playing,
-			};
+		this.playerStoreServe.getTrackList().subscribe(trackList => {
+			this.trackList = trackList || [];
+			console.log('trackList : ', trackList);
 			if (trackList.length) {
 				this.showPlayer = true;
 				this.cdr.markForCheck();
@@ -138,7 +120,7 @@ export class AppComponent implements OnInit {
 	}
 
 	closePlayer(): void {
-		this.playerServe.clear();
+		this.playerStoreServe.clear();
 		this.showPlayer = false;
 	}
 }

@@ -1,18 +1,18 @@
 import {
-	ChangeDetectionStrategy,
+	ChangeDetectionStrategy, ChangeDetectorRef,
 	Component,
 	ElementRef,
 	EventEmitter, Inject,
-	Input, OnChanges,
+	Input,OnDestroy,
 	OnInit,
 	Output, Renderer2,
-	SimpleChanges,
 	ViewChild
 } from '@angular/core';
 import {AlbumInfo, Track} from "../../services/apis/types";
-import {PlayerService} from "../../services/business/player.service";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {DOCUMENT} from "@angular/common";
+import {PlayerStoreService} from "../../services/business/player.store.service";
+import {combineLatest, Subscription} from "rxjs";
 
 const PANEL_HEIGHT = 280;
 const THUMBNAIL_WIDTH = 50;
@@ -46,12 +46,12 @@ const THUMBNAIL_WIDTH = 50;
 		])
 	],
 })
-export class PlayerComponent implements OnInit, OnChanges {
+export class PlayerComponent implements OnInit, OnDestroy {
 	@Input() trackList: Track[];
-	@Input() currentIndex: number;
-	@Input() currentTrack: Track;
-	@Input() album: AlbumInfo;
-	@Input() playing: boolean;
+	currentIndex: number;
+	currentTrack: Track;
+	album: AlbumInfo;
+	playing: boolean;
 	private canPlay: boolean = false;
 	@ViewChild('audio', {static: true}) readonly audioRef: ElementRef;
 	@ViewChild('player', {static: true}) readonly playerRef: ElementRef;
@@ -61,42 +61,56 @@ export class PlayerComponent implements OnInit, OnChanges {
 	isDown: boolean = true;
 	private sidePlayer: boolean = false;
 	private playerEl: HTMLElement;
+	private subscription: Subscription;
 
 	constructor(
-		private playerServe: PlayerService,
 		private rd2: Renderer2,
+		private playerStoreServe: PlayerStoreService,
+		private cdr: ChangeDetectorRef,
 		@Inject(DOCUMENT) private doc: Document,
 	) {
 	}
 
+
 	ngOnInit(): void {
+		this.subscription = combineLatest([
+			this.playerStoreServe.getCurrentTrack(),
+			this.playerStoreServe.getCurrentIndex(),
+			this.playerStoreServe.getAlbum(),
+			this.playerStoreServe.getPlaying(),
+		]).subscribe(([currentTrack, currentIndex, album, playing]) => {
+			this.currentTrack = currentTrack;
+			this.currentIndex = currentIndex;
+			this.album = album;
+			this.setPlaying(playing);
+			this.cdr.markForCheck();
+		});
 	}
 
-	canplay(): void {
-		this.canPlay = true;
-		this.play();
-		this.playerServe.setPlaying(true);
-	}
-
-	ended(): void {
-		this.playerServe.setPlaying(false);
-		this.next(this.currentIndex + 1);
-	}
-
-	error(): void {
-		this.playerServe.setPlaying(false);
-	}
-
-	ngOnChanges(changes: SimpleChanges): void {
-		const {playing} = changes;
-		if (playing && !playing.firstChange) {
-			if (playing.currentValue) {
-				this.audioEl = this.audioRef.nativeElement;
+	private setPlaying(playing: boolean): void {
+		if (this.playing !== playing) {
+			this.playing = playing;
+			this.audioEl = this.audioRef.nativeElement;
+			if (playing && this.canPlay) {
 				this.audioEl.play();
 			} else {
 				this.audioEl.pause();
 			}
 		}
+	}
+
+	canplay(): void {
+		this.canPlay = true;
+		this.play();
+	}
+
+	ended(): void {
+		this.playerStoreServe.setPlaying(false);
+		this.next(this.currentIndex + 1);
+	}
+
+	error(): void {
+		this.playerStoreServe.setPlaying(false);
 	}
 
 	togglePanel(showPanel: boolean): void {
@@ -113,14 +127,9 @@ export class PlayerComponent implements OnInit, OnChanges {
 		if (this.currentTrack) {
 			if (this.canPlay) {
 				const playing = !this.playing;
-				this.playerServe.setPlaying(playing);
+				this.playerStoreServe.setPlaying(playing);
 				if (!this.audioEl) {
 					this.audioEl = this.audioRef.nativeElement;
-				}
-				if (playing) {
-					this.audioEl.play();
-				} else {
-					this.audioEl.pause();
 				}
 			}
 		} else {
@@ -160,11 +169,11 @@ export class PlayerComponent implements OnInit, OnChanges {
 		if (!this.audioEl) {
 			this.audioEl = this.audioRef.nativeElement;
 		}
-		this.audioEl.play();
+		this.playerStoreServe.setPlaying(true);
 	}
 
 	private updateIndex(index: number, canplay = false): void {
-		this.playerServe.setCurrentIndex(index);
+		this.playerStoreServe.setCurrentIndex(index);
 		this.canPlay = canplay;
 	}
 
@@ -214,9 +223,11 @@ export class PlayerComponent implements OnInit, OnChanges {
 		let newTrack = this.trackList.slice();
 		let newIndex = this.currentIndex;
 		let canPlay = true;
+		let delTarget: Track;
 		if (newTrack.length <= 1) {
-			newTrack = [];
 			newIndex = -1;
+			delTarget = newTrack[0];
+			newTrack = [];
 		} else {
 			if (deleteIndex < this.currentIndex) {
 				newIndex--;
@@ -235,10 +246,15 @@ export class PlayerComponent implements OnInit, OnChanges {
 					canPlay = false;
 				}
 			}
-			newTrack.splice(deleteIndex, 1);
+			delTarget = newTrack.splice(deleteIndex, 1)[0];
 		}
 		this.canPlay = canPlay;
-		this.playerServe.setTrackList(newTrack);
+		this.playerStoreServe.setTrackList(newTrack);
 		this.updateIndex(newIndex, canPlay);
 	}
+
+	ngOnDestroy(): void {
+		this.subscription?.unsubscribe();
+	}
+
 }

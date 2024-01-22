@@ -40,11 +40,7 @@
 <!--</div>-->
 <app-player
 	*ngIf="showPlayer"
-	[trackList]="playerInfo.trackList"
-	[album]="playerInfo.album"
-	[currentTrack]="playerInfo.currentTrack"
-	[currentIndex]="playerInfo.currentIndex"
-	[playing]="playerInfo.playing"
+	[trackList]="trackList"
 	(closePlayer)="closePlayer()"
 	@fadePlayer
 >
