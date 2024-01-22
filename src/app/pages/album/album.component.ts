@@ -9,12 +9,12 @@ import {ActivatedRoute} from "@angular/router";
 import {combineLatest, Observable, Subject, takeUntil} from "rxjs";
 import {AlbumService, AlbumTrackArgs} from "../../services/apis/album.service";
 import {AlbumInfo, Anchor, RelateAlbum, Track} from "../../services/apis/types";
-import {PlayerService} from "../../services/business/player.service";
 import {MessageService} from "../../share/components/message/message.service";
 import {PageInfoService} from "../../services/tools/page-info.service";
 import {CategoryStoreService} from "../../services/business/category.store.service";
 import {AlbumStoreService} from "../../services/business/album.store.service";
 import {skip, take} from "rxjs/operators";
+import {PlayerStoreService} from "../../services/business/player.store.service";
 
 interface MoreStatus {
 	full: boolean;
@@ -58,7 +58,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 		private route: ActivatedRoute,
 		private cdr: ChangeDetectorRef,
 		private categoryStoreServe: CategoryStoreService,
-		private playerServe: PlayerService,
+		private playerStoreServe: PlayerStoreService,
 		private messageServe: MessageService,
 		private pageInfoServe: PageInfoService,
 	) {
@@ -67,10 +67,10 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
 	togglePlay(track: Track, action: 'play' | 'pause'): void {
 		if (action === 'pause') {
-			this.playerServe.setPlaying(false);
+			this.playerStoreServe.setPlaying(false);
 		} else {
 			this.setAlbumInfo();
-			this.playerServe.playTrack(track);
+			this.playerStoreServe.playTrack(track);
 		}
 	}
 
@@ -119,8 +119,8 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
 	private listenPlayer(): void {
 		combineLatest(
-			this.playerServe.getCurrentTrack(),
-			this.playerServe.getPlaying(),
+			this.playerStoreServe.getCurrentTrack(),
+			this.playerStoreServe.getPlaying(),
 		).pipe(takeUntil(this.destroy$)).subscribe(([track, playing]) => {
 			this.currentTrack = track;
 			this.playing = playing;
@@ -155,9 +155,9 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	play(needPlay: boolean): void {
 		if (this.checkedList.length) {
 			if (needPlay) {
-				this.playerServe.playTracks(this.checkedList);
+				this.playerStoreServe.playTracks(this.checkedList);
 			} else {
-				this.playerServe.addTracks(this.checkedList);
+				this.playerStoreServe.addTracks(this.checkedList);
 				this.messageServe.info('已添加曲目');
 			}
 			this.setAlbumInfo();
@@ -169,7 +169,7 @@ export class AlbumComponent implements OnInit, OnDestroy {
 
 	private setAlbumInfo(): void {
 		if (!this.currentTrack) {
-			this.playerServe.setAlbum(this.albumInfo);
+			this.playerStoreServe.setAlbum(this.albumInfo);
 		}
 	}
 
@@ -233,9 +233,9 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	}
 
 	playAll(): void {
-		this.playerServe.setTrackList(this.tracks);
+		this.playerStoreServe.setTrackList(this.tracks);
 		this.setAlbumInfo();
-		this.playerServe.setCurrentIndex(0);
+		this.playerStoreServe.setCurrentIndex(0);
 	}
 
 	ngOnDestroy(): void {

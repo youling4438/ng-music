@@ -3,7 +3,7 @@ import {
 	Component,
 	ElementRef,
 	EventEmitter, Inject,
-	Input,OnDestroy,
+	Input, OnDestroy,
 	OnInit,
 	Output, Renderer2,
 	ViewChild
@@ -81,6 +81,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		]).subscribe(([currentTrack, currentIndex, album, playing]) => {
 			this.currentTrack = currentTrack;
 			this.currentIndex = currentIndex;
+			console.log('currentTrack', currentTrack);
 			this.album = album;
 			this.setPlaying(playing);
 			this.cdr.markForCheck();
@@ -134,6 +135,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 			}
 		} else {
 			if (this.trackList.length) {
+				this.playerStoreServe.setPlaying(false);
 				this.updateIndex(0);
 			}
 		}
@@ -172,9 +174,12 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		this.playerStoreServe.setPlaying(true);
 	}
 
-	private updateIndex(index: number, canplay = false): void {
-		this.playerStoreServe.setCurrentIndex(index);
-		this.canPlay = canplay;
+	private updateIndex(index: number): void {
+		if (index !== this.currentIndex) {
+			this.playerStoreServe.setPlaying(false);
+			this.playerStoreServe.setCurrentIndex(index);
+			this.canPlay = false;
+		}
 	}
 
 	trackByTracks(_index: number, track: Track): number {
@@ -222,7 +227,6 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	deleteTrack(deleteIndex: number): void {
 		let newTrack = this.trackList.slice();
 		let newIndex = this.currentIndex;
-		let canPlay = true;
 		let delTarget: Track;
 		if (newTrack.length <= 1) {
 			newIndex = -1;
@@ -239,18 +243,15 @@ export class PlayerComponent implements OnInit, OnDestroy {
 						// 	不处理当前播放的索引 后面的歌曲会顶上来
 					} else {
 						newIndex--;
-						canPlay = false;
 					}
 				} else {
 					newIndex = -1;
-					canPlay = false;
 				}
 			}
 			delTarget = newTrack.splice(deleteIndex, 1)[0];
 		}
-		this.canPlay = canPlay;
 		this.playerStoreServe.setTrackList(newTrack);
-		this.updateIndex(newIndex, canPlay);
+		this.updateIndex(newIndex);
 	}
 
 	ngOnDestroy(): void {

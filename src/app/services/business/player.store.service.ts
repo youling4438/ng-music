@@ -103,6 +103,7 @@ export class PlayerStoreService {
 			} else {
 				this.addTrack(track);
 				// 最后一个曲目的索引
+				this.setPlaying(false);
 				this.setCurrentIndex(trackList.length);
 			}
 		});
