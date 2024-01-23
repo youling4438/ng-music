@@ -248,6 +248,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 			delTarget = newTrack.splice(deleteIndex, 1)[0];
 		}
 		this.playerStoreServe.setTracks(newTrack);
+		this.playerStoreServe.deleteTrack(delTarget?.trackId);
 		this.updateIndex(newIndex);
 	}
 

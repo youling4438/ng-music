@@ -113,7 +113,7 @@ export class PlayerStoreService {
 		this.store$.dispatch(addTrack(track));
 	}
 
-	private deleteTrack(trackId: number): void {
+	deleteTrack(trackId: number): void {
 		this.store$.dispatch(deleteTrack({trackId}));
 	}
 	playTracks(tracks: Track[], index: number = 0): void {
