@@ -71,7 +71,7 @@
 	<div class="page-wrap">
 		<app-pagination
 			class="page"
-			[total]="total"
+			[total]="(albumsInfo$ | ngrxPush)?.total"
 			[pageNum]="searchParams.page"
 			[pageSize]="searchParams.perPage"
 			(pageChanged)="pageChanged($event)"

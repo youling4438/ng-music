@@ -12,7 +12,8 @@ import {AlbumInfo, Track} from "../../services/apis/types";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {DOCUMENT} from "@angular/common";
 import {PlayerStoreService} from "../../services/business/player.store.service";
-import {combineLatest, Subscription} from "rxjs";
+import {Observable, Subscription} from "rxjs";
+import {take} from "rxjs/operators";
 
 const PANEL_HEIGHT = 280;
 const THUMBNAIL_WIDTH = 50;
@@ -49,8 +50,8 @@ const THUMBNAIL_WIDTH = 50;
 export class PlayerComponent implements OnInit, OnDestroy {
 	@Input() trackList: Track[];
 	currentIndex: number;
-	currentTrack: Track;
-	album: AlbumInfo;
+	currentTrack$: Observable<Track>;
+	album$: Observable<AlbumInfo>;
 	playing: boolean;
 	private canPlay: boolean = false;
 	@ViewChild('audio', {static: true}) readonly audioRef: ElementRef;
@@ -73,16 +74,14 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
 
 	ngOnInit(): void {
-		this.subscription = combineLatest([
-			this.playerStoreServe.getCurrentTrack(),
-			this.playerStoreServe.getCurrentIndex(),
-			this.playerStoreServe.getAlbum(),
-			this.playerStoreServe.getPlaying(),
-		]).subscribe(([currentTrack, currentIndex, album, playing]) => {
-			this.currentTrack = currentTrack;
+		this.currentTrack$ = this.playerStoreServe.getCurrentTrack();
+		this.album$ = this.playerStoreServe.getAlbum();
+		this.playerStoreServe.getCurrentIndex().subscribe(currentIndex => {
 			this.currentIndex = currentIndex;
-			console.log('currentTrack', currentTrack);
-			this.album = album;
+			this.cdr.markForCheck();
+		});
+
+		this.playerStoreServe.getPlaying().subscribe(playing => {
 			this.setPlaying(playing);
 			this.cdr.markForCheck();
 		});
@@ -125,20 +124,18 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	}
 
 	togglePlay(): void {
-		if (this.currentTrack) {
-			if (this.canPlay) {
-				const playing = !this.playing;
-				this.playerStoreServe.setPlaying(playing);
-				if (!this.audioEl) {
-					this.audioEl = this.audioRef.nativeElement;
+		this.currentTrack$.pipe(take(1)).subscribe(currentTrack => {
+			if (currentTrack) {
+				if (this.canPlay) {
+					this.playerStoreServe.setPlaying(!this.playing);
+				}
+			} else {
+				if (this.trackList.length) {
+					// this.playerStoreServe.setPlaying(false);
+					this.updateIndex(0);
 				}
 			}
-		} else {
-			if (this.trackList.length) {
-				this.playerStoreServe.setPlaying(false);
-				this.updateIndex(0);
-			}
-		}
+		})
 	}
 
 	dragEnd(dragItem: HTMLElement): void {
@@ -250,7 +247,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 			}
 			delTarget = newTrack.splice(deleteIndex, 1)[0];
 		}
-		this.playerStoreServe.setTrackList(newTrack);
+		this.playerStoreServe.setTracks(newTrack);
 		this.updateIndex(newIndex);
 	}
 

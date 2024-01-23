@@ -1,5 +1,5 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {AlbumArgs, AlbumService, AlbumsInfo, CategoryInfo} from "../../services/apis/album.service";
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {AlbumArgs, AlbumsInfo, CategoryInfo} from "../../services/apis/album.service";
 import {Album, MetaData, MetaValue, SubCategory} from "../../services/apis/types";
 import {skip, take, withLatestFrom} from "rxjs/operators";
 import {WindowService} from "../../services/tools/window.service";
@@ -7,10 +7,10 @@ import {storageKeys} from "../../share/config";
 import {Observable} from "rxjs";
 import {IconType} from "../../share/directives/icon/types";
 import {ActivatedRoute} from "@angular/router";
-import {PlayerService} from "../../services/business/player.service";
 import {PageInfoService} from "../../services/tools/page-info.service";
 import {CategoryStoreService} from "../../services/business/category.store.service";
 import {AlbumStoreService} from "../../services/business/album.store.service";
+import {PlayerStoreService} from "../../services/business/player.store.service";
 
 interface CheckedMeta {
 	metaRowId: number;
@@ -34,7 +34,6 @@ export class AlbumsComponent implements OnInit {
 		page: 1,
 		perPage: 30,
 	};
-	total: number = 0;
 	categoryInfo$: Observable<CategoryInfo>;
 	albumsInfo$: Observable<AlbumsInfo>;
 	checkedMetas: CheckedMeta[] = [];
@@ -43,12 +42,10 @@ export class AlbumsComponent implements OnInit {
 	currentIcon: IconType = 'headset';
 
 	constructor(
-		private albumServe: AlbumService,
-		private cdr: ChangeDetectorRef,
 		private route: ActivatedRoute,
 		private categoryStoreServe: CategoryStoreService,
 		private winServe: WindowService,
-		private playerServe: PlayerService,
+		private playerStoreServe: PlayerStoreService,
 		private pageInfoServe: PageInfoService,
 		private albumStoreServe: AlbumStoreService,
 	) {
@@ -117,11 +114,7 @@ export class AlbumsComponent implements OnInit {
 
 	playAlbum(event: MouseEvent, albumId: number): void {
 		event.stopPropagation();
-		this.albumServe.album(`${albumId}`).subscribe(({mainInfo, tracksInfo}) => {
-			this.playerServe.setAlbum({...mainInfo, albumId});
-			this.playerServe.setTrackList(tracksInfo.tracks);
-			this.playerServe.setCurrentIndex(0);
-		});
+		this.playerStoreServe.requestAlbum(albumId.toString());
 	}
 
 	private getMetaParam(): string {

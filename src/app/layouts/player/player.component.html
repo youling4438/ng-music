@@ -1,7 +1,7 @@
 <div class="app-player-box" appDrag (dragEnd)="dragEnd($event)" (mouseenter)="hoverPlayer()">
 	<div class="app-player" #player>
 		<div class="thumbnail">
-			<img appDragHandle [src]="album?.cover || '../../../assets/images/default-pic.jpg'"/>
+			<img appDragHandle [src]="(album$ | ngrxPush)?.cover || '../../../assets/images/default-pic.jpg'"/>
 		</div>
 		<div class="middle">
 			<div class="operate">
@@ -25,7 +25,7 @@
 			<ul>
 				<li
 					*ngFor="let track of trackList;index as i; trackBy: trackByTracks"
-					[class.current]="track.trackId === currentTrack?.trackId"
+					[class.current]="track.trackId === (currentTrack$ | ngrxPush)?.trackId"
 				>
 					<p
 						class="title ellipsis"
@@ -39,7 +39,7 @@
 	</div>
 	<audio
 		#audio
-		[src]="currentTrack?.src"
+		[src]="(currentTrack$ | ngrxPush)?.src"
 		(canplay)="canplay()"
 		(ended)="ended()"
 		(error)="error()"

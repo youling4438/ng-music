@@ -17,6 +17,7 @@ import {PlayerComponent} from './layouts/player/player.component';
 import {PipesModule} from "./share/pipes/pipes.module";
 import {BackTopModule} from "./share/components/back-top/back-top.module";
 import {AppStoreModule} from "./store";
+import {PushPipe} from "@ngrx/component";
 
 
 @NgModule({
@@ -25,23 +26,24 @@ import {AppStoreModule} from "./store";
 		LoginComponent,
 		PlayerComponent,
 	],
-	imports: [
-		BrowserModule,
-		HttpClientModule,
-		PagesModule,
-		AppRoutingModule,
-		BreadcrumbModule,
-		ShareModule,
-		BrowserAnimationsModule,
-		CheckboxModule,
-		DirectivesModule,
-		ReactiveFormsModule,
-		FormsModule,
-		MessageModule,
-		PipesModule,
-		BackTopModule,
-		AppStoreModule,
-	],
+    imports: [
+        BrowserModule,
+        HttpClientModule,
+        PagesModule,
+        AppRoutingModule,
+        BreadcrumbModule,
+        ShareModule,
+        BrowserAnimationsModule,
+        CheckboxModule,
+        DirectivesModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MessageModule,
+        PipesModule,
+        BackTopModule,
+        AppStoreModule,
+        PushPipe,
+    ],
 	exports: [
 		HeaderComponent,
 		BreadcrumbModule,

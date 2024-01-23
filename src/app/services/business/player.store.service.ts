@@ -38,7 +38,7 @@ export class PlayerStoreService {
 		this.store$.dispatch(requestAlbum({albumId}));
 	}
 
-	setTrackList(tracks: Track[]): void {
+	setTracks(tracks: Track[]): void {
 		this.store$.dispatch(setTracks({tracks}));
 	}
 
@@ -119,7 +119,8 @@ export class PlayerStoreService {
 	playTracks(tracks: Track[], index: number = 0): void {
 		this.addTracks(tracks);
 		this.getTrackList().pipe(take(1)).subscribe(trackList => {
-			const playIndex: number = trackList.findIndex(item => item.trackId === trackList[index].trackId);
+			const playIndex: number = trackList.findIndex(item => item.trackId === tracks[index].trackId);
+			this.setPlaying(false);
 			this.setCurrentIndex(playIndex);
 		});
 	}

@@ -233,8 +233,9 @@ export class AlbumComponent implements OnInit, OnDestroy {
 	}
 
 	playAll(): void {
-		this.playerStoreServe.setTrackList(this.tracks);
+		this.playerStoreServe.setTracks(this.tracks);
 		this.setAlbumInfo();
+		this.playerStoreServe.setPlaying(false);
 		this.playerStoreServe.setCurrentIndex(0);
 	}
 
