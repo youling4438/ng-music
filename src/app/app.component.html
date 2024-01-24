@@ -38,13 +38,15 @@
 <!--	<div class="block block2">block2 <span appDragHandle>内部的P标签</span></div>-->
 <!--	<div appDragHandle class="block block3">block3</div>-->
 <!--</div>-->
-<app-player
-	*ngIf="showPlayer"
-	[trackList]="trackList"
-	(closePlayer)="closePlayer()"
-	@fadePlayer
->
-</app-player>
+<ng-container *ngrxLet="trackList$ as trackList">
+	<app-player
+		[trackList]="trackList"
+		(closePlayer)="closePlayer()"
+		*ngIf="trackList.length"
+		@fadePlayer
+	>
+	</app-player>
+</ng-container>
 <!--<app-back-top target=".scroll-box" [tpl]="appTpl"></app-back-top>-->
 <app-back-top></app-back-top>
 

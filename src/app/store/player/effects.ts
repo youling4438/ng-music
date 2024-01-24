@@ -27,7 +27,6 @@ export class PlayerEffects {
 					this.messageServe.warning('请先购买专辑');
 					throw new Error('请先购买专辑');
 				}
-				// // console.log('audio', audio);
 				track.src = audio.src;
 				track.isPaid = audio.isPaid;
 				return setCurrentTrack(track);

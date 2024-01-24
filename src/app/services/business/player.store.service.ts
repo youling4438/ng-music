@@ -61,6 +61,7 @@ export class PlayerStoreService {
 				if (track.src) {
 					this.store$.dispatch(setCurrentTrack(track));
 				} else {
+					this.setPlaying(false);
 					this.store$.dispatch(requestAudio(track));
 				}
 			} else {

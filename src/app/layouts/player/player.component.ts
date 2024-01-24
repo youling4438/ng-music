@@ -12,7 +12,7 @@ import {AlbumInfo, Track} from "../../services/apis/types";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {DOCUMENT} from "@angular/common";
 import {PlayerStoreService} from "../../services/business/player.store.service";
-import {Observable, Subscription} from "rxjs";
+import {Observable, Subject, takeUntil} from "rxjs";
 import {take} from "rxjs/operators";
 
 const PANEL_HEIGHT = 280;
@@ -62,8 +62,7 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	isDown: boolean = true;
 	private sidePlayer: boolean = false;
 	private playerEl: HTMLElement;
-	private subscription: Subscription;
-
+	private destroy$ = new Subject<void>();
 	constructor(
 		private rd2: Renderer2,
 		private playerStoreServe: PlayerStoreService,
@@ -76,12 +75,12 @@ export class PlayerComponent implements OnInit, OnDestroy {
 	ngOnInit(): void {
 		this.currentTrack$ = this.playerStoreServe.getCurrentTrack();
 		this.album$ = this.playerStoreServe.getAlbum();
-		this.playerStoreServe.getCurrentIndex().subscribe(currentIndex => {
+		this.playerStoreServe.getCurrentIndex().pipe(takeUntil(this.destroy$)).subscribe(currentIndex => {
 			this.currentIndex = currentIndex;
 			this.cdr.markForCheck();
 		});
 
-		this.playerStoreServe.getPlaying().subscribe(playing => {
+		this.playerStoreServe.getPlaying().pipe(takeUntil(this.destroy$)).subscribe(playing => {
 			this.setPlaying(playing);
 			this.cdr.markForCheck();
 		});
@@ -125,13 +124,12 @@ export class PlayerComponent implements OnInit, OnDestroy {
 
 	togglePlay(): void {
 		this.currentTrack$.pipe(take(1)).subscribe(currentTrack => {
-			if (currentTrack) {
+			if (currentTrack.trackId) {
 				if (this.canPlay) {
 					this.playerStoreServe.setPlaying(!this.playing);
 				}
 			} else {
 				if (this.trackList.length) {
-					// this.playerStoreServe.setPlaying(false);
 					this.updateIndex(0);
 				}
 			}
@@ -171,11 +169,11 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		this.playerStoreServe.setPlaying(true);
 	}
 
-	private updateIndex(index: number): void {
-		if (index !== this.currentIndex) {
-			this.playerStoreServe.setPlaying(false);
-			this.playerStoreServe.setCurrentIndex(index);
+	private updateIndex(index: number, changeTrack = true): void {
+		this.playerStoreServe.setCurrentIndex(index);
+		if (changeTrack) {
 			this.canPlay = false;
+			this.playerStoreServe.setPlaying(false);
 		}
 	}
 
@@ -249,11 +247,12 @@ export class PlayerComponent implements OnInit, OnDestroy {
 		}
 		this.playerStoreServe.setTracks(newTrack);
 		this.playerStoreServe.deleteTrack(delTarget?.trackId);
-		this.updateIndex(newIndex);
+		this.updateIndex(newIndex, deleteIndex === this.currentIndex);
 	}
 
 	ngOnDestroy(): void {
-		this.subscription?.unsubscribe();
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 
 }

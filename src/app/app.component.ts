@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {Category, Track} from "./services/apis/types";
 import {Router} from "@angular/router";
 import {combineLatest, Observable,} from "rxjs";
 import {WindowService} from "./services/tools/window.service";
 import {storageKeys} from "./share/config";
-import {MessageService} from "./share/components/message/message.service";
+// import {MessageService} from "./share/components/message/message.service";
 import {animate, style, transition, trigger} from "@angular/animations";
 import {ContextStoreService} from "./services/business/context.store.service";
 import {RouterStoreModule} from "./store/router";
@@ -43,10 +43,8 @@ export class AppComponent implements OnInit {
 	categoryPinyin: string = '';
 	subCategory$: Observable<string[]>
 	showDialog: boolean = false;
-	showPlayer: boolean = false;
-	trackList: Track[];
+	trackList$: Observable<Track[]>;
 	constructor(
-		private cdr: ChangeDetectorRef,
 		private router: Router,
 		private winServe: WindowService,
 		private contextStoreServe: ContextStoreService,
@@ -74,7 +72,7 @@ export class AppComponent implements OnInit {
 			this.contextStoreServe.userInfo();
 		}
 		this.init();
-		this.listenPlayer();
+		this.trackList$ = this.playerStoreServe.getTrackList();
 	}
 	private init(): void {
 		this.categoryStoreServe.initCategories();
@@ -108,19 +106,7 @@ export class AppComponent implements OnInit {
 	// 	});
 	// }
 
-	private listenPlayer(): void {
-		this.playerStoreServe.getTrackList().subscribe(trackList => {
-			this.trackList = trackList || [];
-			console.log('trackList : ', trackList);
-			if (trackList.length) {
-				this.showPlayer = true;
-				this.cdr.markForCheck();
-			}
-		});
-	}
-
 	closePlayer(): void {
 		this.playerStoreServe.clear();
-		this.showPlayer = false;
 	}
 }
