@@ -1,5 +1,4 @@
 import {NgModule, Optional, SkipSelf} from '@angular/core';
-import {BrowserModule} from "@angular/platform-browser";
 import {AppRoutingModule} from "./app-routing.module";
 import {HeaderComponent} from './layouts/header/header.component';
 import {BreadcrumbModule} from "./share/components/breadcrumb/breadcrumb.module";
@@ -27,7 +26,6 @@ import {PushPipe} from "@ngrx/component";
 		PlayerComponent,
 	],
     imports: [
-        BrowserModule,
         HttpClientModule,
         PagesModule,
         AppRoutingModule,
@@ -47,7 +45,6 @@ import {PushPipe} from "@ngrx/component";
 	exports: [
 		HeaderComponent,
 		BreadcrumbModule,
-		BrowserModule,
 		AppRoutingModule,
 		LoginComponent,
 		PlayerComponent,
