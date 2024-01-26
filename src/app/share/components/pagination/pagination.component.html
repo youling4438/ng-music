@@ -8,14 +8,17 @@
 			(click)="pageClick(item)"
 		>
 			<ng-container [ngSwitch]="item.type">
-				<a *ngSwitchCase="'page'">{{item.num}}</a>
-				<ng-container *ngSwitchDefault>
-					<ng-container [ngSwitch]="item.type">
-						<i *ngSwitchCase="'prev'" appIcon="previewleft"></i>
-						<i *ngSwitchCase="'next'" appIcon="previewright"></i>
-						<i *ngSwitchDefault appIcon="more"></i>
+				<ng-template #defaultTpl>
+					<a *ngSwitchCase="'page'">{{item.num}}</a>
+					<ng-container *ngSwitchDefault>
+						<ng-container [ngSwitch]="item.type">
+							<i *ngSwitchCase="'prev'" appIcon="previewleft"></i>
+							<i *ngSwitchCase="'next'" appIcon="previewright"></i>
+							<i *ngSwitchDefault appIcon="more"></i>
+						</ng-container>
 					</ng-container>
-				</ng-container>
+				</ng-template>
+				<ng-container *ngTemplateOutlet="itemRender || defaultTpl; context: { $implicit: item.type, num: item.num }"></ng-container>
 			</ng-container>
 		</li>
 	</ul>

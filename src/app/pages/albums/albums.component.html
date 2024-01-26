@@ -5,16 +5,18 @@
 			<li *ngFor="let item of categoryInfo?.subcategories; trackBy: trackBySubCategory"
 				(click)="changeSubCategory(item)"
 				[class.checked]="item.code === searchParams.subcategory"
-			>{{item.displayValue}}</li>
+			>{{ item.displayValue }}
+			</li>
 		</ul>
 	</div>
 	<div class="conditions">
 		<ng-container *ngFor="let row of categoryInfo?.metadata">
 			<div class="row" *ngIf="showMetaRow(row.name)">
-				<b class="title">{{row.name}}</b>
+				<b class="title">{{ row.name }}</b>
 				<ul class="tabs">
 					<li class="tag" (click)="changeMeta(row, item)"
-						*ngFor="let item of row.metaValues; trackBy: trackByMetaValues">{{item.displayName}}</li>
+						*ngFor="let item of row.metaValues; trackBy: trackByMetaValues">{{ item.displayName }}
+					</li>
 				</ul>
 			</div>
 		</ng-container>
@@ -22,9 +24,9 @@
 			<b class="title">已筛选</b>
 			<ul class="tabs">
 				<li class="tag checked" *ngFor="let item of checkedMetas">
-					<span class="label-title">{{item.metaRowName}}</span>
+					<span class="label-title">{{ item.metaRowName }}</span>
 					<app-tag [tagCloseAble]="true" (closed)="unCheckMeta(item)">
-						{{item.metaName}}
+						{{ item.metaName }}
 					</app-tag>
 				</li>
 			</ul>
@@ -41,16 +43,18 @@
 					[class.checked]="i === searchParams.sort"
 					*ngFor="let item of sorts; index as i"
 					(click)="changeSort(i)">
-					{{item}}
+					{{ item }}
 				</li>
 			</ul>
 		</div>
 		<div class="album-cards">
-			<div class="album-card" [routerLink]="'/album/' + album.albumId" *ngFor="let album of albumsInfo?.albums;trackBy: trackByAlbums">
+			<div class="album-card" [routerLink]="'/album/' + album.albumId"
+				 *ngFor="let album of albumsInfo?.albums;trackBy: trackByAlbums">
 				<div class="cover">
 					<!--    图片地址加上!strip=1&quality=7&magick=webp&op_type=3&columns=290&rows=290，尺寸就会变为140 * 140      -->
 					<img class="thumbnail" [appImgLazy]="album.coverPath" [alt]="[album.title]">
-					<img class="icon-play" (click)="playAlbum($event, album.albumId)" alt="icon-play" src="../../../assets/images/icon-play-cover.png"/>
+					<img class="icon-play" (click)="playAlbum($event, album.albumId)" alt="icon-play"
+						 src="../../../assets/images/icon-play-cover.png"/>
 					<p class="listen-count">
 						<i class="icon" [appIcon]="currentIcon"></i>
 						<span>{{ album.playCount | numberFormat }}</span>
@@ -74,7 +78,13 @@
 			[total]="(albumsInfo$ | ngrxPush)?.total"
 			[pageNum]="searchParams.page"
 			[pageSize]="searchParams.perPage"
+
 			(pageChanged)="pageChanged($event)"
 		></app-pagination>
+<!--		[itemRender]="btnTpl"-->
+<!--		<ng-template #btnTpl let-type let-num='num'>-->
+<!--			<span style="color: #73faff" *ngIf="type==='page'">{{ num }}</span>-->
+<!--			<span *ngIf="type !=='page'">{{ type }}</span>-->
+<!--		</ng-template>-->
 	</div>
 </div>

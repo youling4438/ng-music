@@ -4,7 +4,7 @@ import {
 	EventEmitter,
 	Input,
 	OnChanges,
-	Output,
+	Output, TemplateRef,
 } from '@angular/core';
 
 type PageItemType = 'page' | 'prev' | 'next' | 'prev5' | 'next5';
@@ -15,6 +15,10 @@ interface PageItem {
 	num?: number;
 }
 
+interface PaginationContext {
+	type: PageItemType;
+	num: number;
+}
 @Component({
 	selector: 'app-pagination',
 	templateUrl: './pagination.component.html',
@@ -25,6 +29,7 @@ export class PaginationComponent implements OnChanges {
 	@Input() total: number = 500;
 	@Input() pageNum: number = 5;
 	@Input() pageSize: number = 10;
+	@Input() itemRender: TemplateRef<PaginationContext>;
 	@Output() pageChanged = new EventEmitter<number>();
 	lastNum = 0;
 	listOfPageItem: PageItem[] = [];
@@ -54,7 +59,7 @@ export class PaginationComponent implements OnChanges {
 			const lastPageItem: PageItem[] = this.generatorPageItem(lastNum, lastNum);
 			const prev5PageItem: PageItem = {type: 'prev5',};
 			const next5PageItem: PageItem = {type: 'next5',};
-			let midPageItem: PageItem[] = [];
+			let midPageItem: PageItem[];
 			if (pageNum <= 4) {
 				midPageItem = [
 					...this.generatorPageItem(2, 5),
