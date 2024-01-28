@@ -4,6 +4,7 @@ import {DOCUMENT} from "@angular/common";
 
 export type ScrollEl = Element | Window;
 export type EasingFn = (t: number, b: number, c: number, d: number) => number;
+
 function easeInOutCubic(t: number, b: number, c: number, d: number): number {
 	const cc = c - b;
 	let tt = t / (d / 2);
@@ -44,7 +45,7 @@ export class ScrollService {
 		return target === window ? target[windowProp] : target[elementProp];
 	}
 
-	private setScroll(target: ScrollEl, topValue: number): void {
+	setScroll(target: ScrollEl, topValue: number): void {
 		if (target === window) {
 			this.doc.body.scrollTop = topValue;
 			this.doc.documentElement.scrollTop = topValue;

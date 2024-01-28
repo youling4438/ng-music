@@ -1,5 +1,20 @@
-<div class="virtual-list">
-	<ng-container *ngFor="let item of list;index as i">
-		<ng-container *ngTemplateOutlet="itemTpl; context: {item, index: i}"></ng-container>
-	</ng-container>
+<div
+	class="virtual-list"
+	#virtualWrap
+	[style]="{
+		maxHeight: maxHeight + 'px',
+		overflowY: 'auto',
+	}"
+>
+	<div
+		class="scroll-item"
+		[style]="{
+			paddingTop: base.paddingTop + 'px',
+			paddingBottom: base.paddingBottom + 'px',
+		}">
+		<ng-container *ngFor="let item of renderList;index as i">
+			<ng-container *ngTemplateOutlet="itemTpl; context: {item, index: i}"></ng-container>
+		</ng-container>
+	</div>
+
 </div>

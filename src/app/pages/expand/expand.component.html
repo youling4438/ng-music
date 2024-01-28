@@ -10,8 +10,17 @@
 	<button appBtn appRipples> clear </button>
 </div>
 <div class="scroll-box" *ngIf="showBox">
-	<app-virtual-list [list]="list" [itemTpl]="itemTpl"></app-virtual-list>
-	<ng-template #itemTpl let-item='item' let-index='index'>
-		<div class="item">{{item}}--{{index}}</div>
-	</ng-template>
+	<div class="list">
+		<app-virtual-list
+			[list]="list"
+			[itemTpl]="itemTpl"
+			[size]="42"
+			[start]="6"
+			[remain]="7"
+			[offset]="1200"
+		></app-virtual-list>
+		<ng-template #itemTpl let-item='item' let-index='index'>
+			<div class="item">{{item}}--{{index}}</div>
+		</ng-template>
+	</div>
 </div>
