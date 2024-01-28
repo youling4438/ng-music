@@ -1,0 +1,5 @@
+<div class="virtual-list">
+	<ng-container *ngFor="let item of list;index as i">
+		<ng-container *ngTemplateOutlet="itemTpl; context: {item, index: i}"></ng-container>
+	</ng-container>
+</div>

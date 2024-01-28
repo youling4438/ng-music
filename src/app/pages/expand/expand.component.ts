@@ -20,6 +20,8 @@ export class ExpandComponent implements AfterViewInit, OnDestroy {
 	@ViewChildren('btn') readonly buttons: QueryList<ElementRef<HTMLButtonElement>>;
 	destroy$ = new Subject<void>();
 
+	showBox: boolean = false;
+	list: string[] = [];
 	ngAfterViewInit(): void {
 		const sub1: Observable<any> = fromEvent(this.buttons.first.nativeElement, 'click');
 		const sub2: Observable<any> = fromEvent(this.buttons.last.nativeElement, 'click');
@@ -32,6 +34,15 @@ export class ExpandComponent implements AfterViewInit, OnDestroy {
 		sub1.pipe(withLatestFrom(sub2)).pipe(takeUntil(this.destroy$)).subscribe(buttonsClickEvents => {
 			console.log('----------------buttonsClickEvents-------------------- : ', buttonsClickEvents);
 		});
+
+		this.mockListData();
+	}
+
+	mockListData(length = 100):void {
+		this.list = [];
+		for(let i = 0; i < length; i++){
+			this.list.push('item' + i);
+		}
 	}
 
 	ngOnDestroy(): void {

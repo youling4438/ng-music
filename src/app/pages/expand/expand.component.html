@@ -1,2 +1,17 @@
-<button #btn appBtn appRipples> Button1 </button> |
-<button #btn appBtn appRipples> Button2 </button>
+<div class="btn-list">
+	<button #btn appBtn appRipples> Button1 </button> |
+	<button #btn appBtn appRipples> Button2 </button>
+</div>
+<div class="btn-list">
+	<button appBtn appRipples (click)="showBox = !showBox"> toggle box </button> |
+	<button appBtn appRipples (click)="mockListData(100)"> refresh </button> |
+	<button appBtn appRipples> add Items </button> |
+	<button appBtn appRipples> sub Items </button> |
+	<button appBtn appRipples> clear </button>
+</div>
+<div class="scroll-box" *ngIf="showBox">
+	<app-virtual-list [list]="list" [itemTpl]="itemTpl"></app-virtual-list>
+	<ng-template #itemTpl let-item='item' let-index='index'>
+		<div class="item">{{item}}--{{index}}</div>
+	</ng-template>
+</div>
