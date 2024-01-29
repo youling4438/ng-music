@@ -1,6 +1,7 @@
 <div
 	class="virtual-list"
 	#virtualWrap
+	(scroll)="onListScroll()"
 	[style]="{
 		maxHeight: maxHeight + 'px',
 		overflowY: 'auto',
@@ -13,7 +14,7 @@
 			paddingBottom: base.paddingBottom + 'px',
 		}">
 		<ng-container *ngFor="let item of renderList;index as i">
-			<ng-container *ngTemplateOutlet="itemTpl; context: {item, index: i}"></ng-container>
+			<ng-container *ngTemplateOutlet="itemTpl; context: {item, index: i + base.start}"></ng-container>
 		</ng-container>
 	</div>
 

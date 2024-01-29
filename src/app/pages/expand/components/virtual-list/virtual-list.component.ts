@@ -35,7 +35,7 @@ export class VirtualListComponent implements OnInit, OnChanges, AfterViewInit {
 	@Input() itemTpl: TemplateRef<VirtualItemContext>;
 	@Input() size: number;
 	@Input() remain: number;
-	@Input() addition: number;  //额外渲染多少条数据
+	@Input() additional: number;  //额外渲染多少条数据
 	@Input() start: number = 0;  //从第几条开始渲染
 	@Input() offset: number = 0;  //默认的scrollTop
 	@ViewChild('virtualWrap') readonly virtualWrap: ElementRef<HTMLElement>;
@@ -94,19 +94,62 @@ export class VirtualListComponent implements OnInit, OnChanges, AfterViewInit {
 	}
 
 	get keeps(): number {
-		return this.remain + (this.addition || this.remain);
+		return this.remain + (this.additional || this.remain);
+	}
+
+	onListScroll(): void {
+		if (this.list.length > this.keeps) {
+			this.updateZone(this.virtualWrap.nativeElement.scrollTop);
+		}
+	}
+
+	private updateZone(offset: number): void {
+		const overs = Math.floor(offset / this.size);
+		const zone = this.getZone(overs);
+		const additional = this.additional || this.remain;
+		const arriveAtNextZone = overs > this.base.start + additional;
+		let shouldRefresh = false;
+		if (overs < this.base.start) {
+			// 向上滚动
+			shouldRefresh = true;
+		} else {
+			if(zone.isLastZone) {
+				if((this.base.start !== zone.start) || (this.base.end !== zone.end)){
+					shouldRefresh = true;
+				}
+			} else {
+				shouldRefresh = arriveAtNextZone;
+			}
+		}
+
+		if(shouldRefresh){
+			this.base.start = zone.start;
+			this.base.end = zone.end;
+			this.updateContainer();
+			this.renderList = this.filterList();
+		}
+
 	}
 
 	ngAfterViewInit(): void {
 		if (this.start) {
-			let start = Math.max(0, this.start);
-			const remainCount = this.list.length - this.keeps;
-			if (start >= remainCount) {
-				start = Math.max(0, remainCount);
-			}
-			this.scrollServe.setScroll(this.virtualWrap.nativeElement, start * this.size);
+			this.scrollServe.setScroll(this.virtualWrap.nativeElement, this.getZone(this.start).start * this.size);
 		} else if (this.offset) {
 			this.scrollServe.setScroll(this.virtualWrap.nativeElement, this.offset);
+		}
+	}
+
+	private getZone(startIndex: number): { start: number, end: number, isLastZone: boolean } {
+		let start = Math.max(0, startIndex);
+		const remainCount = this.list.length - this.keeps;
+		const isLastZone: boolean = start >= remainCount;
+		if (isLastZone) {
+			start = Math.max(0, remainCount);
+		}
+		return {
+			start,
+			end: this.getEndIndex(start),
+			isLastZone,
 		}
 	}
 }

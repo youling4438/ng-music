@@ -38,7 +38,7 @@ export class ExpandComponent implements AfterViewInit, OnDestroy {
 		this.mockListData();
 	}
 
-	mockListData(length = 100):void {
+	mockListData(length = 100000):void {
 		this.list = [];
 		for(let i = 0; i < length; i++){
 			this.list.push('item' + i);
