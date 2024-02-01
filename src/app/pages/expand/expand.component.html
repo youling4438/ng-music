@@ -5,9 +5,9 @@
 <div class="btn-list">
 	<button appBtn appRipples (click)="showBox = !showBox"> toggle box </button> |
 	<button appBtn appRipples (click)="mockListData(100)"> refresh </button> |
-	<button appBtn appRipples> add Items </button> |
-	<button appBtn appRipples> sub Items </button> |
-	<button appBtn appRipples> clear </button>
+	<button appBtn appRipples (click)="addList(100)"> add Items </button> |
+	<button appBtn appRipples (click)="subList(100)"> sub Items </button> |
+	<button appBtn appRipples (click)="list = []"> clear </button>
 </div>
 <div class="scroll-box" *ngIf="showBox">
 	<div class="list">

@@ -22,6 +22,7 @@ export class ExpandComponent implements AfterViewInit, OnDestroy {
 
 	showBox: boolean = false;
 	list: string[] = [];
+
 	ngAfterViewInit(): void {
 		const sub1: Observable<any> = fromEvent(this.buttons.first.nativeElement, 'click');
 		const sub2: Observable<any> = fromEvent(this.buttons.last.nativeElement, 'click');
@@ -38,9 +39,22 @@ export class ExpandComponent implements AfterViewInit, OnDestroy {
 		this.mockListData();
 	}
 
-	mockListData(length = 100000):void {
+	addList(count = 100): void {
+		const length: number = this.list.length;
+		for (let i = 0; i < count; i++) {
+			this.list.push(`item${i + length}`);
+		}
+		this.list = this.list.slice();
+	}
+
+	subList(count = 100): void {
+		this.list.splice(0, count);
+		this.list = this.list.slice();
+	}
+
+	mockListData(length = 200): void {
 		this.list = [];
-		for(let i = 0; i < length; i++){
+		for (let i = 0; i < length; i++) {
 			this.list.push('item' + i);
 		}
 	}

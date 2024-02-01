@@ -51,14 +51,15 @@ export class VirtualListComponent implements OnInit, OnChanges, AfterViewInit {
 	constructor(private scrollServe: ScrollService) {
 	}
 
-	ngOnInit(): void {
-		this.base.start = this.list.length > this.start + this.keeps ? this.start : 0;
-		this.base.end = this.getEndIndex(this.base.start);
-		this.updateContainer();
-		this.renderList = this.filterList();
+	ngOnChanges(changes: SimpleChanges): void {
+		const {list} = changes;
+		if (list && !list.firstChange) {
+			this.onListScroll(true);
+		}
 	}
 
-	ngOnChanges(changes: SimpleChanges): void {
+	ngOnInit(): void {
+		this.refresh(true);
 	}
 
 	private updateContainer(): void {
@@ -97,32 +98,48 @@ export class VirtualListComponent implements OnInit, OnChanges, AfterViewInit {
 		return this.remain + (this.additional || this.remain);
 	}
 
-	onListScroll(): void {
+	onListScroll(forceUpdate = false): void {
 		if (this.list.length > this.keeps) {
-			this.updateZone(this.virtualWrap.nativeElement.scrollTop);
+			this.updateZone(this.virtualWrap.nativeElement.scrollTop, forceUpdate);
+		} else {
+			this.refresh();
 		}
 	}
 
-	private updateZone(offset: number): void {
+	private refresh(init = false) {
+		if (init) {
+			this.base.start = this.list.length > this.start + this.keeps ? this.start : 0;
+		} else {
+			this.base.start = 0;
+		}
+		this.base.end = this.getEndIndex(this.base.start);
+		this.updateContainer();
+		this.renderList = this.filterList();
+	}
+
+	private updateZone(offset: number, forceUpdate: boolean): void {
 		const overs = Math.floor(offset / this.size);
 		const zone = this.getZone(overs);
-		const additional = this.additional || this.remain;
-		const arriveAtNextZone = overs > this.base.start + additional;
 		let shouldRefresh = false;
-		if (overs < this.base.start) {
-			// 向上滚动
+		if (forceUpdate) {
 			shouldRefresh = true;
 		} else {
-			if(zone.isLastZone) {
-				if((this.base.start !== zone.start) || (this.base.end !== zone.end)){
-					shouldRefresh = true;
-				}
+			if (overs < this.base.start) {
+				// 向上滚动
+				shouldRefresh = true;
 			} else {
-				shouldRefresh = arriveAtNextZone;
+				if (zone.isLastZone) {
+					if ((this.base.start !== zone.start) || (this.base.end !== zone.end)) {
+						shouldRefresh = true;
+					}
+				} else {
+					const additional = this.additional || this.remain;
+					shouldRefresh = overs > this.base.start + additional;
+				}
 			}
 		}
 
-		if(shouldRefresh){
+		if (shouldRefresh) {
 			this.base.start = zone.start;
 			this.base.end = zone.end;
 			this.updateContainer();
